@@ -1,0 +1,92 @@
+#!/usr/bin/env bash
+
+#~ USAGE: serp new [NAME]
+#~
+#~ Commands:
+#~
+#~   --help  - View these usage instructions
+#~
+
+log() {
+  echo "SERP: ${1}"
+}
+
+usage() {
+  grep '^#~' < "$0" | cut -c 3-
+}
+
+if [[ $# -lt 1 ]]; then
+    usage
+    exit 2
+fi
+
+############################################################
+# Main Script
+############################################################
+
+function new_app() {
+  if [ "$app_name" == "" ]; then
+    echo "Give a project name as the first argument"
+    exit 1
+  fi
+
+  mkdir $1
+  cd $1
+
+  # Initialize git repository
+  git init
+  git branch -M main
+
+  # Use poetry for package management
+  poetry init -n
+
+  # Use virtualenv
+  python -m venv venv
+  source venv/bin/activate
+
+  # Add common libraries
+  poetry add fastapi uvicorn alembic dotenv
+
+  # App structure
+  mkdir -p tests config app/models app/schemas app/services app/utils app/db app/api app/core
+
+  touch app/main.py tests/main_test.py
+
+  cat > app/main.py <<EOF
+  import os
+  import time
+  from fastapi import FastAPI
+  from dotenv import load_dotenv
+
+  load_dotenv()
+
+  app = FastAPI()
+
+  @app.get("/")
+  async def root():
+    return {"message": "Hello World"}
+EOF
+
+  cat > README.md <<EOF
+  # $1
+
+  A FastAPI project
+EOF
+
+  # Use alembic for migrations
+  alembic init migrations
+
+  # Output project structure
+  tree -L 2
+}
+
+############################################################
+# Main Script
+############################################################
+if [[ $# -lt 1 ]] || [[ $1 == "--help" ]]; then
+  usage
+  exit 2
+else
+  app_name="$1"
+  new_app "$app_name"
+fi
