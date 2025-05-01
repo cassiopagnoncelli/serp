@@ -22,7 +22,7 @@ usage() {
 
 SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
 SCRIPT_DIR="$(dirname "$SCRIPT_PATH")"
-TEMPLATE_DIR="$SCRIPT_DIR/templates"
+TEMPLATE_DIR="$SCRIPT_DIR/template"
 
 ############################################################
 # Main Script
