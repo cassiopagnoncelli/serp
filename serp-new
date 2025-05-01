@@ -20,19 +20,63 @@ usage() {
   grep '^#~' < "$0" | cut -c 3-
 }
 
+breakpoint() {
+  set -x
+  bash --norc --noprofile
+  set +x
+}
+
 SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
 SCRIPT_DIR="$(dirname "$SCRIPT_PATH")"
 TEMPLATE_DIR="$SCRIPT_DIR/template"
 
 ############################################################
+# Validation Functions
+############################################################
+
+function validate_project_name() {
+  if [[ ! "$1" =~ ^[a-z][a-z0-9]+$ ]]; then
+    echo "Error: Project name must start with a lowercase letter and contain only lowercase letters and numbers"
+    exit 1
+  fi
+}
+
+############################################################
 # Main Script
 ############################################################
+
+function apply_env() {
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    sed -i '' "s/^APP_NAME=template/APP_NAME=${1}/g" .env
+  else
+    sed -i "s/^APP_NAME=template/APP_NAME=${1}/g" .env
+  fi
+}
+
+function apply_database_yml() {
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    sed -i '' "s/\${APP_NAME}/${1}/g" config/database.yml
+  else
+    sed -i "s/\${APP_NAME}/${1}/g" config/database.yml
+  fi
+}
+
+function apply_core_settings() {
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    sed -i '' "s/my-app/${1}/g" app/core/settings.py
+  else
+    sed -i "s/my-app/${1}/g" app/core/settings.py
+  fi
+}
 
 function new_app() {
   if [ "$$1" == "" ]; then
     echo "Give a project name as the first argument"
     exit 1
   fi
+
+  # Validate project name format
+  validate_project_name "$1"
 
   mkdir $1
   cd $1
@@ -49,7 +93,7 @@ function new_app() {
   source venv/bin/activate
 
   # Add common libraries
-  poetry add fastapi uvicorn alembic dotenv
+  poetry add fastapi uvicorn alembic dotenv pydantic
 
   # App structure
   mkdir -p \
@@ -65,10 +109,47 @@ function new_app() {
     app/utils \
     db
 
-  cp $TEMPLATE_DIR/app/server.py app/server.py
+  # Copy files
   cp $TEMPLATE_DIR/README.md README.md
   cp $TEMPLATE_DIR/console.py console.py
   cp $TEMPLATE_DIR/public/robots.txt public/robots.txt
+  cp $TEMPLATE_DIR/app/server.py app/server.py
+
+  # Copy API.
+  cp -r $TEMPLATE_DIR/app/api app/api
+
+  # Copy core.
+  cp -r $TEMPLATE_DIR/app/core app/core
+
+  # Copy db.
+  cp -r $TEMPLATE_DIR/app/db app/db
+  
+  # Copy models.
+  cp -r $TEMPLATE_DIR/app/models app/models
+
+  # Copy schemas.
+  cp -r $TEMPLATE_DIR/app/schemas app/schemas
+
+  # Copy services.
+  cp -r $TEMPLATE_DIR/app/services app/services
+
+  # Copy utils.
+  cp -r $TEMPLATE_DIR/app/utils app/utils
+
+  # Copy jobs.
+  cp -r $TEMPLATE_DIR/app/jobs app/jobs
+
+  # Env.
+  cp $TEMPLATE_DIR/.env .env
+  apply_env $1
+
+  # Configuration files.
+  cp $TEMPLATE_DIR/config/database.yml config/database.yml
+  apply_database_yml $1
+
+  # Core settings.
+  cp $TEMPLATE_DIR/app/core/settings.py app/core/settings.py
+  apply_core_settings $1
 
   # Use alembic for migrations
   alembic init db/migrations

@@ -1,9 +1,9 @@
 from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from routers import *
+from api import *
 
-app = FastAPI(title="Hero API")
+app = FastAPI(title="API")
 
 app.add_middleware(
   CORSMiddleware,
