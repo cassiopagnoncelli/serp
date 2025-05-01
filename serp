@@ -2,32 +2,35 @@
 
 set -e
 
-#~ USAGE: serp [COMMAND]
+#~ USAGE
+#~ 
+#~   serp COMMAND
 #~
-#~ Commands:
 #~
-#~   new          - Set up a new serp project
+#~ COMMANDS
 #~
-#~   c, console   - Open app console
-#~   db           - Open database console
-#~   s, server    - Run the serp server
-#~   w, worker    - Run the serp worker
+#~   new           - Set up a new serp project
 #~
-#~   t, test      - Run the tests
-#~   l, lint      - Run the linter
+#~   c, console    - Open app console
+#~   db            - Open database console
+#~   s, server     - Run the serp server
+#~   w, worker     - Run the serp worker
 #~
-#~   db:migrate   - Run the migrations
-#~   db:rollback  - Rollback the migrations
-#~   db:seed      - Fills an empy local dev pgsql database with seed data.
-#~   db:reset     - Wipes the dev pgsql database, recreates it clean from
-#~                  migrations, and seeds it with seed data. Useful for clean
-#~                  dev environment setup and for switching customer
-#~                  enviromnets in local development.
+#~   t, test       - Run the tests
+#~   l, lint       - Run the linter
+#~
+#~   db:migrate    - Run the migrations
+#~   db:rollback   - Rollback the migrations
+#~   db:seed       - Fills an empy local dev pgsql database with seed data.
+#~   db:reset      - Wipes the dev pgsql database, recreates it clean from
+#~                   migrations, and seeds it with seed data. Useful for clean
+#~                   dev environment setup and for switching customer
+#~                   enviromnets in local development.
 #~
 #~   redis         - Open CLI access to the Redis instance
 #~   redis:monitor - Run Redis monitor (https://redis.io/commands/monitor/)
 #~
-#~   help  - View these usage instructions
+#~   help          - View these usage instructions
 #~
 
 log() {
@@ -38,22 +41,25 @@ usage() {
   grep '^#~' < "$0" | cut -c 3-
 }
 
-if [[ $# -lt 1 ]]; then
-    usage
-    exit 2
-fi
+SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
+SCRIPT_DIR="$(dirname "$SCRIPT_PATH")"
+TEMPLATE_DIR="$SCRIPT_DIR/templates"
 
 ############################################################
 # Main Script
 ############################################################
+if [[ $# -lt 1 ]]; then
+  usage
+  exit 2
+fi
+
 while [[ $# -gt 0 ]]; do
   command="$1"
-  params="$2"
-  shift
+  shift 1
+  params=("$@")
   case "$command" in
     new)
-      log "Creating new Serp project: ${params}"
-      ./serp-new "${params}"
+      "$SCRIPT_DIR/serp-new" "${params}"
       ;;
 
     --help|help)
@@ -61,7 +67,7 @@ while [[ $# -gt 0 ]]; do
       break
       ;;
     *)
-      log "Unknown command: $param"
+      log "Unknown command: $command"
       break
       ;;
   esac
