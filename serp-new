@@ -52,7 +52,17 @@ function new_app() {
   poetry add fastapi uvicorn alembic dotenv
 
   # App structure
-  mkdir -p tests config app/models app/schemas app/services app/utils app/db app/api app/core db
+  mkdir -p \
+    tests \
+    config \
+    app/models \
+    app/schemas \
+    app/services \
+    app/utils \
+    app/db \
+    app/api \
+    app/core \
+    db
 
   cp $TEMPLATE_DIR/app/main.py app/main.py
   cp $TEMPLATE_DIR/README.md README.md
@@ -70,6 +80,9 @@ function new_app() {
 if [[ $# -lt 1 ]] || [[ $1 == "--help" ]] || [[ $1 == "" ]]; then
   usage
   exit 2
+elif [ -d "$1" ]; then
+  echo "Project already exists"
+  exit 1
 else
   echo "Creating a Serp project with params: $@"
   new_app "$1"
