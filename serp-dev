@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+set -e
+
+#~ USAGE
+#~
+#~   serp dev
+#~
+#~
+#~ COMMANDS
+#~
+#~   --help  - View these usage instructions
+#~
+
+log() {
+  echo "${1}"
+}
+
+usage() {
+  grep '^#~' < "$0" | cut -c 3-
+}
+
+SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
+SCRIPT_DIR="$(dirname "$SCRIPT_PATH")"
+TEMPLATE_DIR="$SCRIPT_DIR/template"
+PROJECT_ROOT=$(git rev-parse --show-toplevel)
+
+############################################################
+# Main Script
+############################################################
+
+function run_dev_server() {
+  cd "$PROJECT_ROOT"
+  fastapi dev app/server.py
+}
+
+############################################################
+# Main Script
+############################################################
+run_dev_server

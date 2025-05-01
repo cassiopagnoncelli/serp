@@ -13,16 +13,17 @@ set -e
 #~
 #~   c, console    - Open app console
 #~   db            - Open database console
-#~   s, server     - Run the serp server
+#~   dev           - Run the serp server in development mode
+#~   prod          - Run the serp server in production mode
 #~   w, worker     - Run the serp worker
 #~
 #~   t, test       - Run the tests
 #~   l, lint       - Run the linter
 #~
-#~   db:migrate    - Run the migrations
-#~   db:rollback   - Rollback the migrations
-#~   db:seed       - Fills an empy local dev pgsql database with seed data.
-#~   db:reset      - Wipes the dev pgsql database, recreates it clean from
+#~   migrate       - Run the migrations
+#~   rollback      - Rollback the migrations
+#~   seed          - Fills an empy local dev pgsql database with seed data.
+#~   reset         - Wipes the dev pgsql database, recreates it clean from
 #~                   migrations, and seeds it with seed data. Useful for clean
 #~                   dev environment setup and for switching customer
 #~                   enviromnets in local development.
@@ -53,22 +54,41 @@ if [[ $# -lt 1 ]]; then
   exit 2
 fi
 
-while [[ $# -gt 0 ]]; do
-  command="$1"
-  shift 1
-  params=("$@")
-  case "$command" in
-    new)
-      "$SCRIPT_DIR/serp-new" "${params}"
-      ;;
+command="$1"
+shift 1
+params=("$@")
+case "$command" in
+  new)
+    "$SCRIPT_DIR/serp-new" "${params}"
+    ;;
 
-    --help|help)
-      usage | ${PAGER}
-      break
-      ;;
-    *)
-      log "Unknown command: $command"
-      break
-      ;;
-  esac
-done
+  --help|help)
+    usage | ${PAGER}
+    break
+    ;;
+
+  c|console)
+    "$SCRIPT_DIR/serp-console" "${params}"
+    break
+    ;;
+
+  db)
+    "$SCRIPT_DIR/serp-db" "${params}"
+    break
+    ;;
+
+  d|dev)
+    "$SCRIPT_DIR/serp-dev" "${params}"
+    break
+    ;;
+
+  p|prod)
+    "$SCRIPT_DIR/serp-prod" "${params}"
+    break
+    ;;
+
+  *)
+    log "Unknown command: ${command}"
+    usage
+    ;;
+esac

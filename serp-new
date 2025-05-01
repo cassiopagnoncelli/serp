@@ -13,7 +13,7 @@ set -e
 #~
 
 log() {
-  echo "SERP: ${1}"
+  echo "${1}"
 }
 
 usage() {
@@ -55,17 +55,20 @@ function new_app() {
   mkdir -p \
     tests \
     config \
+    public \
+    app/api \
+    app/core \
+    app/db \
     app/models \
     app/schemas \
     app/services \
     app/utils \
-    app/db \
-    app/api \
-    app/core \
     db
 
-  cp $TEMPLATE_DIR/app/main.py app/main.py
+  cp $TEMPLATE_DIR/app/server.py app/server.py
   cp $TEMPLATE_DIR/README.md README.md
+  cp $TEMPLATE_DIR/console.py console.py
+  cp $TEMPLATE_DIR/public/robots.txt public/robots.txt
 
   # Use alembic for migrations
   alembic init db/migrations

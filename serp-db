@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+set -e
+
+#~ USAGE
+#~
+#~   serp db
+#~
+#~
+#~ COMMANDS
+#~
+#~   --help  - View these usage instructions
+#~
+
+log() {
+  echo "${1}"
+}
+
+usage() {
+  grep '^#~' < "$0" | cut -c 3-
+}
+
+SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
+SCRIPT_DIR="$(dirname "$SCRIPT_PATH")"
+TEMPLATE_DIR="$SCRIPT_DIR/template"
+PROJECT_ROOT=$(git rev-parse --show-toplevel)
+
+############################################################
+# Main Script
+############################################################
+
+function run_db_console() {
+  cd "$PROJECT_ROOT"
+}
+
+############################################################
+# Main Script
+############################################################
+run_db_console

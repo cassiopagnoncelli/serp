@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+set -e
+
+#~ USAGE
+#~
+#~   serp prod
+#~
+#~
+#~ COMMANDS
+#~
+#~   --help  - View these usage instructions
+#~
+
+log() {
+  echo "${1}"
+}
+
+usage() {
+  grep '^#~' < "$0" | cut -c 3-
+}
+
+SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
+SCRIPT_DIR="$(dirname "$SCRIPT_PATH")"
+TEMPLATE_DIR="$SCRIPT_DIR/template"
+PROJECT_ROOT=$(git rev-parse --show-toplevel)
+
+############################################################
+# Main Script
+############################################################
+
+function run_prod_server() {
+  cd "$PROJECT_ROOT"
+  poetry run uvicorn app.server:app --host 0.0.0.0 --port 8000
+  # uvicorn api:app --workers 8 --host 0.0.0.0 --port 8000
+}
+
+############################################################
+# Main Script
+############################################################
+run_prod_server
