@@ -1,4 +1,4 @@
-from app.core.queue import celery
+from config.initializers.broker import celery
 
 # Usage:
 #

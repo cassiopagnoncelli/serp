@@ -43,11 +43,11 @@ if __name__ == "__main__":
   from app.models import *
   from app.services import *
   from app.utils import *
-  from app.core.database import SessionDep, engine, get_database_url
+  from config.initializers.database import engine
 
-  db = Session(engine)
-  
   # Start IPython REPL
   from IPython import embed
-  print("\nStarting Python REPL... Type 'exit()' to quit\n")
-  embed()
+  print("\nType 'exit()' or ^D to quit\n")
+
+  with Session(engine) as session:
+    embed()

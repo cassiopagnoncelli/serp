@@ -53,19 +53,11 @@ function apply_env() {
   fi
 }
 
-function apply_database_yml() {
-  if [[ "$OSTYPE" == "darwin"* ]]; then
-    sed -i '' "s/\${APP_NAME}/${1}/g" config/database.yml
-  else
-    sed -i "s/\${APP_NAME}/${1}/g" config/database.yml
-  fi
-}
-
 function apply_core_settings() {
   if [[ "$OSTYPE" == "darwin"* ]]; then
-    sed -i '' "s/my-app/${1}/g" app/core/settings.py
+    sed -i '' "s/my-app/${1}/g" config/initializers/settings.py
   else
-    sed -i "s/my-app/${1}/g" app/core/settings.py
+    sed -i "s/my-app/${1}/g" config/initializers/settings.py
   fi
 }
 
@@ -135,21 +127,16 @@ function new_app() {
   cp $TEMPLATE_DIR/gitignore .gitignore
   
   cp -r $TEMPLATE_DIR/app/api app/
-  cp -r $TEMPLATE_DIR/app/core app/
   cp -r $TEMPLATE_DIR/app/models app/
   cp -r $TEMPLATE_DIR/app/schemas app/
   cp -r $TEMPLATE_DIR/app/services app/
   cp -r $TEMPLATE_DIR/app/utils app/
   cp -r $TEMPLATE_DIR/app/jobs app/
+  cp -r $TEMPLATE_DIR/config/* config/
 
   # Update env, config, core settings
   cp $TEMPLATE_DIR/.env .env
   apply_env $1
-
-  cp $TEMPLATE_DIR/config/database.yml config/database.yml
-  apply_database_yml $1
-
-  cp $TEMPLATE_DIR/app/core/settings.py app/core/settings.py
   apply_core_settings $1
 
   # Use alembic for migrations

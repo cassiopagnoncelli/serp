@@ -1,15 +1,11 @@
 from fastapi import APIRouter, HTTPException, Query, Depends
 from sqlmodel import Session, SQLModel, select, update
 from typing import Annotated
-from models.user import *
-from schemas.user import *
-from core.database import *
+from app.models.user import *
+from app.schemas.user import *
+from config.initializers.database import *
 
 router = APIRouter(tags=["Users API"])
-
-@router.on_event("startup")
-def on_startup():
-  create_db_and_tables()
 
 @router.post("/users/", response_model=UserPublic)
 def create_user(user: UserCreate, session: SessionDep) -> UserPublic:

@@ -1,5 +1,5 @@
-from app.core.database import SessionDep, engine, create_db_and_tables
+from config.initializers.database import engine
+from sqlmodel import Session, SQLModel
 
-db = Session(engine)
-
-create_db_and_tables()
+with Session(engine) as session:
+  SQLModel.metadata.create_all(engine)

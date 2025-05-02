@@ -26,7 +26,7 @@ PROJECT_ROOT=$(git rev-parse --show-toplevel)
 
 function run_redis_cli() {
   cd "$PROJECT_ROOT"
-  URL=$(poetry run python lib/core/redis-cli.py)
+  URL=$(poetry run python lib/core/redis_url.py)
   echo $URL
   redis-cli -u $URL
 }
