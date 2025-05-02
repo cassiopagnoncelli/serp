@@ -93,7 +93,7 @@ function new_app() {
   source venv/bin/activate
 
   # Add common libraries
-  poetry add fastapi uvicorn alembic dotenv pydantic celery
+  poetry add fastapi uvicorn alembic dotenv pydantic celery ipython
 
   # App structure
   mkdir -p \
