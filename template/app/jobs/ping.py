@@ -1,5 +1,12 @@
-from app.core.queue import app
+from app.core.queue import celery
 
-@app.task
+# Usage:
+#
+# from app.jobs.ping import ping
+#
+# result = ping.delay()
+# print(f"Task ID: {result.id}") 
+
+@celery.task
 def ping():
   return "pong"
