@@ -1,8 +1,8 @@
 """
 Jobs package that exports all jobs from submodules.
 """
-# from .example_job import *
+from .ping import ping
 
-# Add all models you want to export here
 __all__ = [
+  "ping"
 ]

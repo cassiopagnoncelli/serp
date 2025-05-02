@@ -87,6 +87,11 @@ case "$command" in
     break
     ;;
 
+  w|worker)
+    "$SCRIPT_DIR/serp-jobs" "${params}"
+    break
+    ;;
+
   *)
     log "Unknown command: ${command}"
     usage
