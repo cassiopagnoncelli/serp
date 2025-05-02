@@ -1,11 +1,14 @@
-from typing import Annotated
-from fastapi import Depends
-from sqlmodel import Session, create_engine, SQLModel
+import sys
+import os
+
+# Add the project root directory to Python path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+
 from app.core.settings import get_settings
 
 settings = get_settings()
 
-def get_database_url():
+def get_postgresql_url():
   if settings.fetch("DATABASE_URL"):
     return settings.fetch("DATABASE_URL")
   else:
@@ -17,12 +20,4 @@ def get_database_url():
     database_url = f"postgresql://{username}:{password}@{host}:{port}/{name}"
     return database_url
 
-engine = create_engine(get_database_url(), echo=True)
-
-def get_session():
-  with Session(engine) as session:
-    yield session
-
-SessionDep = Annotated[Session, Depends(get_session)]
-
-print(get_database_url())
+print(get_postgresql_url())

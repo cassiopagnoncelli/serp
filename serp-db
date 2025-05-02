@@ -34,7 +34,7 @@ function run_db_console() {
   URL=$(poetry run python lib/core/dbconsole.py)
 
   CLEAN_URL="${URL#postgres://}"
-  USER_PASS_HOST_PORT_DB=$(echo "$CLEAN_URL" | sed -E 's#([^:]+):([^@]+)@([^:]+):([0-9]+)/(.+)#\1 \2 \3 \4 \5#')
+  USER_PASS_HOST_PORT_DB=$(echo "$CLEAN_URL" | sed -E 's#postgresql://([^:]+):([^@]+)@([^:]+):([0-9]+)/(.+)#\1 \2 \3 \4 \5#')
   read USER PASSWORD HOST PORT DBNAME <<< "$USER_PASS_HOST_PORT_DB"
   PGPASSWORD="$PASSWORD" psql -h $HOST -p $PORT -U $USER $DBNAME
 }

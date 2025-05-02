@@ -61,54 +61,56 @@ params=("$@")
 case "$command" in
   new)
     "$SCRIPT_DIR/serp-new" "${params}"
+    exit 0
     ;;
 
   # Help.
   --help|help)
     usage | ${PAGER:-less}
-    break
+    exit 0
     ;;
 
   # Processes.
   c|console)
     "$SCRIPT_DIR/serp-console" "${params}"
+    exit 0
     ;;
 
   db)
     "$SCRIPT_DIR/serp-db" "${params}"
-    break
+    exit 0
     ;;
 
   s|dev)
     "$SCRIPT_DIR/serp-dev" "${params}"
-    break
+    exit 0
     ;;
 
   p|prod)
     "$SCRIPT_DIR/serp-prod" "${params}"
-    break
+    exit 0
     ;;
 
   w|worker)
     "$SCRIPT_DIR/serp-jobs" "${params}"
-    break
+    exit 0
     ;;
 
   # Tests.
   t|test)
     "$SCRIPT_DIR/serp-test" "${params}"
-    break
+    exit 0
     ;;
 
   l|lint)
     "$SCRIPT_DIR/serp-lint" "${params}"
-    break
+    exit 0
     ;;
 
   # Database commands.
   dbcreate)
     "$SCRIPT_DIR/serp-create-db" "${params}"
-    break
+    exit 0
     ;;
 
   *)
