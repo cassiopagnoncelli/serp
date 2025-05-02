@@ -31,7 +31,13 @@ function run_tests() {
   cd "$PROJECT_ROOT"
   params=("$@")
   if [ ${#params[@]} -eq 0 ]; then
-    PYTHONPATH="$PROJECT_ROOT" poetry run pytest tests/ -v
+    PYTHONPATH="$PROJECT_ROOT" poetry run pytest \
+      tests/api \
+      tests/jobs \
+      tests/models \
+      tests/services \
+      tests/utils \
+      -v
   else
     PYTHONPATH="$PROJECT_ROOT" poetry run pytest "${params[@]}" -v
   fi
