@@ -11,12 +11,12 @@ set -e
 #~
 #~   new           - Set up a new serp project
 #~
-#~   c, console    - Open app console
+#~   console, c    - Open app console
 #~   db            - Open Postgres console
 #~   redis         - Open Redis console
-#~   s, dev        - Run web server in development mode
+#~   dev, s        - Run web server in development mode
 #~   prod          - Run web server in production mode
-#~   w, worker     - Run celery worker
+#~   worker, w     - Run celery worker
 #~
 #~   test, tests   - Run the tests
 #~   lint          - Run the linter
