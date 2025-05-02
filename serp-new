@@ -124,6 +124,7 @@ function new_app() {
   cp $TEMPLATE_DIR/app/console.py app/console.py
   cp $TEMPLATE_DIR/app/__init__.py app/__init__.py
   cp $TEMPLATE_DIR/lib/core/* lib/core/
+  cp $TEMPLATE_DIR/db/* db/
   cp $TEMPLATE_DIR/gitignore .gitignore
   
   cp -r $TEMPLATE_DIR/app/api app/
