@@ -6,14 +6,14 @@ from core.settings import get_settings
 settings = get_settings()
 
 def get_database_url():
-  if settings.fetch("database_url"):
-    return settings.fetch("database_url")
+  if settings.fetch("DATABASE_URL"):
+    return settings.fetch("DATABASE_URL")
   else:
-    username = settings.fetch("db_username")
-    password = settings.fetch("db_password")
-    host = settings.fetch("db_host", "localhost")
-    port = settings.fetch("db_port", 5432)
-    name = settings.fetch("db_name", f"{settings.APP_NAME}_{settings.fetch("app_env", "development")}")
+    username = settings.fetch("DB_USERNAME")
+    password = settings.fetch("DB_PASSWORD")
+    host = settings.fetch("DB_HOST", "localhost")
+    port = settings.fetch("DB_PORT", 5432)
+    name = settings.fetch("DB_NAME", f"{settings.APP_NAME}_{settings.fetch("APP_ENV", "development")}")
     database_url = f"postgresql://{username}:{password}@{host}:{port}/{name}"
     return database_url
 

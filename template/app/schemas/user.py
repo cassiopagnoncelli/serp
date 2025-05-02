@@ -2,6 +2,7 @@ from typing import Optional
 from sqlmodel import SQLModel
 
 class UserPublic(SQLModel):
+  uuid: str
   name: str
   email: str
 
