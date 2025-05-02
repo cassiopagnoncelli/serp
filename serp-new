@@ -100,13 +100,7 @@ function new_app() {
     tests \
     config \
     public \
-    app/api \
-    app/core \
-    app/db \
-    app/models \
-    app/schemas \
-    app/services \
-    app/utils \
+    app \
     db
 
   # Copy files
@@ -115,39 +109,21 @@ function new_app() {
   cp $TEMPLATE_DIR/public/robots.txt public/robots.txt
   cp $TEMPLATE_DIR/app/server.py app/server.py
 
-  # Copy API.
   cp -r $TEMPLATE_DIR/app/api app/api
+  cp -r $TEMPLATE_DIR/app/core app/
+  cp -r $TEMPLATE_DIR/app/models app/
+  cp -r $TEMPLATE_DIR/app/schemas app/
+  cp -r $TEMPLATE_DIR/app/services app/
+  cp -r $TEMPLATE_DIR/app/utils app/
+  cp -r $TEMPLATE_DIR/app/jobs app/
 
-  # Copy core.
-  cp -r $TEMPLATE_DIR/app/core app/core
-
-  # Copy db.
-  cp -r $TEMPLATE_DIR/app/db app/db
-  
-  # Copy models.
-  cp -r $TEMPLATE_DIR/app/models app/models
-
-  # Copy schemas.
-  cp -r $TEMPLATE_DIR/app/schemas app/schemas
-
-  # Copy services.
-  cp -r $TEMPLATE_DIR/app/services app/services
-
-  # Copy utils.
-  cp -r $TEMPLATE_DIR/app/utils app/utils
-
-  # Copy jobs.
-  cp -r $TEMPLATE_DIR/app/jobs app/jobs
-
-  # Env.
+  # Update env, config, core settings
   cp $TEMPLATE_DIR/.env .env
   apply_env $1
 
-  # Configuration files.
   cp $TEMPLATE_DIR/config/database.yml config/database.yml
   apply_database_yml $1
 
-  # Core settings.
   cp $TEMPLATE_DIR/app/core/settings.py app/core/settings.py
   apply_core_settings $1
 
