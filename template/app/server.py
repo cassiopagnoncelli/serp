@@ -1,7 +1,7 @@
 from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from api import *
+from app.api import *
 
 app = FastAPI(title="API")
 

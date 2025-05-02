@@ -31,11 +31,7 @@ PROJECT_ROOT=$(git rev-parse --show-toplevel)
 
 function run_db_create() {
   cd "$PROJECT_ROOT"
-  echo "Creating the database..."
-  echo <<EOF
-from app.core.database import create_db_and_tables
-create_db_and_tables()
-EOF | poetry run python
+  poetry run python lib/core/dbcreate.py
 }
 
 ############################################################

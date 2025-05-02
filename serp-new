@@ -114,7 +114,8 @@ function new_app() {
     config \
     public \
     app \
-    db
+    db \
+    lib/core
 
   # Copy files
   cp $TEMPLATE_DIR/README.md README.md
@@ -122,9 +123,10 @@ function new_app() {
   cp $TEMPLATE_DIR/app/server.py app/server.py
   cp $TEMPLATE_DIR/app/console.py app/console.py
   cp $TEMPLATE_DIR/app/__init__.py app/__init__.py
+  cp $TEMPLATE_DIR/lib/core/* lib/core/
   cp $TEMPLATE_DIR/gitignore .gitignore
   
-  cp -r $TEMPLATE_DIR/app/api app/api
+  cp -r $TEMPLATE_DIR/app/api app/
   cp -r $TEMPLATE_DIR/app/core app/
   cp -r $TEMPLATE_DIR/app/models app/
   cp -r $TEMPLATE_DIR/app/schemas app/
