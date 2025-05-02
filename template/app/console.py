@@ -44,10 +44,12 @@ if __name__ == "__main__":
   from app.services import *
   from app.utils import *
   from config.initializers.database import get_session_standalone
+  from config.initializers.redis import get_redis_standalone
 
   # Start IPython REPL
   from IPython import embed
   print("\nType 'exit()' or ^D to quit\n")
 
-  with get_session_standalone() as db:
-    embed()
+  with get_redis_standalone() as redis:
+    with get_session_standalone() as db:
+      embed()
