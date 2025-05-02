@@ -21,6 +21,8 @@ This is a brand new Serp project, a boilerplate Python API combining
 - [ ] FastAPI Admin
 - [ ] Stripe payments
 - [ ] OpenAI, Clarifai, LangChain, HuggingFace, RAG
+- [ ] Docling
+- [ ] Image Magick
 
 To-do
 
