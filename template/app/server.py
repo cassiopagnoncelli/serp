@@ -17,4 +17,4 @@ for router_name in dir():
   if router_name.endswith('_router') and isinstance(globals()[router_name], APIRouter):
     app.include_router(globals()[router_name])
 
-app.mount("/public", StaticFiles(directory="public"), name="public")
+app.mount("/public", StaticFiles(directory="../public"), name="public")
