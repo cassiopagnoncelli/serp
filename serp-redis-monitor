@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+set -e
+
+#~ USAGE
+#~
+#~   serp redis-monitor
+#~
+#~
+#~ COMMANDS
+#~
+#~   --help  - View these usage instructions
+#~
+
+usage() {
+  grep '^#~' < "$0" | cut -c 3-
+}
+
+SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
+SCRIPT_DIR="$(dirname "$SCRIPT_PATH")"
+PROJECT_ROOT=$(git rev-parse --show-toplevel)
+
+############################################################
+# Main Script
+############################################################
+
+function run_redis_monitor() {
+  cd "$PROJECT_ROOT"
+  URL=$(poetry run python lib/core/redis-cli.py)
+  echo $URL
+  redis-cli -u $URL monitor
+}
+
+############################################################
+# Main Script
+############################################################
+run_redis_monitor

@@ -6,7 +6,7 @@ development:
   password: postgres
   database: ${APP_NAME}_development
 
-development:
+test:
   driver: postgresql
   host: localhost
   port: 5432
