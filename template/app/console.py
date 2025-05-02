@@ -26,14 +26,22 @@ def print_colored_snake():
     for line in snake:
         print(line)
 
-print_colored_snake()
-
-from app.jobs import *
-from app.models import *
-from app.services import *
-from app.utils import *
-
-#~ IPython
-from IPython import embed
-
-embed()
+if __name__ == "__main__":
+    import sys
+    import os
+    
+    # Add the project root to Python path
+    project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    sys.path.insert(0, project_root)
+    
+    print_colored_snake()
+    
+    from app.jobs import *
+    from app.models import *
+    from app.services import *
+    from app.utils import *
+    
+    #~ IPython
+    from IPython import embed
+    
+    embed()

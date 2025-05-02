@@ -93,7 +93,15 @@ function new_app() {
   source venv/bin/activate
 
   # Add common libraries
-  poetry add fastapi uvicorn alembic dotenv pydantic celery ipython
+  poetry add \
+    fastapi \
+    uvicorn \
+    alembic \
+    dotenv \
+    pydantic \
+    pydantic-settings \
+    celery \
+    ipython
 
   # App structure
   mkdir -p \
@@ -108,7 +116,8 @@ function new_app() {
   cp $TEMPLATE_DIR/public/robots.txt public/robots.txt
   cp $TEMPLATE_DIR/app/server.py app/server.py
   cp $TEMPLATE_DIR/app/console.py app/console.py
-
+  cp $TEMPLATE_DIR/app/__init__.py app/__init__.py
+  
   cp -r $TEMPLATE_DIR/app/api app/api
   cp -r $TEMPLATE_DIR/app/core app/
   cp -r $TEMPLATE_DIR/app/models app/
@@ -129,6 +138,10 @@ function new_app() {
 
   # Use alembic for migrations
   alembic init db/migrations
+
+  # Persist to repository
+  git add .
+  git commit -m "Initial commit"
 
   # Output project structure
   tree -L 2
