@@ -55,9 +55,9 @@ function apply_env() {
 
 function apply_core_settings() {
   if [[ "$OSTYPE" == "darwin"* ]]; then
-    sed -i '' "s/my-app/${1}/g" config/initializers/settings.py
+    sed -i '' "s/my_app_development/${1}_development/g" config/initializers/settings.py
   else
-    sed -i "s/my-app/${1}/g" config/initializers/settings.py
+    sed -i "s/my_app_development/${1}_development/g" config/initializers/settings.py
   fi
 }
 
@@ -104,7 +104,8 @@ function new_app() {
     psycopg2 \
     celery \
     redis \
-    ipython
+    ipython \
+    pylint
 
   poetry install --no-root
 

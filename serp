@@ -19,12 +19,12 @@ set -e
 #~   w, worker     - Run the serp worker
 #~
 #~   [x]t, test    - Run the tests
-#~   [x]l, lint    - Run the linter
+#~   lint          - Run the linter
 #~
 #~   dbcreate      - Create the database
 #~   [x]migrate    - Run the migrations
 #~   [x]rollback   - Rollback the migrations
-#~   [x]seed       - Fills an empy local dev pgsql database with seed data
+#~   seed          - Fills an empy local dev pgsql database with seed data
 #~   [x]reset      - Wipes the dev pgsql database, recreates it clean from
 #~                   migrations, and seeds it with seed data. Useful for clean
 #~                   dev environment setup and for switching customer

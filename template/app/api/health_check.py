@@ -12,7 +12,7 @@ def get_git_revision_short_hash() -> str:
     return "unknown"
 
 @router.get("/health-check")
-def health_check():
+async def health_check():
   return {
     "status": "ok",
     "revision": get_git_revision_short_hash()

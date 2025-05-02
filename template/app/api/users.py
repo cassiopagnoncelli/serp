@@ -8,7 +8,7 @@ from config.initializers.database import *
 router = APIRouter(tags=["Users API"])
 
 @router.post("/users/", response_model=UserPublic)
-def create_user(user: UserCreate, session: SessionDep) -> UserPublic:
+async def create_user(user: UserCreate, session: SessionDep) -> UserPublic:
   user = User.model_validate(user)
   session.add(user)
   session.commit()
@@ -16,19 +16,19 @@ def create_user(user: UserCreate, session: SessionDep) -> UserPublic:
   return user
 
 @router.get("/users/", response_model=list[UserPublic])
-def read_users(session: SessionDep, offset: int = 0, limit: Annotated[int, Query(ge=0, le=100)] = 100) -> list[UserPublic]:
+async def read_users(session: SessionDep, offset: int = 0, limit: Annotated[int, Query(ge=0, le=100)] = 100) -> list[UserPublic]:
   users = session.exec(select(User).offset(offset).limit(limit)).all()
   return users
 
 @router.get("/users/{user_id}", response_model=UserPublic)
-def read_user(user_id: int, session: SessionDep) -> UserPublic:
+async def read_user(user_id: int, session: SessionDep) -> UserPublic:
   user = session.get(User, user_id)
   if not user:
     raise HTTPException(status_code=404, detail="User not found")
   return user
 
 @router.patch("/users/{user_id}", response_model=UserPublic)
-def update_user(user_id: int, user: UserUpdate, session: SessionDep) -> UserPublic:
+async def update_user(user_id: int, user: UserUpdate, session: SessionDep) -> UserPublic:
   user_record = session.get(User, user_id)
   if not user_record:
     raise HTTPException(status_code=404, detail="User not found")
@@ -41,7 +41,7 @@ def update_user(user_id: int, user: UserUpdate, session: SessionDep) -> UserPubl
   return user_record
 
 @router.delete("/users/{user_id}")
-def delete_user(user_id: int, session: SessionDep):
+async def delete_user(user_id: int, session: SessionDep):
   user = session.get(User, user_id)
   if not user:
     raise HTTPException(status_code=404, detail="User not found")
