@@ -41,3 +41,5 @@ SessionDep = Annotated[Session, Depends(get_session)]
 def get_session_standalone():
   with Session(engine) as session:
     yield session
+
+SessionStandaloneDep = Annotated[Session, Depends(get_session_standalone)]
