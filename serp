@@ -12,11 +12,11 @@ set -e
 #~   new           - Set up a new serp project
 #~
 #~   c, console    - Open app console
-#~   db            - Open database console
-#~   redis         - Open CLI access to the Redis instance
-#~   s, dev        - Run the serp server in development mode
-#~   prod          - Run the serp server in production mode
-#~   w, worker     - Run the serp worker
+#~   db            - Open Postgres console
+#~   redis         - Open Redis console
+#~   s, dev        - Run web server in development mode
+#~   prod          - Run web server in production mode
+#~   w, worker     - Run celery worker
 #~
 #~   [x]t, test    - Run the tests
 #~   lint          - Run the linter
@@ -31,6 +31,7 @@ set -e
 #~                   enviromnets in local development.
 #~
 #~   redismon      - Run Redis monitor (https://redis.io/commands/monitor/)
+#~   flower        - Run Flower (Celery's monitor UI)
 #~
 #~   help          - View these usage instructions
 #~
@@ -141,6 +142,11 @@ case "$command" in
   # Monitor tools
   redismon)
     "$SCRIPT_DIR/serp-redis-monitor" "${params}"
+    exit 0
+    ;;
+
+  flower)
+    "$SCRIPT_DIR/serp-flower" "${params}"
     exit 0
     ;;
 

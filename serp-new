@@ -105,7 +105,8 @@ function new_app() {
     celery \
     redis \
     ipython \
-    pylint
+    pylint \
+    flower
 
   poetry install --no-root
 
