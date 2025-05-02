@@ -43,7 +43,7 @@ if __name__ == "__main__":
   from app.models import *
   from app.services import *
   from app.utils import *
-  from app.core.database import SessionDep, engine
+  from app.core.database import SessionDep, engine, get_database_url
 
   db = Session(engine)
   

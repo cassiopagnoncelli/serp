@@ -69,6 +69,14 @@ function apply_core_settings() {
   fi
 }
 
+function apply_alembic_ini() {
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    sed -i '' "s/sqlalchemy.url = driver:\/\/user:pass@localhost\/dbname/sqlalchemy.url = driver:\/\/postgres:postgres@localhost:5432\/${1}_development/g" alembic.ini
+  else
+    sed -i "s/sqlalchemy.url = driver:\/\/user:pass@localhost\/dbname/sqlalchemy.url = driver:\/\/postgres:postgres@localhost:5432\/${1}_development/g" alembic.ini
+  fi
+}
+
 function new_app() {
   if [ "$$1" == "" ]; then
     echo "Give a project name as the first argument"
@@ -146,6 +154,7 @@ function new_app() {
 
   # Use alembic for migrations
   alembic init db/migrations > /dev/null
+  apply_alembic_ini $1
 
   # Persist to repository
   git add .
@@ -165,6 +174,6 @@ elif [ -d "$1" ]; then
   echo "Project already exists"
   exit 1
 else
-  echo "Creating a Serp project with params: $@"
+  echo "Creating a Serp project: serp new $@"
   new_app "$1"
 fi
