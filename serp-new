@@ -124,6 +124,7 @@ function new_app() {
 
   # Copy files
   cp $TEMPLATE_DIR/README.md README.md
+  cp $TEMPLATE_DIR/Makefile Makefile
   cp $TEMPLATE_DIR/public/robots.txt public/robots.txt
   cp $TEMPLATE_DIR/app/server.py app/server.py
   cp $TEMPLATE_DIR/app/console.py app/console.py
@@ -131,6 +132,7 @@ function new_app() {
   cp $TEMPLATE_DIR/lib/core/* lib/core/
   cp $TEMPLATE_DIR/db/* db/
   cp $TEMPLATE_DIR/gitignore .gitignore
+  cp $TEMPLATE_DIR/bash_aliases .bash_aliases
   
   cp -r $TEMPLATE_DIR/app/api app/
   cp -r $TEMPLATE_DIR/app/models app/
