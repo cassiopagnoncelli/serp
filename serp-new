@@ -100,6 +100,8 @@ function new_app() {
     dotenv \
     pydantic \
     pydantic-settings \
+    sqlmodel \
+    psycopg2 \
     celery \
     ipython
 
@@ -117,6 +119,7 @@ function new_app() {
   cp $TEMPLATE_DIR/app/server.py app/server.py
   cp $TEMPLATE_DIR/app/console.py app/console.py
   cp $TEMPLATE_DIR/app/__init__.py app/__init__.py
+  cp $TEMPLATE_DIR/gitignore .gitignore
   
   cp -r $TEMPLATE_DIR/app/api app/api
   cp -r $TEMPLATE_DIR/app/core app/

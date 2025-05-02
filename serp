@@ -69,7 +69,6 @@ case "$command" in
 
   c|console)
     "$SCRIPT_DIR/serp-console" "${params}"
-    break
     ;;
 
   db)
