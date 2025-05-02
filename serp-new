@@ -137,6 +137,7 @@ function new_app() {
   cp -r $TEMPLATE_DIR/app/utils app/
   cp -r $TEMPLATE_DIR/app/jobs app/
   cp -r $TEMPLATE_DIR/config/* config/
+  cp -r $TEMPLATE_DIR/tests/* tests/
 
   # Update env, config, core settings
   cp $TEMPLATE_DIR/.env .env

@@ -15,8 +15,8 @@ This is a brand new Serp project, a boilerplate Python API combining
 - Pytest
 x Docker
 x Makefile
-x Authentication (JWT, OAuth2, Google OAuth2)
+x Authentication (JWT, OAuth2, Google OAuth2, Microsoft, GitHub, Facebook, Accounts, Plans)
 x Storage
-x Jinja2 (mailer templates)
-x Strawberry GraphQL
+d Jinja2 (mailer templates)
+d Strawberry GraphQL (api/gql)
 d FastAPI Admin

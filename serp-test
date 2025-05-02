@@ -27,13 +27,14 @@ PROJECT_ROOT=$(git rev-parse --show-toplevel)
 ############################################################
 # Main Script
 ############################################################
-
 function run_tests() {
   cd "$PROJECT_ROOT"
-  pytest tests/
+  params=("$@")
+  if [ ${#params[@]} -eq 0 ]; then
+    PYTHONPATH="$PROJECT_ROOT" poetry run pytest tests/
+  else
+    PYTHONPATH="$PROJECT_ROOT" poetry run pytest "${params[@]}"
+  fi
 }
 
-############################################################
-# Main Script
-############################################################
-run_tests
+run_tests "$@"

@@ -61,7 +61,7 @@ shift 1
 params=("$@")
 case "$command" in
   new)
-    "$SCRIPT_DIR/serp-new" "${params}"
+    "$SCRIPT_DIR/serp-new" "${params[@]}"
     exit 0
     ;;
 
@@ -73,80 +73,80 @@ case "$command" in
 
   # Processes.
   c|console)
-    "$SCRIPT_DIR/serp-console" "${params}"
+    "$SCRIPT_DIR/serp-console" "${params[@]}"
     exit 0
     ;;
 
   db)
-    "$SCRIPT_DIR/serp-db" "${params}"
+    "$SCRIPT_DIR/serp-db" "${params[@]}"
     exit 0
     ;;
 
   redis)
-    "$SCRIPT_DIR/serp-redis-cli" "${params}"
+    "$SCRIPT_DIR/serp-redis-cli" "${params[@]}"
     exit 0
     ;;
 
   s|dev)
-    "$SCRIPT_DIR/serp-dev" "${params}"
+    "$SCRIPT_DIR/serp-dev" "${params[@]}"
     exit 0
     ;;
 
   p|prod)
-    "$SCRIPT_DIR/serp-prod" "${params}"
+    "$SCRIPT_DIR/serp-prod" "${params[@]}"
     exit 0
     ;;
 
   w|worker)
-    "$SCRIPT_DIR/serp-jobs" "${params}"
+    "$SCRIPT_DIR/serp-jobs" "${params[@]}"
     exit 0
     ;;
 
   # Tests.
   t|test)
-    "$SCRIPT_DIR/serp-test" "${params}"
+    "$SCRIPT_DIR/serp-test" "${params[@]}"
     exit 0
     ;;
 
   l|lint)
-    "$SCRIPT_DIR/serp-lint" "${params}"
+    "$SCRIPT_DIR/serp-lint" "${params[@]}"
     exit 0
     ;;
 
   # Database commands.
   dbcreate)
-    "$SCRIPT_DIR/serp-dbcreate" "${params}"
+    "$SCRIPT_DIR/serp-dbcreate" "${params[@]}"
     exit 0
     ;;
 
   migrate)
-    "$SCRIPT_DIR/serp-migrate" "${params}"
+    "$SCRIPT_DIR/serp-migrate" "${params[@]}"
     exit 0
     ;;
 
   rollback)
-    "$SCRIPT_DIR/serp-rollback" "${params}"
+    "$SCRIPT_DIR/serp-rollback" "${params[@]}"
     exit 0
     ;;  
 
   seed)
-    "$SCRIPT_DIR/serp-seed" "${params}"
+    "$SCRIPT_DIR/serp-seed" "${params[@]}"
     exit 0
     ;;
 
   reset)
-    "$SCRIPT_DIR/serp-reset" "${params}"
+    "$SCRIPT_DIR/serp-reset" "${params[@]}"
     exit 0
     ;;
 
   # Monitor tools
   redismon)
-    "$SCRIPT_DIR/serp-redis-monitor" "${params}"
+    "$SCRIPT_DIR/serp-redis-monitor" "${params[@]}"
     exit 0
     ;;
 
   flower)
-    "$SCRIPT_DIR/serp-flower" "${params}"
+    "$SCRIPT_DIR/serp-flower" "${params[@]}"
     exit 0
     ;;
 
