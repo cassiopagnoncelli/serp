@@ -1,3 +1,8 @@
+import sys
+import os
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+
 from sqlmodel import Session, SQLModel
 from config.initializers.database import get_session_standalone, engine
 
