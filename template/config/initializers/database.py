@@ -1,14 +1,14 @@
 from sqlmodel import Session, create_engine
 from contextlib import contextmanager
-from config.initializers.settings import get_settings
 from typing import Annotated
 from fastapi import Depends
+from config.initializers.settings import get_settings
 
 settings = get_settings()
 
 engine = create_engine(
   settings.fetch("DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/my_app_development"),
-  echo = True,
+  echo = False,
   pool_size = 5
 )
 

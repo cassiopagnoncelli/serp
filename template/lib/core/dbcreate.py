@@ -1,5 +1,5 @@
-from config.initializers.database import engine
 from sqlmodel import Session, SQLModel
+from config.initializers.database import get_session_standalone, engine
 
-with Session(engine) as session:
+with get_session_standalone() as db:
   SQLModel.metadata.create_all(engine)

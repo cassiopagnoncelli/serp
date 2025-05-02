@@ -37,17 +37,17 @@ if __name__ == "__main__":
   print_colored_snake()
   
   # Import all modules
-  from sqlmodel import Session, SQLModel, select, update
+  from sqlmodel import SQLModel, select, update
 
   from app.jobs import *
   from app.models import *
   from app.services import *
   from app.utils import *
-  from config.initializers.database import engine
+  from config.initializers.database import get_session_standalone
 
   # Start IPython REPL
   from IPython import embed
   print("\nType 'exit()' or ^D to quit\n")
 
-  with Session(engine) as session:
+  with get_session_standalone() as db:
     embed()
