@@ -48,8 +48,10 @@ function validate_project_name() {
 function apply_env() {
   if [[ "$OSTYPE" == "darwin"* ]]; then
     sed -i '' "s/^APP_NAME=template/APP_NAME=${1}/g" .env
+    sed -i '' "s/^APP_NAME=template/APP_NAME=${1}/g" .env.test
   else
     sed -i "s/^APP_NAME=template/APP_NAME=${1}/g" .env
+    sed -i "s/^APP_NAME=template/APP_NAME=${1}/g" .env.test
   fi
 }
 
@@ -141,6 +143,7 @@ function new_app() {
 
   # Update env, config, core settings
   cp $TEMPLATE_DIR/.env .env
+  cp $TEMPLATE_DIR/.env.test .env.test
   apply_env $1
   apply_core_settings $1
 
