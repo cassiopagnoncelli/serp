@@ -37,10 +37,15 @@ if __name__ == "__main__":
   print_colored_snake()
   
   # Import all modules
+  from sqlmodel import Session, SQLModel, select, update
+
   from app.jobs import *
   from app.models import *
   from app.services import *
   from app.utils import *
+  from app.core.database import SessionDep, engine
+
+  db = Session(engine)
   
   # Start IPython REPL
   from IPython import embed

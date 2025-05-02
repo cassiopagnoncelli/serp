@@ -82,7 +82,7 @@ function new_app() {
   cd $1
 
   # Initialize git repository
-  git init
+  git init > /dev/null
   git branch -M main
 
   # Use poetry for package management
@@ -103,7 +103,10 @@ function new_app() {
     sqlmodel \
     psycopg2 \
     celery \
+    redis \
     ipython
+
+  poetry install --no-root
 
   # App structure
   mkdir -p \
@@ -140,11 +143,11 @@ function new_app() {
   apply_core_settings $1
 
   # Use alembic for migrations
-  alembic init db/migrations
+  alembic init db/migrations > /dev/null
 
   # Persist to repository
   git add .
-  git commit -m "Initial commit"
+  git commit -m "Initial commit" > /dev/null
 
   # Output project structure
   tree -L 2

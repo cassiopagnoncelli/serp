@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+set -e
+
+#~ USAGE
+#~
+#~   serp dbcreate
+#~
+#~
+#~ COMMANDS
+#~
+#~   --help  - View these usage instructions
+#~
+
+log() {
+  echo "${1}"
+}
+
+usage() {
+  grep '^#~' < "$0" | cut -c 3-
+}
+
+SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
+SCRIPT_DIR="$(dirname "$SCRIPT_PATH")"
+TEMPLATE_DIR="$SCRIPT_DIR/template"
+PROJECT_ROOT=$(git rev-parse --show-toplevel)
+
+############################################################
+# Main Script
+############################################################
+
+function run_db_create() {
+  cd "$PROJECT_ROOT"
+  echo "Creating the database..."
+  echo <<EOF
+from app.core.database import create_db_and_tables
+create_db_and_tables()
+EOF | poetry run python
+}
+
+############################################################
+# Main Script
+############################################################
+run_db_create

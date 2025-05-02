@@ -20,9 +20,10 @@ set -e
 #~   t, test       - Run the tests
 #~   l, lint       - Run the linter
 #~
+#~   dbcreate      - Create the database
 #~   migrate       - Run the migrations
 #~   rollback      - Rollback the migrations
-#~   seed          - Fills an empy local dev pgsql database with seed data.
+#~   seed          - Fills an empy local dev pgsql database with seed data
 #~   reset         - Wipes the dev pgsql database, recreates it clean from
 #~                   migrations, and seeds it with seed data. Useful for clean
 #~                   dev environment setup and for switching customer
@@ -62,11 +63,13 @@ case "$command" in
     "$SCRIPT_DIR/serp-new" "${params}"
     ;;
 
+  # Help.
   --help|help)
-    usage | ${PAGER}
+    usage | ${PAGER:-less}
     break
     ;;
 
+  # Processes.
   c|console)
     "$SCRIPT_DIR/serp-console" "${params}"
     ;;
@@ -88,6 +91,23 @@ case "$command" in
 
   w|worker)
     "$SCRIPT_DIR/serp-jobs" "${params}"
+    break
+    ;;
+
+  # Tests.
+  t|test)
+    "$SCRIPT_DIR/serp-test" "${params}"
+    break
+    ;;
+
+  l|lint)
+    "$SCRIPT_DIR/serp-lint" "${params}"
+    break
+    ;;
+
+  # Database commands.
+  dbcreate)
+    "$SCRIPT_DIR/serp-create-db" "${params}"
     break
     ;;
 

@@ -8,6 +8,7 @@ def generate_id(prefix: str, length: int = 16):
   return f"{prefix}_{random_chars}"
 
 class User(SQLModel, table=True):
+  __tablename__ = "users"
   id: Optional[int] = Field(default=None, primary_key=True)
   uuid: Annotated[str, Field(default_factory=lambda: generate_id("usr"), index=True, unique=True)]
   email: str = Field(index=True, unique=True)
