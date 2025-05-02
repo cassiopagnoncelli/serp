@@ -153,5 +153,6 @@ case "$command" in
   *)
     log "Unknown command: ${command}"
     usage
+    exit 0
     ;;
 esac

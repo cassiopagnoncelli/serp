@@ -71,17 +71,42 @@ function apply_alembic_ini() {
   fi
 }
 
+function add_docling() {
+  poetry add "docling@^2.31.0" --python=">=3.13,<4.0" && \
+    poetry lock
+}
+
 function new_app() {
-  if [ "$$1" == "" ]; then
+  if [ "$1" == "" ]; then
     echo "Give a project name as the first argument"
     exit 1
   fi
 
-  # Validate project name format
-  validate_project_name "$1"
+  # Store project name
+  local project_name="$1"
+  shift
 
-  mkdir $1
-  cd $1
+  # Validate project name format
+  validate_project_name "$project_name"
+
+  mkdir $project_name
+  cd $project_name
+
+  # Process any additional arguments
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      --help)
+        usage
+        exit 0
+        ;;
+      # Add more options here as needed
+      *)
+        echo "Unknown option: $1"
+        exit 1
+        ;;
+    esac
+    shift
+  done
 
   # Initialize git repository
   git init > /dev/null
@@ -112,6 +137,8 @@ function new_app() {
     pytest \
     Wand
 
+  # add_docling
+
   poetry install --no-root
 
   # App structure
@@ -119,6 +146,7 @@ function new_app() {
     tests \
     config \
     public \
+    bin \
     app \
     db \
     lib/core \
@@ -135,7 +163,8 @@ function new_app() {
   cp $TEMPLATE_DIR/db/* db/
   cp $TEMPLATE_DIR/gitignore .gitignore
   cp $TEMPLATE_DIR/bash_aliases .bash_aliases
-  
+  cp $TEMPLATE_DIR/bin/* bin/
+
   cp -r $TEMPLATE_DIR/app/api app/
   cp -r $TEMPLATE_DIR/app/models app/
   cp -r $TEMPLATE_DIR/app/schemas app/
@@ -148,12 +177,12 @@ function new_app() {
   # Update env, config, core settings
   cp $TEMPLATE_DIR/.env .env
   cp $TEMPLATE_DIR/.env.test .env.test
-  apply_env $1
-  apply_core_settings $1
+  apply_env $project_name
+  apply_core_settings $project_name
 
   # Use alembic for migrations
   alembic init db/migrations > /dev/null
-  apply_alembic_ini $1
+  apply_alembic_ini $project_name
 
   # Persist to repository
   git add .
@@ -173,6 +202,12 @@ elif [ -d "$1" ]; then
   echo "Project already exists"
   exit 1
 else
-  echo "Creating a Serp project: serp new $@"
-  new_app "$1"
+  echo "Creating a Serp project"
+  echo
+  echo "  serp new $@"
+  echo
+  project_name="$1"
+  shift
+  echo "params: $@"
+  new_app "$project_name" "$@"
 fi

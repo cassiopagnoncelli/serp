@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+set -e
+
+if ! command -v sw_vers &> /dev/null
+then
+  echo "Not on macOS"
+  exit 1
+fi
+
+brew install \
+  yq \
+  jq \
+  freetype imagemagick
+
+echo "Python package Wand (interface for Image Magick) sometiems do not link properly on MacOS, in such cases, link it manually with"
+echo
+echo "  ln -s /opt/homebrew/lib/libMagickWand-7.Q16HDRI.dylib /usr/local/lib/"
+echo "  ln -s /opt/homebrew/include/ImageMagick-7 /usr/local/include/"
+echo
+
