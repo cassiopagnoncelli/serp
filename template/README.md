@@ -9,17 +9,14 @@ x FastAPI Admin
 - Alembic (with Postgres, SQLite)
 - Redis
 - Celery with support to RabbitMQ and Redis
-x Flower, an UI for Celery
+- Flower, an UI for Celery
 - Uvicorn
 - Console
 - OpenAPI (automatic)
-x JWT
-x Authentication (OAuth2, Google OAuth2)
+x Pytest
 x Docker
 x Makefile
+x Authentication (JWT, OAuth2, Google OAuth2)
 x Storage
-x Pytest
 x Jinja2 (mailer templates)
 x Strawberry GraphQL
-x Model Wrapper
-x Transactions

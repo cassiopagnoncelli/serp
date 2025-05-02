@@ -106,7 +106,8 @@ function new_app() {
     redis \
     ipython \
     pylint \
-    flower
+    flower \
+    pytest
 
   poetry install --no-root
 

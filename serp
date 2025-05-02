@@ -18,7 +18,7 @@ set -e
 #~   prod          - Run web server in production mode
 #~   w, worker     - Run celery worker
 #~
-#~   [x]t, test    - Run the tests
+#~   test, tests   - Run the tests
 #~   lint          - Run the linter
 #~
 #~   dbcreate      - Create the database
