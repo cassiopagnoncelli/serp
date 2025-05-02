@@ -31,7 +31,7 @@ PROJECT_ROOT=$(git rev-parse --show-toplevel)
 
 function run_jobs_worker() {
   cd "$PROJECT_ROOT"
-  celery -A app.core.celery worker --loglevel=info --concurrency=5
+  celery -A app.core.queue worker --loglevel=info --concurrency=5
 }
 
 ############################################################
