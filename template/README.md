@@ -18,7 +18,6 @@ This is a brand new Serp project, a boilerplate Python API combining
 - [ ] Dockerfile
 - [-] Makefile
 - [ ] Jinja2 (mailer templates)
-- [ ] Strawberry GraphQL (api/gql)
 - [ ] FastAPI Admin
 - [ ] Stripe payments
 
