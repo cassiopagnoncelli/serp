@@ -13,24 +13,24 @@ set -e
 #~
 #~   c, console    - Open app console
 #~   db            - Open database console
+#~   redis         - Open CLI access to the Redis instance
 #~   s, dev        - Run the serp server in development mode
 #~   prod          - Run the serp server in production mode
 #~   w, worker     - Run the serp worker
 #~
-#~   t, test       - Run the tests
-#~   l, lint       - Run the linter
+#~   [x]t, test    - Run the tests
+#~   [x]l, lint    - Run the linter
 #~
 #~   dbcreate      - Create the database
-#~   migrate       - Run the migrations
-#~   rollback      - Rollback the migrations
-#~   seed          - Fills an empy local dev pgsql database with seed data
-#~   reset         - Wipes the dev pgsql database, recreates it clean from
+#~   [x]migrate    - Run the migrations
+#~   [x]rollback   - Rollback the migrations
+#~   [x]seed       - Fills an empy local dev pgsql database with seed data
+#~   [x]reset      - Wipes the dev pgsql database, recreates it clean from
 #~                   migrations, and seeds it with seed data. Useful for clean
 #~                   dev environment setup and for switching customer
 #~                   enviromnets in local development.
 #~
-#~   redis         - Open CLI access to the Redis instance
-#~   redis:monitor - Run Redis monitor (https://redis.io/commands/monitor/)
+#~   redismon      - Run Redis monitor (https://redis.io/commands/monitor/)
 #~
 #~   help          - View these usage instructions
 #~
@@ -81,6 +81,11 @@ case "$command" in
     exit 0
     ;;
 
+  redis)
+    "$SCRIPT_DIR/serp-redis-cli" "${params}"
+    exit 0
+    ;;
+
   s|dev)
     "$SCRIPT_DIR/serp-dev" "${params}"
     exit 0
@@ -110,6 +115,32 @@ case "$command" in
   # Database commands.
   dbcreate)
     "$SCRIPT_DIR/serp-create-db" "${params}"
+    exit 0
+    ;;
+
+  migrate)
+    "$SCRIPT_DIR/serp-migrate" "${params}"
+    exit 0
+    ;;
+
+  rollback)
+    "$SCRIPT_DIR/serp-rollback" "${params}"
+    exit 0
+    ;;  
+
+  seed)
+    "$SCRIPT_DIR/serp-seed" "${params}"
+    exit 0
+    ;;
+
+  reset)
+    "$SCRIPT_DIR/serp-reset" "${params}"
+    exit 0
+    ;;
+
+  # Monitor tools
+  redismon)
+    "$SCRIPT_DIR/serp-redis-monitor" "${params}"
     exit 0
     ;;
 
