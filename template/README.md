@@ -22,7 +22,7 @@ This is a brand new Serp project, a boilerplate Python API combining
 - [ ] Stripe payments
 - [ ] OpenAI, Clarifai, LangChain, HuggingFace, RAG
 - [ ] Docling
-- [ ] Image Magick
+- [x] Image Magick
 
 To-do
 

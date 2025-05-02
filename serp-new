@@ -109,7 +109,8 @@ function new_app() {
     ipython \
     pylint \
     flower \
-    pytest
+    pytest \
+    Wand
 
   poetry install --no-root
 
@@ -120,7 +121,8 @@ function new_app() {
     public \
     app \
     db \
-    lib/core
+    lib/core \
+    tmp
 
   # Copy files
   cp $TEMPLATE_DIR/README.md README.md
