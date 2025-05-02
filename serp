@@ -13,7 +13,7 @@ set -e
 #~
 #~   c, console    - Open app console
 #~   db            - Open database console
-#~   dev           - Run the serp server in development mode
+#~   s, dev        - Run the serp server in development mode
 #~   prod          - Run the serp server in production mode
 #~   w, worker     - Run the serp worker
 #~
@@ -77,7 +77,7 @@ case "$command" in
     break
     ;;
 
-  d|dev)
+  s|dev)
     "$SCRIPT_DIR/serp-dev" "${params}"
     break
     ;;

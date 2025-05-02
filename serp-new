@@ -105,9 +105,9 @@ function new_app() {
 
   # Copy files
   cp $TEMPLATE_DIR/README.md README.md
-  cp $TEMPLATE_DIR/console.py console.py
   cp $TEMPLATE_DIR/public/robots.txt public/robots.txt
   cp $TEMPLATE_DIR/app/server.py app/server.py
+  cp $TEMPLATE_DIR/app/console.py app/console.py
 
   cp -r $TEMPLATE_DIR/app/api app/api
   cp -r $TEMPLATE_DIR/app/core app/

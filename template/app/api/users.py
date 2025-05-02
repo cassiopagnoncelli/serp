@@ -3,7 +3,7 @@ from sqlmodel import Session, SQLModel, select, update
 from typing import Annotated
 from models.user import *
 from schemas.user import *
-# from db.sqlite import *
+from core.database import *
 
 router = APIRouter(tags=["Users API"])
 
