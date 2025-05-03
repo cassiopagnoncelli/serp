@@ -216,7 +216,7 @@ function new_app() {
   git commit -m "Initial commit" > /dev/null
 
   # Output project structure
-  tree -L 2
+  tree -a -I venv -I .git -I .env -I .env.test
 }
 
 ############################################################
