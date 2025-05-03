@@ -11,19 +11,25 @@ set -e
 #~   Creates a new Serp project, an opinionated AI-ready Python framework
 #~   resembling Ruby on Rails.
 #~
-#~   Features:
+#~   Packages:
+#~   - Poetry for dependency management
 #~   - Console
 #~   - FastAPI with automatic documentation and UI admin interface
 #~   - SQLModel backed by PostgreSQL database
 #~   - Alembic for migrations
 #~   - Redis
-#~   - Celery worker with Flower UI backed by Redis or RabbitMQ
+#~   - Background jobs with Celery (+Flower UI) backed by Redis or RabbitMQ
 #~   - Preconfigured user and account models
 #~   - Authentication
 #~   - Docker with Make routines
 #~   - Linter
 #~   - Tests
 #~   - Uvicorn webserver with http and websocket endpoints
+#~   - File storage
+#~   - Image processing with Image Magick
+#~   - Document processing with Docling
+#~   - Machine learning with Tensorflow, numpy, pandas, and other libraries
+#~   - AI APIs with OpenAI, Anthropic, Gemini, and other LLM providers
 #~
 #~ OPTIONS
 #~

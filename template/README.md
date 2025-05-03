@@ -20,9 +20,12 @@ This is a brand new Serp project, a boilerplate Python API combining
 - [ ] Jinja2 (mailer templates)
 - [ ] FastAPI Admin
 - [ ] Stripe payments
-- [ ] OpenAI, Clarifai, LangChain, HuggingFace, RAG
-- [ ] Docling
+- [x] Docling
 - [x] Image Magick
+- [x] Tensor flow
+- [ ] OpenAI, Anthropic, Gemini, Clarifai
+- [ ] Explore: LangChain, HuggingFace
+- [ ] RAG server
 
 To-do
 

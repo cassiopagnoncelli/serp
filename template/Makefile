@@ -37,7 +37,14 @@ logs:
 websocket:
 	wscat -c ws://localhost:$(DOCKER_PORT)/ws
 
-prod:
+health_check:
+	@STATUS=$$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/health-check); \
+	if [ "$$STATUS" -ne 200 ]; then \
+		echo "Health check failed"; \
+		exit 1; \
+	fi
+
+staging:
 	git checkout main && \
 	git pull origin main && \
 	git checkout staging && \
@@ -46,7 +53,7 @@ prod:
 	git push origin staging && \
 	git checkout main
 
-prod:
+production:
 	git checkout main && \
 	git pull origin main && \
 	git checkout production && \
