@@ -33,6 +33,11 @@ set -e
 #~   redismon      - Run Redis monitor (https://redis.io/commands/monitor/)
 #~   flower        - Run Flower (Celery's monitor UI)
 #~
+#~   secret        - Generate a secure random secret
+#~
+#~   tasks         - List available tasks
+#~   task          - Run task
+#~
 #~   help          - View these usage instructions
 #~
 
@@ -147,6 +152,17 @@ case "$command" in
 
   flower)
     "$SCRIPT_DIR/serp-flower" "${params[@]}"
+    exit 0
+    ;;
+
+  # Tasks.
+  tasks)
+    "$SCRIPT_DIR/serp-tasks" "${params[@]}"
+    exit 0
+    ;;
+
+  task)
+    "$SCRIPT_DIR/serp-task" "${params[@]}"
     exit 0
     ;;
 

@@ -105,8 +105,10 @@ function apply_env() {
 function apply_core_settings() {
   if [[ "$OSTYPE" == "darwin"* ]]; then
     sed -i '' "s/my_app_development/${1}_development/g" config/initializers/settings.py
+    sed -i '' "s/my_app_test/${1}_test/g" config/initializers/settings.py
   else
     sed -i "s/my_app_development/${1}_development/g" config/initializers/settings.py
+    sed -i "s/my_app_test/${1}_test/g" config/initializers/settings.py
   fi
 }
 
@@ -176,7 +178,7 @@ function new_app() {
     bin \
     app \
     db \
-    lib/core \
+    lib/{core,tasks} \
     tmp
 
   # Copy files
@@ -186,8 +188,6 @@ function new_app() {
   cp $TEMPLATE_DIR/app/server.py app/server.py
   cp $TEMPLATE_DIR/app/console.py app/console.py
   cp $TEMPLATE_DIR/app/__init__.py app/__init__.py
-  cp $TEMPLATE_DIR/lib/core/* lib/core/
-  cp $TEMPLATE_DIR/db/* db/
   cp $TEMPLATE_DIR/gitignore .gitignore
   cp $TEMPLATE_DIR/bash_aliases .bash_aliases
   cp $TEMPLATE_DIR/bin/* bin/
@@ -200,6 +200,9 @@ function new_app() {
   cp -r $TEMPLATE_DIR/app/jobs app/
   cp -r $TEMPLATE_DIR/config/* config/
   cp -r $TEMPLATE_DIR/tests/* tests/
+  cp -r $TEMPLATE_DIR/lib/core/* lib/core/
+  cp -r $TEMPLATE_DIR/lib/tasks/* lib/tasks/
+  cp -r $TEMPLATE_DIR/db/* db/
 
   # Update env, config, core settings
   cp $TEMPLATE_DIR/.env .env
