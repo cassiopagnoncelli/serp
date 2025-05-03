@@ -31,10 +31,9 @@ PROJECT_ROOT=$(git rev-parse --show-toplevel)
 
 function list_tasks() {
   cd "$PROJECT_ROOT"
-  grep "#~" lib/tasks/* | sed -E "s/.*:#~ ([^:]*): (.*)/\1:\2/" | column -t -s ":"
+  grep "#~" lib/tasks/* | \
+    sed -E "s/.*:#~ ([^:]*): (.*)/\1:\2/" | \
+    awk -F: '{printf "%30s     %s\n", $1, $2}'
 }
 
-############################################################
-# Main Script
-############################################################
 list_tasks

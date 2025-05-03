@@ -34,7 +34,4 @@ function run_jobs_worker() {
   celery -A config.initializers.broker worker --loglevel=info --concurrency=5
 }
 
-############################################################
-# Main Script
-############################################################
 run_jobs_worker

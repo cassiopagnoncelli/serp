@@ -31,7 +31,4 @@ function run_redis_monitor() {
   redis-cli -u $URL monitor
 }
 
-############################################################
-# Main Script
-############################################################
 run_redis_monitor

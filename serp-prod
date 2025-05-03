@@ -35,7 +35,4 @@ function run_prod_server() {
   # uvicorn api:app --workers 8 --host 0.0.0.0 --port 8000
 }
 
-############################################################
-# Main Script
-############################################################
 run_prod_server

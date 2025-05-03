@@ -33,7 +33,4 @@ function run_db_create() {
   poetry run python lib/core/dbcreate.py
 }
 
-############################################################
-# Main Script
-############################################################
 run_db_create
