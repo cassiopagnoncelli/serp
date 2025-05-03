@@ -5,7 +5,6 @@ CONTAINER_NAME := serp_app_server
 DOCKER_PORT := 8002
 SERVICE_PORT := 8000
 APP_DIR := /app
-TEST_DIRS := tests/{api,jobs,models,services,utils}
 
 all: run
 
@@ -28,13 +27,21 @@ run: stop build
 	@echo "Type 'make open' to open websockets terminal"
 
 test:
-	docker exec -it $(CONTAINER_NAME) /bin/bash -c 'cd $(APP_DIR) && poetry run pytest ${TEST_DIRS} -v'
+	docker exec -it $(CONTAINER_NAME) /bin/bash -c 'PYTHONPATH="$(APP_DIR)" \
+		poetry run pytest \
+		tests/api \
+		tests/jobs \
+		tests/models \
+		tests/services \
+		tests/utils \
+		-v'
 
 shell:
 	docker exec -it $(CONTAINER_NAME) /bin/bash
 
 console:
-	docker exec -it $(CONTAINER_NAME) /bin/bash -c 'cd $(APP_DIR) && poetry run python app/console.py'
+	docker exec -it $(CONTAINER_NAME) /bin/bash -c 'PYTHONPATH="$(APP_DIR)" \
+    poetry run python app/console.py'
 
 logs:
 	docker logs -f $(CONTAINER_NAME)
