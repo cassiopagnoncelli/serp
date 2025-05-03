@@ -28,7 +28,5 @@ This is a brand new Serp project, a boilerplate Python API combining
 To-do
 
 - [ ] Pytest: helpers (api), vcr, fixtures
-- [ ] Flower password
 - [ ] Celery with RabbitMQ
-- [ ] Alembic shortcuts, create
 - [ ] Active Model lifecycle hooks, has_many & siblings, validations, normalizations, enums
