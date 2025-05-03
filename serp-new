@@ -14,9 +14,7 @@ set -e
 #~   Packages:
 #~   - Poetry for dependency management
 #~   - Console
-#~   - FastAPI with automatic documentation and UI admin interface
-#~   - SQLModel backed by PostgreSQL database
-#~   - Alembic for migrations
+#~   - Prisma for database interface
 #~   - Redis
 #~   - Background jobs with Celery (+Flower UI) backed by Redis or RabbitMQ
 #~   - Preconfigured user and account models
@@ -30,6 +28,8 @@ set -e
 #~   - Document processing with Docling
 #~   - Machine learning with Tensorflow, numpy, pandas, and other libraries
 #~   - AI APIs with OpenAI, Anthropic, Gemini, and other LLM providers
+#
+#~   Still, you may resort to prisma studio for UI admin inferface (CRUD).
 #~
 #~ OPTIONS
 #~

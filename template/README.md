@@ -4,8 +4,7 @@ This is a brand new Serp project, a boilerplate Python API combining
 
 - [x] Poetry package manager
 - [x] FastAPI
-- [x] SQLModel
-- [x] Alembic (with Postgres, SQLite)
+- [ ] Prisma
 - [x] Redis
 - [x] Celery with support to RabbitMQ and Redis
 - [x] Flower, an UI for Celery
@@ -18,7 +17,6 @@ This is a brand new Serp project, a boilerplate Python API combining
 - [ ] Dockerfile
 - [x] Makefile
 - [ ] Jinja2 (mailer templates)
-- [ ] FastAPI Admin
 - [ ] Stripe payments
 - [x] Docling
 - [x] Image Magick
