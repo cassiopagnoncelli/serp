@@ -38,6 +38,8 @@ set -e
 #~   tasks         - List available tasks
 #~   task          - Run task
 #~
+#~   frontend, fe  - Generate the frontend project (nextjs app in a sibiling directory)
+#~
 #~   help          - View these usage instructions
 #~
 
@@ -163,6 +165,12 @@ case "$command" in
 
   task)
     "$SCRIPT_DIR/serp-task" "${params[@]}"
+    exit 0
+    ;;
+
+  # Frontend.
+  frontend|fe)
+    "$SCRIPT_DIR/serp-frontend" "${params[@]}"
     exit 0
     ;;
 

@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+set -e
+
+#~ USAGE
+#~
+#~   serp frontend
+#~
+#~
+#~ COMMANDS
+#~
+#~   --help  - View these usage instructions
+#~
+
+log() {
+  echo "${1}"
+}
+
+usage() {
+  grep '^#~' < "$0" | cut -c 3-
+}
+
+############################################################
+# Main Script
+############################################################
+
+create_frontend() {
+  project_name="$1"
+  npx create-next-app@latest $project_name \
+    --javascript \
+    --tailwind \
+    --app \
+    --turbopack \
+    --use-npm \
+    --no-eslint \
+    --src-dir \
+    --import-alias "@/*"
+  cd "$project_name"
+  git branch -M main
+}
+
+create_frontend "$@"

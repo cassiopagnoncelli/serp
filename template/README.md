@@ -12,7 +12,7 @@ This is a brand new Serp project, a boilerplate Python API combining
 - [x] Console
 - [x] OpenAPI (automatic)
 - [ ] Authentication (JWT, OAuth2, Google OAuth2, Microsoft, GitHub, Facebook, Accounts, Plans)
-- [ ] Storage
+- [-] Storage
 - [x] Pytest
 - [ ] Dockerfile
 - [x] Makefile

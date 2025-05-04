@@ -149,6 +149,7 @@ function new_app() {
   source venv/bin/activate
 
   # Add common libraries
+  # "s3transfer@0.10.0" "botocore@1.35.99" "boto3@1.35.99"
   poetry add \
     "ipython" \
     "pylint" \
@@ -165,7 +166,8 @@ function new_app() {
     "flower@<3" \
     "pytest@<9" \
     "Wand@<1" \
-    "PyJWT@<3"
+    "PyJWT@<3" \
+    "minio"
 
   install_optional_libraries "${params[@]}"
 

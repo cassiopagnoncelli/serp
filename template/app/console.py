@@ -52,6 +52,7 @@ if __name__ == "__main__":
   # Import project initializers
   from config.initializers.database import get_session_standalone
   from config.initializers.redis import RedisStandaloneDep
+  from config.initializers.storage import storage
 
   # Start IPython REPL
   from IPython import embed
