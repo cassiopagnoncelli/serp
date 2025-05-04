@@ -242,5 +242,14 @@ fi
 project_name="$1"
 shift
 params=("$@")
-echo "Creating Serp project \`$project_name\` with params \`${params[@]}\`"
+
+GREEN="\033[32m"
+RED="\033[31m"
+RESET="\033[0m"
+if [ "${#params[@]}" -gt 0 ]; then
+  echo -e "Creating Serp project ${GREEN}${project_name}${RESET} with params ${GREEN}${params[@]}${RESET}"
+else
+  echo -e "Creating Serp project ${GREEN}${project_name}${RESET} with no params"
+fi
+
 new_app "$project_name" "${params[@]}"

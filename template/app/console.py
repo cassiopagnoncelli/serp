@@ -56,6 +56,8 @@ if __name__ == "__main__":
 
   c = Config()
   c.TerminalInteractiveShell.confirm_exit = False
+  c.InteractiveShell.ast_node_interactivity = "last_expr"
+  c.InteractiveShell.pprint = True
   c.InteractiveShellEmbed.colors = "Linux"        # 'NoColor', 'LightBG', 'Linux'
   c.InteractiveShellEmbed.autocall = 2            # Auto-call functions (like Rails console)
   c.TerminalInteractiveShell.editing_mode = "vi"  # Optional: vi mode
@@ -69,6 +71,8 @@ if __name__ == "__main__":
   print("\n💻 Starting interactive console. Type 'exit()' or press Ctrl-D to quit.\n")
   with RedisStandaloneDep() as redis:
     with get_session_standalone() as db:
-      local_vars = { "db": db, "redis": redis }
       shell = InteractiveShellEmbed(config=c, banner1="📦 Console loaded", exit_msg="👋 Goodbye!")
-      shell(local_ns=local_vars)
+      shell(local_ns = {
+        "db": db,
+        "redis": redis
+      })
