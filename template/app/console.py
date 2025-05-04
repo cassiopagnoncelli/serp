@@ -36,13 +36,20 @@ if __name__ == "__main__":
   
   print_colored_snake()
   
-  # Import all modules
+  # Import Python libraries
   from sqlmodel import SQLModel, select, update
 
+  # Import environment variables
+  import lib.core.env
+  from os import getenv
+
+  # Import project modules
   from app.jobs import *
   from app.models import *
   from app.services import *
   from app.utils import *
+
+  # Import project initializers
   from config.initializers.database import get_session_standalone
   from config.initializers.redis import RedisStandaloneDep
 
