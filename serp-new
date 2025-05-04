@@ -167,10 +167,11 @@ function new_app() {
     "pytest@<9" \
     "Wand@<1" \
     "PyJWT@<3" \
-    "minio" \
-    "boto3" \
-    "jinja2" \
-    "ruamel.yaml"
+    "minio@<8" \
+    "boto3@<2" \
+    "jinja2@<4" \
+    "ruamel.yaml@<1" \
+    "prettyprinter@<1"
   
   install_optional_libraries "${params[@]}"
 
