@@ -48,8 +48,11 @@ if __name__ == "__main__":
 
   # Start IPython REPL
   from IPython import embed
+  from IPython.terminal.interactiveshell import TerminalInteractiveShell
+  TerminalInteractiveShell.banner1 = ""
+  TerminalInteractiveShell.banner2 = ""
   print("\nType 'exit()' or ^D to quit\n")
 
   with RedisStandaloneDep() as redis:
     with get_session_standalone() as db:
-      embed(ipython=True, no_confirm_exit=True, no_banner=True)
+      embed(ipython=True, no_confirm_exit=True, no_banner=True, display_banner=False)
