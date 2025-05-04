@@ -30,9 +30,7 @@ PROJECT_ROOT=$(git rev-parse --show-toplevel)
 ############################################################
 
 function run_db_console() {
-  cd "$PROJECT_ROOT"
-  URL=$(poetry run python lib/core/database_url.py)
-  psql $URL
+  psql $(PYTHONPATH="$PROJECT_ROOT" poetry run python lib/core/database_url.py)
 }
 
 run_db_console

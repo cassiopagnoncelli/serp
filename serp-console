@@ -30,8 +30,7 @@ PROJECT_ROOT=$(git rev-parse --show-toplevel)
 ############################################################
 
 function console() {
-  cd "$PROJECT_ROOT"
-  poetry run python app/console.py
+  PYTHONPATH="$PROJECT_ROOT" poetry run python app/console.py
 }
 
 console

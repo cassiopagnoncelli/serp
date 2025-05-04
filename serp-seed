@@ -25,8 +25,7 @@ PROJECT_ROOT=$(git rev-parse --show-toplevel)
 ############################################################
 
 function run_seed() {
-  cd "$PROJECT_ROOT"
-  poetry run python db/seeds.py
+  PYTHONPATH="$PROJECT_ROOT" poetry run python db/seeds.py
 }
 
 run_seed

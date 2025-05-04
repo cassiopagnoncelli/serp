@@ -25,8 +25,7 @@ PROJECT_ROOT=$(git rev-parse --show-toplevel)
 ############################################################
 
 function run_redis_monitor() {
-  cd "$PROJECT_ROOT"
-  URL=$(poetry run python lib/core/redis_url.py)
+  URL=$(PYTHONPATH="$PROJECT_ROOT" poetry run python lib/core/redis_url.py)
   echo $URL
   redis-cli -u $URL monitor
 }

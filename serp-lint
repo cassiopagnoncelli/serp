@@ -29,8 +29,7 @@ PROJECT_ROOT=$(git rev-parse --show-toplevel)
 ############################################################
 
 function run_lint() {
-  cd "$PROJECT_ROOT"
-  poetry run pylint app
+  PYTHONPATH="$PROJECT_ROOT" poetry run pylint app
 }
 
 run_lint

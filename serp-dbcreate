@@ -29,8 +29,7 @@ PROJECT_ROOT=$(git rev-parse --show-toplevel)
 ############################################################
 
 function run_db_create() {
-  cd "$PROJECT_ROOT"
-  poetry run python lib/core/dbcreate.py
+  PYTHONPATH="$PROJECT_ROOT" poetry run python lib/core/dbcreate.py
 }
 
 run_db_create

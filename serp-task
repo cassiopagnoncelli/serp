@@ -30,7 +30,6 @@ PROJECT_ROOT=$(git rev-parse --show-toplevel)
 ############################################################
 
 function run_task() {
-  cd "$PROJECT_ROOT"
   PYTHONPATH="$PROJECT_ROOT" poetry run python -m lib.tasks.$1
 }
 

@@ -150,21 +150,22 @@ function new_app() {
 
   # Add common libraries
   poetry add \
-    fastapi \
-    uvicorn \
-    alembic \
-    dotenv \
-    pydantic \
-    pydantic-settings \
-    sqlmodel \
-    psycopg2 \
-    celery \
-    redis \
-    ipython \
-    pylint \
-    flower \
-    pytest \
-    Wand
+    "ipython" \
+    "pylint" \
+    "fastapi@<1" \
+    "uvicorn@<1" \
+    "alembic@<2" \
+    "python-dotenv" \
+    "pydantic@<3" \
+    "pydantic-settings@<3" \
+    "sqlmodel@<1" \
+    "psycopg2@<3" \
+    "celery@<6" \
+    "redis@<7" \
+    "flower@<3" \
+    "pytest@<9" \
+    "Wand@<1" \
+    "PyJWT@<3"
 
   install_optional_libraries "${params[@]}"
 

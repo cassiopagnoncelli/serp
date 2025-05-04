@@ -52,4 +52,4 @@ if __name__ == "__main__":
 
   with RedisStandaloneDep() as redis:
     with get_session_standalone() as db:
-      embed()
+      embed(ipython=True, no_confirm_exit=True, no_banner=True)
