@@ -4,7 +4,7 @@ This is a brand new Serp project, a boilerplate Python API combining
 
 - [x] Poetry package manager
 - [x] FastAPI
-- [ ] Prisma
+- [x] SQL Model, Alembic for migrations
 - [x] Redis
 - [x] Celery with support to RabbitMQ and Redis
 - [x] Flower, an UI for Celery
