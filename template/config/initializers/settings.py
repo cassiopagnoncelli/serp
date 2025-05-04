@@ -3,17 +3,19 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Any, TypeVar, Optional
 import os
 
+from lib.core.env import APP_ENV
+
 T = TypeVar('T')
 
 class Settings(BaseSettings):
-  APP_NAME: str = "bla"
+  APP_NAME: str = "my_app_development"
   DEBUG: bool = False
 
   model_config = SettingsConfigDict(
-    env_file=".env",
-    env_file_encoding="utf-8",
-    case_sensitive=True,
-    extra="allow"
+    env_file = f".env.{APP_ENV}",
+    env_file_encoding = "utf-8",
+    case_sensitive = True,
+    extra = "allow"
   )
 
   def fetch(self, key: str, default: Optional[T] = None) -> Any:

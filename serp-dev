@@ -30,8 +30,7 @@ PROJECT_ROOT=$(git rev-parse --show-toplevel)
 ############################################################
 
 function run_dev_server() {
-  cd "$PROJECT_ROOT"
-  fastapi dev app/server.py
+  PYTHONPATH="$PROJECT_ROOT" APP_ENV=development fastapi dev app/server.py
 }
 
 run_dev_server

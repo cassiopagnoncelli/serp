@@ -32,7 +32,7 @@ function run_jobs_ui() {
   cd "$PROJECT_ROOT"
   export SERP_BROKER_PASSWORD=$(serp secret)
   echo "Celery ``admin`` password: $SERP_BROKER_PASSWORD"
-  celery -A config.initializers.broker --basic-auth="admin:$SERP_BROKER_PASSWORD" flower
+  PYTHONPATH="$PROJECT_ROOT" celery -A config.initializers.broker --basic-auth="admin:$SERP_BROKER_PASSWORD" flower
 }
 
 run_jobs_ui
