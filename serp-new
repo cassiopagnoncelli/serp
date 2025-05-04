@@ -167,8 +167,11 @@ function new_app() {
     "pytest@<9" \
     "Wand@<1" \
     "PyJWT@<3" \
-    "minio"
-
+    "minio" \
+    "boto3" \
+    "jinja2" \
+    "ruamel.yaml"
+  
   install_optional_libraries "${params[@]}"
 
   poetry install --no-root
