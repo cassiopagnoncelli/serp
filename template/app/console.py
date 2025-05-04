@@ -19,7 +19,7 @@ from IPython import get_ipython
 # Project imports
 from config.initializers.database import get_session_standalone
 from config.initializers.redis import RedisStandaloneDep
-from config.initializers.storage import *
+from config.initializers.storage import get_storage
 from app.jobs import *
 from app.models import *
 from app.services import *
@@ -104,7 +104,8 @@ def start_console():
       
       shell(local_ns = {
         "db": db,
-        "redis": redis
+        "redis": redis,
+        "storage": get_storage()
       })
 
 if __name__ == "__main__":

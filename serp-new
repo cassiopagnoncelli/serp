@@ -102,11 +102,9 @@ function apply_env() {
 
 function apply_core_settings() {
   if [[ "$OSTYPE" == "darwin"* ]]; then
-    sed -i '' "s/my_app_development/${1}_development/g" config/initializers/settings.py
-    sed -i '' "s/my_app_test/${1}_test/g" config/initializers/settings.py
+    sed -i '' "s/my_app/${1}/g" config/initializers/settings.py
   else
-    sed -i "s/my_app_development/${1}_development/g" config/initializers/settings.py
-    sed -i "s/my_app_test/${1}_test/g" config/initializers/settings.py
+    sed -i "s/my_app/${1}/g" config/initializers/settings.py
   fi
 }
 

@@ -1,0 +1,8 @@
+development:
+  url: {{ REDIS_URL }}
+
+test:
+  url: {{ REDIS_URL }}
+
+production:
+  url: {{ REDIS_URL }}

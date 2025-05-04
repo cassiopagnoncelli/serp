@@ -1,0 +1,8 @@
+development:
+  backend: {{ BROKER_BACKEND }}
+
+test:
+  backend: {{ BROKER_BACKEND }}
+
+production:
+  backend: {{ BROKER_BACKEND }}

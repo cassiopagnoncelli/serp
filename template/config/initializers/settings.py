@@ -1,14 +1,36 @@
+import os
+from os import environ
+from io import StringIO
 from functools import lru_cache
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Any, TypeVar, Optional
-import os
+from jinja2 import Environment, FileSystemLoader
+from ruamel.yaml import YAML
+from lib.core.env import *
 
-from lib.core.env import APP_ENV
+def decode_yaml(path: str) -> dict:
+  env = Environment(loader = FileSystemLoader("."), autoescape = False)
+  template = env.get_template(path)
+  rendered = template.render(environ)
+  return YAML(typ = "safe").load(StringIO(rendered))
+
+def dig(d, path, default = None, sep = "."):
+  keys = path.split(sep)
+  for key in keys:
+    if isinstance(d, dict):
+      d = d.get(key, default)
+    else:
+      return default
+  return d
+
+storage_config = decode_yaml("config/storage.yml")[APP_ENV]
+database_config = decode_yaml("config/database.yml")[APP_ENV]
+broker_config = decode_yaml("config/broker.yml")[APP_ENV]
+redis_config = decode_yaml("config/redis.yml")[APP_ENV]
 
 T = TypeVar('T')
-
 class Settings(BaseSettings):
-  APP_NAME: str = "my_app_development"
+  APP_NAME: str = "my_app"
   DEBUG: bool = False
 
   model_config = SettingsConfigDict(

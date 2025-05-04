@@ -1,14 +1,20 @@
-from os import environ
-from io import StringIO
-from jinja2 import Environment, FileSystemLoader
-from ruamel.yaml import YAML
+from typing import Annotated
+from fastapi import Depends
 
-from lib.core.env import *
+from lib.core.env import APP_ENV
+from config.initializers.settings import decode_yaml
 from lib.core.storage import Storage
 
-storage_env = Environment(loader = FileSystemLoader('.'), autoescape=False)
-storage_template = storage_env.get_template("config/storage.yml")
-storage_rendered = storage_template.render(environ)
-storage_config = YAML(typ = "safe").load(StringIO(storage_rendered))
+# Load and parse storage configuration once, based on the environment
+storage_config = decode_yaml("config/storage.yml")[APP_ENV]
 
-storage = Storage(storage_config[APP_ENV])
+# Create a singleton Storage instance if it's safe to reuse
+storage_instance = Storage(storage_config)
+
+# Dependency injection function for FastAPI
+@lru_cache()
+def get_storage() -> Storage:
+  return storage_instance
+
+# Type alias for injecting Storage via FastAPI's dependency system
+StorageDep = Annotated[Storage, Depends(get_storage)]
