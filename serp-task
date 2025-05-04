@@ -30,6 +30,7 @@ PROJECT_ROOT=$(git rev-parse --show-toplevel)
 ############################################################
 
 function run_task() {
+  source "$PROJECT_ROOT/venv/bin/activate"
   PYTHONPATH="$PROJECT_ROOT" poetry run python -m lib.tasks.$1
 }
 

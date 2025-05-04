@@ -30,6 +30,7 @@ PROJECT_ROOT=$(git rev-parse --show-toplevel)
 ############################################################
 
 function console() {
+  source "$PROJECT_ROOT/venv/bin/activate"
   PYTHONPATH="$PROJECT_ROOT" poetry run python app/console.py
 }
 

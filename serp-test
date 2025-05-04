@@ -30,6 +30,7 @@ PROJECT_ROOT=$(git rev-parse --show-toplevel)
 function run_tests() {
   cd "$PROJECT_ROOT"
   params=("$@")
+  source "$PROJECT_ROOT/venv/bin/activate"
   if [ ${#params[@]} -eq 0 ]; then
     PYTHONPATH="$PROJECT_ROOT" APP_ENV=test poetry run pytest \
       tests/api \

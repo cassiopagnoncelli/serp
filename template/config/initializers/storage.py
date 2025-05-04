@@ -1,5 +1,6 @@
 from typing import Annotated
 from fastapi import Depends
+from functools import lru_cache
 
 from lib.core.env import APP_ENV
 from config.initializers.settings import decode_yaml

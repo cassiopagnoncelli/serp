@@ -9,6 +9,10 @@ development:
 test:
   driver: local
   url_endpoint: tmp/storage
+  access_key:
+  secret_key:
+  bucket:
+  region:
 
 production:
   driver: minio

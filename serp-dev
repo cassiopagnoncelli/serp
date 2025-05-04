@@ -30,6 +30,7 @@ PROJECT_ROOT=$(git rev-parse --show-toplevel)
 ############################################################
 
 function run_dev_server() {
+  source "$PROJECT_ROOT/venv/bin/activate"
   PYTHONPATH="$PROJECT_ROOT" APP_ENV=development fastapi dev app/server.py
 }
 

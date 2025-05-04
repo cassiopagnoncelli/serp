@@ -25,6 +25,7 @@ PROJECT_ROOT=$(git rev-parse --show-toplevel)
 ############################################################
 
 function run_seed() {
+  source "$PROJECT_ROOT/venv/bin/activate"
   PYTHONPATH="$PROJECT_ROOT" poetry run python db/seeds.py
 }
 

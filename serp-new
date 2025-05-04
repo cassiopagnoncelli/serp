@@ -167,7 +167,8 @@ function new_app() {
     "boto3@<2" \
     "jinja2@<4" \
     "ruamel.yaml@<1" \
-    "prettyprinter@<1"
+    "prettyprinter@<1" \
+    "ipdb"
   
   install_optional_libraries "${params[@]}"
 
