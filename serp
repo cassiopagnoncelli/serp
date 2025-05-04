@@ -10,6 +10,7 @@ set -e
 #~ COMMANDS
 #~
 #~   new           - Set up a new serp project
+#~   env           - Show the current environment (APP_ENV env variable)
 #~
 #~   console, c    - Open app console
 #~   db            - Open Postgres console
@@ -69,6 +70,11 @@ params=("$@")
 case "$command" in
   new)
     "$SCRIPT_DIR/serp-new" "${params[@]}"
+    exit 0
+    ;;
+
+  env)
+    "$SCRIPT_DIR/serp-env" "${params[@]}"
     exit 0
     ;;
 
