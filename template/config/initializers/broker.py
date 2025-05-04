@@ -6,5 +6,5 @@ settings = get_settings()
 celery = Celery(
   'my_app_queue',
   include=['app.jobs'],
-  broker=settings.fetch("BROKER_BACKEND"),
+  broker = settings.fetch("BROKER_BACKEND"),
 )

@@ -6,7 +6,7 @@ from pathlib import Path
 import io
 
 class Storage:
-  def __init__(self, config: Dict[str, Any], environment: str = "development"):
+  def __init__(self, config: Dict[str, Any]):
     """
     Initialize the storage client with configuration dictionary.
     
@@ -14,8 +14,6 @@ class Storage:
         config: Dictionary containing storage configuration
         environment: Environment to use (development/production)
     """
-    config = config[environment]
-    
     self.driver = config['driver']
     self.bucket = config['bucket']
     self.region = config['region']

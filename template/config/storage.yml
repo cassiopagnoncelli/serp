@@ -1,14 +1,18 @@
 development:
   driver: minio
-  url_endpoint: {{ MINIO_ENDPOINT_URL | default('https://minioapi.fatura.link') }}
+  url_endpoint: {{ MINIO_ENDPOINT_URL }}
   access_key: {{ MINIO_ACCESS_KEY }}
   secret_key: {{ MINIO_SECRET_KEY }}
   bucket: {{ MINIO_BUCKET }}
   region: {{ MINIO_REGION | default('us-east-1') }}
 
+test:
+  driver: local
+  url_endpoint: tmp/storage
+
 production:
   driver: minio
-  url_endpoint: {{ MINIO_ENDPOINT_URL | default('https://minioapi.fatura.link') }}
+  url_endpoint: {{ MINIO_ENDPOINT_URL }}
   access_key: {{ MINIO_ACCESS_KEY }}
   secret_key: {{ MINIO_SECRET_KEY }}
   bucket: {{ MINIO_BUCKET }}

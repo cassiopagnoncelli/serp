@@ -1,0 +1,11 @@
+development:
+  driver: postgresql
+  url: {{ DATABASE_URL | default('postgresql://postgres:postgres@localhost:5432/serp_development') }}
+
+test:
+  driver: postgresql
+  url: {{ DATABASE_URL | default('postgresql://postgres:postgres@localhost:5432/serp_test') }}
+
+production:
+  driver: postgresql
+  url: {{ DATABASE_URL | default('postgresql://postgres:postgres@localhost:5432/serp_production') }}
