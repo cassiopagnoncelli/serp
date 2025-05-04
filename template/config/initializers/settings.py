@@ -30,25 +30,38 @@ redis_config = decode_yaml("config/redis.yml")[APP_ENV]
 
 T = TypeVar('T')
 class Settings(BaseSettings):
+  # Application general settings.
   APP_NAME: str = "my_app"
   DEBUG: bool = False
-
+  # Broker.
+  BROKER_BACKEND: str = dig(broker_config, "backend")
+  # Database.
+  DATABASE_DRIVER: str = dig(database_config, "driver")
+  DATABASE_URL: str = dig(database_config, "url")
+  # Redis.
+  REDIS_URL: str = dig(redis_config, "url")
+  # Storage.
+  STORAGE_DRIVER: str = dig(storage_config, "driver")
+  STORAGE_URL_ENDPOINT: str = dig(storage_config, "url_endpoint")
+  STORAGE_ACCESS_KEY: str = dig(storage_config, "access_key")
+  STORAGE_SECRET_KEY: str = dig(storage_config, "secret_key")
+  STORAGE_BUCKET: str = dig(storage_config, "bucket")
+  STORAGE_REGION: str = dig(storage_config, "region")
+  # Dynamically load settings from environment variables.
   model_config = SettingsConfigDict(
     env_file = f".env.{APP_ENV}",
     env_file_encoding = "utf-8",
     case_sensitive = True,
     extra = "allow"
   )
-
+  # Fetch a setting from the settings object or the environment.
   def fetch(self, key: str, default: Optional[T] = None) -> Any:
     class_value = getattr(self, key, None)
     if class_value is not None:
         return class_value
-
     env_value = os.environ.get(key)
     if env_value is not None:
         return env_value
-
     return default if default is not None else None
 
 @lru_cache()
