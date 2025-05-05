@@ -3,7 +3,7 @@ from fastapi import Depends
 from functools import lru_cache
 
 from lib.core.env import APP_ENV
-from config.initializers.settings import decode_yaml
+from config.core.settings import decode_yaml
 from lib.core.storage import Storage
 
 # Load and parse storage configuration once, based on the environment

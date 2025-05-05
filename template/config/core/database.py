@@ -2,7 +2,7 @@ from sqlmodel import Session, create_engine
 from contextlib import contextmanager
 from typing import Annotated
 from fastapi import Depends
-from config.initializers.settings import get_settings
+from config.core.settings import get_settings
 
 settings = get_settings()
 
@@ -32,7 +32,7 @@ def get_session():
 SessionDep = Annotated[Session, Depends(get_session)]
 
 # For general-purpose usage
-#   from config.initializers.database import get_session_standalone
+#   from config.core.database import get_session_standalone
 #
 #   with get_session_standalone() as session:
 #     session.execute(select(User)).all()

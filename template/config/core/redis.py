@@ -2,7 +2,7 @@ import redis
 from fastapi import Depends
 from typing import Annotated
 from contextlib import contextmanager
-from config.initializers.settings import get_settings
+from config.core.settings import get_settings
 
 settings = get_settings()
 

@@ -1,4 +1,4 @@
-from config.initializers.broker import celery
+from config.core.broker import celery
 
 # Usage:
 #

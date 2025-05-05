@@ -32,7 +32,7 @@ PROJECT_ROOT=$(git rev-parse --show-toplevel)
 function run_jobs_worker() {
   cd "$PROJECT_ROOT"
   source "$PROJECT_ROOT/venv/bin/activate"
-  PYTHONPATH="$PROJECT_ROOT" celery -A config.initializers.broker worker --loglevel=info --concurrency=5
+  PYTHONPATH="$PROJECT_ROOT" celery -A config.core.broker worker --loglevel=info --concurrency=5
 }
 
 run_jobs_worker

@@ -17,9 +17,9 @@ from IPython.lib.pretty import pprint as ipprint
 from IPython import get_ipython
 
 # Project imports
-from config.initializers.database import get_session_standalone
-from config.initializers.redis import RedisStandaloneDep
-from config.initializers.storage import get_storage
+from config.core.database import get_session_standalone
+from config.core.redis import RedisStandaloneDep
+from config.core.storage import get_storage
 from app.jobs import *
 from app.models import *
 from app.services import *

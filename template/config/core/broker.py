@@ -1,5 +1,5 @@
 from celery import Celery
-from config.initializers.settings import get_settings
+from config.core.settings import get_settings
 
 settings = get_settings()
 

@@ -1,7 +1,7 @@
 import pytest
 from app.jobs.ping import ping
 from celery import Celery
-from config.initializers.broker import celery
+from config.core.broker import celery
 
 @pytest.fixture(autouse=True)
 def setup_celery():

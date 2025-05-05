@@ -9,39 +9,47 @@ set -e
 #~
 #~ COMMANDS
 #~
-#~   new           - Set up a new serp project
-#~   env           - Show the current environment (APP_ENV env variable)
+#~    new           - Set up a new serp project
 #~
-#~   console, c    - Open app console
-#~   db            - Open Postgres console
-#~   redis         - Open Redis console
-#~   dev, s        - Run web server in development mode
-#~   prod          - Run web server in production mode
-#~   worker, w     - Run celery worker
+#~  Processes
+#~    console, c    - Open app console
+#~    db            - Open Postgres console
+#~    redis         - Open Redis console
+#~    dev, s        - Run web server in development mode
+#~    prod          - Run web server in production mode
+#~    worker, w     - Run celery worker
 #~
-#~   test, tests   - Run the tests
-#~   lint          - Run the linter
+#~  Database commands
+#~    dbcreate      - Create the database
+#~    [x]migrate    - Run the migrations
+#~    [x]rollback   - Rollback the migrations
+#~    seed          - Fills an empy local dev pgsql database with seed data
+#~    [x]reset      - Wipes the dev pgsql database, recreates it clean from
+#~                    migrations, and seeds it with seed data. Useful for clean
+#~                    dev environment setup and for switching customer
+#~                    enviromnets in local development.
 #~
-#~   dbcreate      - Create the database
-#~   [x]migrate    - Run the migrations
-#~   [x]rollback   - Rollback the migrations
-#~   seed          - Fills an empy local dev pgsql database with seed data
-#~   [x]reset      - Wipes the dev pgsql database, recreates it clean from
-#~                   migrations, and seeds it with seed data. Useful for clean
-#~                   dev environment setup and for switching customer
-#~                   enviromnets in local development.
+#~  Monitoring
+#~    redismon      - Run Redis monitor (https://redis.io/commands/monitor/)
+#~    flower        - Run Flower (Celery's monitor UI)
 #~
-#~   redismon      - Run Redis monitor (https://redis.io/commands/monitor/)
-#~   flower        - Run Flower (Celery's monitor UI)
+#~  Routines
+#~    env           - Show the current environment (APP_ENV env variable)
+#~    secret        - Generate a secure random secret
 #~
-#~   secret        - Generate a secure random secret
+#~  Tasks
+#~    tasks         - List available tasks
+#~    task          - Run task
 #~
-#~   tasks         - List available tasks
-#~   task          - Run task
+#~  Generators
+#~    frontend, fe  - Generate the frontend project (nextjs app in a sibiling directory)
 #~
-#~   frontend, fe  - Generate the frontend project (nextjs app in a sibiling directory)
+#~  Code quality
+#~    test, tests   - Run the tests
+#~    lint          - Run the linter
 #~
-#~   help          - View these usage instructions
+#~  Help
+#~    help          - View these usage instructions
 #~
 
 log() {
@@ -70,17 +78,6 @@ params=("$@")
 case "$command" in
   new)
     "$SCRIPT_DIR/serp-new" "${params[@]}"
-    exit 0
-    ;;
-
-  env)
-    "$SCRIPT_DIR/serp-env" "${params[@]}"
-    exit 0
-    ;;
-
-  # Help.
-  --help|help)
-    usage | ${PAGER:-less}
     exit 0
     ;;
 
@@ -115,17 +112,6 @@ case "$command" in
     exit 0
     ;;
 
-  # Tests.
-  t|test)
-    "$SCRIPT_DIR/serp-test" "${params[@]}"
-    exit 0
-    ;;
-
-  l|lint)
-    "$SCRIPT_DIR/serp-lint" "${params[@]}"
-    exit 0
-    ;;
-
   # Database commands.
   dbcreate)
     "$SCRIPT_DIR/serp-dbcreate" "${params[@]}"
@@ -152,7 +138,7 @@ case "$command" in
     exit 0
     ;;
 
-  # Monitor tools
+  # Monitoring
   redismon)
     "$SCRIPT_DIR/serp-redis-monitor" "${params[@]}"
     exit 0
@@ -160,6 +146,17 @@ case "$command" in
 
   flower)
     "$SCRIPT_DIR/serp-flower" "${params[@]}"
+    exit 0
+    ;;
+
+  # Routines.
+  env)
+    "$SCRIPT_DIR/serp-env" "${params[@]}"
+    exit 0
+    ;;
+
+  secret)
+    "$SCRIPT_DIR/serp-secret" "${params[@]}"
     exit 0
     ;;
 
@@ -174,9 +171,26 @@ case "$command" in
     exit 0
     ;;
 
-  # Frontend.
+  # Generators.
   frontend|fe)
     "$SCRIPT_DIR/serp-frontend" "${params[@]}"
+    exit 0
+    ;;
+
+  # Code quality.
+  t|test)
+    "$SCRIPT_DIR/serp-test" "${params[@]}"
+    exit 0
+    ;;
+
+  l|lint)
+    "$SCRIPT_DIR/serp-lint" "${params[@]}"
+    exit 0
+    ;;
+
+  # Help.
+  --help|help)
+    usage | ${PAGER:-less}
     exit 0
     ;;
 
