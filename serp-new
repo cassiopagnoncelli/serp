@@ -179,6 +179,9 @@ function new_app() {
 
   poetry install --no-root
 
+  # Copy files
+  rsync -a "$TEMPLATE_DIR/" .
+
   # App structure
   mkdir -p \
     tests \
@@ -190,30 +193,7 @@ function new_app() {
     lib/{core,tasks} \
     tmp
 
-  # Copy files
-  cp $TEMPLATE_DIR/README.md README.md
-  cp $TEMPLATE_DIR/Makefile Makefile
-  cp $TEMPLATE_DIR/public/robots.txt public/robots.txt
-  cp $TEMPLATE_DIR/app/server.py app/server.py
-  cp $TEMPLATE_DIR/app/console.py app/console.py
-  cp $TEMPLATE_DIR/app/__init__.py app/__init__.py
-  cp $TEMPLATE_DIR/gitignore .gitignore
-  cp $TEMPLATE_DIR/bash_aliases .bash_aliases
-  cp $TEMPLATE_DIR/bin/* bin/
-
-  cp -r $TEMPLATE_DIR/app/api app/
-  cp -r $TEMPLATE_DIR/app/models app/
-  cp -r $TEMPLATE_DIR/app/schemas app/
-  cp -r $TEMPLATE_DIR/app/services app/
-  cp -r $TEMPLATE_DIR/app/utils app/
-  cp -r $TEMPLATE_DIR/app/jobs app/
-  cp -r $TEMPLATE_DIR/config/* config/
-  cp -r $TEMPLATE_DIR/tests/* tests/
-  cp -r $TEMPLATE_DIR/lib/core/* lib/core/
-  cp -r $TEMPLATE_DIR/db/* db/
-
   # Update env, config, core settings
-  cp $TEMPLATE_DIR/.env.* .
   apply_env $project_name
   apply_core_settings $project_name
 

@@ -15,17 +15,17 @@ app = FastAPI(title="API")
 
 # Add CORS middleware
 app.add_middleware(
-  CORSMiddleware,
-  allow_origins=["*"],
-  allow_credentials=True,
-  allow_methods=["*"],
-  allow_headers=["*"],
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Include API routers
 for router_name in dir():
-  if router_name.endswith('_router') and isinstance(globals()[router_name], APIRouter):
-    app.include_router(globals()[router_name])
+    if router_name.endswith('_router') and isinstance(globals()[router_name], APIRouter):
+        app.include_router(globals()[router_name])
 
 # Mount static files
 app.mount("/public", StaticFiles(directory="public"), name="public")
