@@ -1,8 +1,11 @@
 development:
-  backend: {{ BROKER_BACKEND }}
+  url: {{ BROKER_URL }}
+  result_backend: {{ BROKER_RESULT_BACKEND }}
 
 test:
-  backend: {{ BROKER_BACKEND }}
+  url: {{ BROKER_URL }}
+  result_backend: {{ BROKER_RESULT_BACKEND }}
 
 production:
-  backend: {{ BROKER_BACKEND }}
+  url: {{ BROKER_URL }}
+  result_backend: {{ BROKER_RESULT_BACKEND }}

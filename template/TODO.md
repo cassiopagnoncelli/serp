@@ -13,11 +13,11 @@
 - [x] Authentication with OAuth2 JWT, Google
 - [x] Storage
 - [x] Pytest
-- [ ] Dockerfile
+- [x] Dockerfile
 - [x] Makefile
 - [x] Docling
 - [x] Image Magick
-- [ ] OpenAI, Anthropic, Gemini, Clarifai
+- [x] OpenAI, Anthropic, Gemini
 - [ ] Explore: LangChain, HuggingFace
 - [ ] MCP server
 - [ ] RAG
@@ -28,10 +28,10 @@
 To-do
 
 - [ ] Celery with RabbitMQ and cron
-- [ ] Pytest: helpers (api), vcr, fixtures
-- [ ] Storage for S3
 - [ ] Authentication (Captcha, JWT, OAuth2, Google OAuth2, Microsoft, GitHub, Facebook)
 - [ ] Record (ORM) CRUD ops, associations, validations, normalizations, callbacks, query building, enums
+- [ ] Pytest: helpers (api), vcr, fixtures
+- [ ] Storage for S3
 
 Learn
 - [x] @contextmanager

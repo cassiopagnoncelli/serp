@@ -32,10 +32,11 @@ redis_config = decode_yaml("config/redis.yml")[APP_ENV]
 T = TypeVar('T')
 class Settings(BaseSettings):
   # Application general settings.
-  APP_NAME: str = "bla"
+  APP_NAME: str = "my_app"
   DEBUG: bool = False
   # Broker.
-  BROKER_BACKEND: str = dig(broker_config, "backend")
+  BROKER_URL: Optional[str] = dig(broker_config, "url")
+  BROKER_RESULT_BACKEND: Optional[str] = dig(broker_config, "result_backend")
   # Database.
   DATABASE_DRIVER: str = dig(database_config, "driver")
   DATABASE_URL: str = dig(database_config, "url")
