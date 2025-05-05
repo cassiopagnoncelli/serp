@@ -31,21 +31,29 @@ class Storage:
     if self.driver == 's3':
       self.client = boto3.client(
         's3',
-        endpoint_url=config['url_endpoint'],
-        aws_access_key_id=config['access_key'],
-        aws_secret_access_key=config['secret_key'],
-        region_name=self.region,
-        config=Config(signature_version='s3v4')
+        endpoint_url = config['url_endpoint'],
+        aws_access_key_id = config['access_key'],
+        aws_secret_access_key = config['secret_key'],
+        region_name = self.region,
+        config = Config(signature_version='s3v4')
       )
+      # Check if the bucket exists
+      try:
+        self._log(f"Checking if S3 bucket '{self.bucket}' exists...")
+        self.client.head_bucket(Bucket=self.bucket)
+        self._log(f"S3 bucket '{self.bucket}' exists.")
+      except Exception as e:
+        self._log(f"S3 bucket '{self.bucket}' does not exist or is not accessible: {str(e)}")
+        raise ValueError(f"S3 bucket '{self.bucket}' does not exist or is not accessible. Please create it or check your permissions.")
     elif self.driver == 'minio':
       # Remove protocol and trailing slashes from endpoint
       endpoint = config['url_endpoint'].replace('https://', '').replace('http://', '').rstrip('/')
       self.client = Minio(
         endpoint,
-        access_key=config['access_key'],
-        secret_key=config['secret_key'],
-        secure=True,
-        region=self.region
+        access_key = config['access_key'],
+        secret_key = config['secret_key'],
+        secure = True,
+        region = self.region
       )
       
       # Ensure bucket exists
@@ -81,8 +89,12 @@ class Storage:
       raise FileNotFoundError(f"File not found: {file_path}")
         
     if self.driver == 's3':
-      self.client.upload_file(str(file_path), self.bucket, key)
-      return f"{self.client.meta.endpoint_url}/{self.bucket}/{key}"
+      try:
+        self.client.upload_file(str(file_path), self.bucket, key)
+        return f"{self.client.meta.endpoint_url}/{self.bucket}/{key}"
+      except Exception as e:
+        self._log(f"S3 upload error: {str(e)}")
+        raise
     elif self.driver == 'minio':
       try:
         # Ensure bucket exists

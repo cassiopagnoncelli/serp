@@ -9,7 +9,7 @@
 - [x] Uvicorn
 - [x] Console
 - [x] OpenAPI (automatic)
-- [x] Mailer
+- [x] Mailer (SMTP, Sendgrid)
 - [x] Authentication with OAuth2 JWT, Google
 - [x] Storage
 - [x] Pytest
@@ -24,8 +24,6 @@
 
 To-do
 
-- [ ] Storage for S3 (30 min)
-- [x] Sendgrid mailer (1h)
 - [ ] Authentication (sessions + ip, Captcha, JWT, OAuth2, Google, Facebook, Microsoft, GitHub) (1d)
 - [ ] Model with validations, normalizations, callbacks, enums
 - [ ] Record (ORM) CRUD ops, associations, query building
