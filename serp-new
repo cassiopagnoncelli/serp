@@ -33,7 +33,9 @@ set -e
 #~
 #~ OPTIONS
 #~
-#~   --docling         - Add Docling library (adds ~800MB to the project)
+#~   --with-docling         - Add Docling library (adds ~800MB to the project)
+#~   --with-ai              - Add AI libraries OpenAI, Anthropic, Google
+#~                            Generative AI, LangChain, HuggingFace
 #~
 #~ COMMANDS
 #~
@@ -79,6 +81,17 @@ function add_docling() {
     poetry lock
 }
 
+function add_ai() {
+  poetry add \
+    "openai" \
+    "anthropic" \
+    "google-generativeai" \
+    "langchain" \
+    "huggingface-hub" \
+    "langchain-community" && \
+    poetry lock
+}
+
 function install_optional_libraries() {
   unique_params=($(printf "%s\n" "${params[@]}" | sort -u))
   for param in "${unique_params[@]}"; do
@@ -86,6 +99,10 @@ function install_optional_libraries() {
       --docling)
         echo "Installing Docling library..."
         add_docling
+        ;;
+      --ai)
+        echo "Installing AI libraries OpenAI, Anthropic, Google Generative AI, LangChain, HuggingFace, LangChain Community..."
+        add_ai
         ;;
     esac
   done
@@ -152,7 +169,7 @@ function new_app() {
     "fastapi[standard]@<1" \
     "uvicorn@<1" \
     "alembic@<2" \
-    "python-dotenv" \
+    "python-dotenv@<2" \
     "pydantic@<3" \
     "pydantic-settings@<3" \
     "sqlmodel@<1" \
@@ -168,15 +185,14 @@ function new_app() {
     "jinja2@<4" \
     "ruamel.yaml@<1" \
     "prettyprinter@<1" \
-    "ipdb" \
-    "websockets" \
-    "passlib" \
-    "python-multipart" \
-    "requests"
+    "ipdb@<1" \
+    "passlib@<2" \
+    "python-multipart@<1" \
+    "requests@<3" \
+    "websockets"
 
   # Constrained libraries.
   poetry add "fastapi-mail@^1.4.2" --python=">=3.8.1,<4.0"
-  # "s3transfer@0.10.0" "botocore@1.35.99" "boto3@1.35.99"
 
   install_optional_libraries "${params[@]}"
 
