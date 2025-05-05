@@ -11,7 +11,7 @@ mailer_config = decode_yaml("config/mailer.yml")[APP_ENV]
 
 # Dependency injection function for FastAPI
 def get_mailer() -> Mailer:
-  return Mailer(config = mailer_config, verbose = False)
+  return Mailer(config = mailer_config, verbose = True)
 
 # Type alias for injecting Storage via FastAPI's dependency system
 MailerDep = Annotated[Mailer, Depends(get_mailer)]

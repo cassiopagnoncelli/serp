@@ -3,6 +3,7 @@ from lib.core.mailer import Mailer
 from pydantic import EmailStr
 from typing import Dict, Any
 from config.core.mailer import mailer_config
+from asyncio import run
 
 # Usage:
 #
@@ -13,5 +14,5 @@ from config.core.mailer import mailer_config
 
 @celery.task
 def mailer(email: EmailStr, subject: str, template: str, variables: Dict[str, Any] = {}):
-  mailer = Mailer(config)
-  mailer.send_email(email, subject, template, variables)
+  mailer = Mailer(config = mailer_config, verbose = True)
+  run(mailer.send_email(email, subject, template, variables))
