@@ -9,7 +9,12 @@ from asyncio import run
 #
 # from app.jobs.mailer import mailer
 #
-# result = mailer.delay(email, subject, template, variables)
+# result = mailer.delay(
+#   email = "to@example.com",
+#   subject = "Test email",
+#   template = "welcome.html.en.v1.jinja2",
+#   variables = { "user_name": "Name Surname" }
+# )
 # print(f"Task ID: {result.id}") 
 
 @celery.task
