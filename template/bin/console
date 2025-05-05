@@ -1,7 +1,3 @@
 #!/usr/bin/env bash
 
-PROJECT_ROOT=$(git rev-parse --show-toplevel)
-
-cd $PROJECT_ROOT
-
-poetry run python app/console.py
+PROJECT_ROOT=/app poetry run python lib/core/console.py

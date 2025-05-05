@@ -35,3 +35,4 @@ To-do
 
 Learn
 - [x] @contextmanager
+- [ ] https://python.langchain.com/docs/introduction/

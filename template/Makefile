@@ -12,7 +12,7 @@ clean: stop
 	docker rmi --force $(IMAGE_NAME)
 
 stop:
-	if [ -z "$$(docker ps -a -q -f name=$(CONTAINER_NAME))" ]; then \
+	@if [ -z "$$(docker ps -a -q -f name=$(CONTAINER_NAME))" ]; then \
 		echo "No container exists"; \
 	else \
 		docker stop $(CONTAINER_NAME); \
@@ -24,10 +24,10 @@ build:
 
 run: stop build
 	docker run -d --name $(CONTAINER_NAME) -p $(DOCKER_PORT):$(SERVICE_PORT) $(IMAGE_NAME)
-	@echo "Type 'make open' to open websockets terminal"
+	@echo "Type 'make ws_console' to open websockets terminal"
 
 test:
-	docker exec -it $(CONTAINER_NAME) /bin/bash -c 'PYTHONPATH="$(APP_DIR)" \
+	@docker exec -it $(CONTAINER_NAME) /bin/bash -c 'PYTHONPATH="$(APP_DIR)" \
 		poetry run pytest \
 		tests/api \
 		tests/jobs \
@@ -40,44 +40,43 @@ shell:
 	docker exec -it $(CONTAINER_NAME) /bin/bash
 
 console:
-	docker exec -it $(CONTAINER_NAME) /bin/bash -c 'PYTHONPATH="$(APP_DIR)" \
-    poetry run python app/console.py'
+	docker exec -it $(CONTAINER_NAME) /bin/bash -c 'poetry run python lib/core/console.py'
 
 logs:
 	docker logs -f $(CONTAINER_NAME)
 
 ws_console:
-	if ! command -v wscat &> /dev/null; then \
+	@if ! command -v wscat &> /dev/null; then \
 		npm install -g wscat; \
 	fi
 	wscat -c ws://localhost:$(DOCKER_PORT)/ws
 
 health_check:
 	@STATUS=$$(curl -s -o /dev/null -w "%{http_code}" http://localhost:$(DOCKER_PORT)/health-check); \
-	if [ "$$STATUS" -ne 200 ]; then \
+	@if [ "$$STATUS" -ne 200 ]; then \
 		echo "Health check failed"; \
 		exit 1; \
 	fi
 
 lines:
-	wc -l $(APP_DIR)/{app,config,tests}/**/*.py ${APP_DIR}/bin/*
+	wc -l {app,config,tests}/**/*.py bin/*
 
 staging:
-	git checkout main && \
-	git pull origin main && \
-	git checkout staging && \
-	git pull origin staging && \
-	git merge main && \
-	git push origin staging && \
-	git checkout main
+	@git checkout main && \
+	  git pull origin main && \
+	  git checkout staging && \
+	  git pull origin staging && \
+	  git merge main && \
+	  git push origin staging && \
+	  git checkout main
 
 production:
-	git checkout main && \
-	git pull origin main && \
-	git checkout production && \
-	git pull origin production && \
-	git merge main && \
-	git push origin production && \
-	git checkout main
+	@git checkout main && \
+	  git pull origin main && \
+	  git checkout production && \
+	  git pull origin production && \
+	  git merge main && \
+	  git push origin production && \
+	  git checkout main
 
 prod: production
