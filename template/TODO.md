@@ -21,17 +21,22 @@
 - [ ] Explore: LangChain, HuggingFace
 - [ ] MCP server
 - [ ] RAG
-- [ ] Models: Accounts, Plans
-- [ ] Metrify
-- [ ] Stripe payments
 
 To-do
 
-- [ ] Celery with RabbitMQ and cron
-- [ ] Authentication (Captcha, JWT, OAuth2, Google OAuth2, Microsoft, GitHub, Facebook)
-- [ ] Record (ORM) CRUD ops, associations, validations, normalizations, callbacks, query building, enums
+- [ ] Storage for S3 (30 min)
+- [ ] Sendgrid mailer (1h)
+- [ ] Authentication (sessions + ip, Captcha, JWT, OAuth2, Google, Facebook, Microsoft, GitHub) (1d)
+- [ ] Model with validations, normalizations, callbacks, enums
+- [ ] Record (ORM) CRUD ops, associations, query building
+- [-] Celery cron (?)
 - [ ] Pytest: helpers (api), vcr, fixtures
-- [ ] Storage for S3
+
+Separate system
+
+- [ ] Models: Accounts, Plans
+- [ ] Metrify
+- [ ] Stripe payments
 
 Learn
 - [x] @contextmanager

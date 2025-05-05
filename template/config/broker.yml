@@ -1,3 +1,22 @@
+# Celery app background jobs broker configuration.
+#
+# You can configure the broker (url parameter) and, optionally, the result
+# backend (result_backend parameter).
+#
+# The broker is used to send the background jobs to the Celery worker.
+# This one is mandatory and must be set.
+# You can use RabbitMQ (the default one) or Redis as a broker, eg.
+#
+#   "amqp://guest:guest@localhost:5672//"
+#   "redis://localhost:6379/7"
+#
+# The result backend is used to store the results of the background jobs, if
+# you need to retrieve them later.
+# This is optional and, if set, must be a Redis broker, the same or a different
+# one, eg.
+#
+#   "redis://localhost:6379/7"
+#
 development:
   url: {{ BROKER_URL }}
   result_backend: {{ BROKER_RESULT_BACKEND }}
