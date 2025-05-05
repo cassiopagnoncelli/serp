@@ -9,6 +9,7 @@ def session_fixture():
     with Session(engine) as session:
         yield session
 
+@pytest.mark.unit
 def test_create_user(session):
     user = User(email="test@example.com", password="secret", name="Test User")
     session.add(user)
@@ -20,6 +21,7 @@ def test_create_user(session):
     assert user.password == "secret"
     assert user.name == "Test User"
 
+@pytest.mark.unit
 def test_uuid_is_unique(session):
     user1 = User(email="a@example.com", password="pw1", name="A")
     user2 = User(email="b@example.com", password="pw2", name="B")
@@ -28,6 +30,7 @@ def test_uuid_is_unique(session):
     session.commit()
     assert user1.uuid != user2.uuid
 
+@pytest.mark.unit
 def test_email_unique_constraint(session):
     user1 = User(email="unique@example.com", password="pw", name="U")
     session.add(user1)

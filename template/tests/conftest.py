@@ -1,35 +1,39 @@
+import os
 import pytest
 from fastapi.testclient import TestClient
+from sqlmodel import SQLModel, create_engine, Session
 from app.server import app
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from app.database import Base, get_db
+from app.models import *
+from config.core.database import get_session
+from lib.core.env import APP_ENV
+from config.core.settings import decode_yaml
 
-# Test database setup
-SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
-engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
-TestingSessionLocal = sessionmaker(autocommit = False, autoflush = False, bind = engine)
+db_config = decode_yaml("config/database.yml")[APP_ENV]
 
 @pytest.fixture(scope="session", autouse=True)
 def create_test_db():
-    Base.metadata.drop_all(bind=engine)
-    Base.metadata.create_all(bind=engine)
-    yield
-    Base.metadata.drop_all(bind=engine)
+    if db_config["driver"] == "sqlite":
+        engine = create_engine(db_config["url"], connect_args={"check_same_thread": False})
+        SQLModel.metadata.drop_all(bind=engine)
+        SQLModel.metadata.create_all(bind=engine)
+        yield
+        SQLModel.metadata.drop_all(bind=engine)
+    else:
+        raise ValueError(f"Unsupported test database driver: {db_config['driver']}")
 
 @pytest.fixture(scope="function")
 def db_session():
-    db = TestingSessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+    with Session(engine) as session:
+        yield session
 
 @pytest.fixture(scope="function")
 def client(db_session):
-    def override_get_db():
+    # Dependency override for FastAPI
+    def override_get_session():
         yield db_session
 
-    app.dependency_overrides[get_db] = override_get_db
+    # Patch the dependency in your app so all routes use the test DB
+    app.dependency_overrides[get_session] = override_get_session
+
     with TestClient(app) as c:
         yield c

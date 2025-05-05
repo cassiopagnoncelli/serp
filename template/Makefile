@@ -27,14 +27,7 @@ run: stop build
 	@echo "Type 'make ws_console' to open websockets terminal"
 
 test:
-	@docker exec -it $(CONTAINER_NAME) /bin/bash -c 'PYTHONPATH="$(APP_DIR)" \
-		poetry run pytest \
-		tests/api \
-		tests/jobs \
-		tests/models \
-		tests/services \
-		tests/utils \
-		-v'
+	@docker exec -it $(CONTAINER_NAME) /bin/bash -c 'PYTHONPATH="$(APP_DIR)" poetry run pytest -v'
 
 shell:
 	@docker exec -it $(CONTAINER_NAME) /bin/bash
