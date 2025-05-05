@@ -7,14 +7,15 @@ import io
 from datetime import timedelta
 
 class Storage:
-  def __init__(self, config: Dict[str, Any]):
+  def __init__(self, config: Dict[str, Any], verbose: bool = False):
     """
     Initialize the storage client with configuration dictionary.
     
     Args:
         config: Dictionary containing storage configuration
-        environment: Environment to use (development/production)
+        verbose: Whether to enable verbose logging (default: False)
     """
+    self.verbose = verbose
     self.driver = config['driver']
     self.bucket = config['bucket']
     self.region = config['region']
@@ -51,6 +52,11 @@ class Storage:
     else:
       raise ValueError(f"Unsupported driver: {self.driver}")
 
+  def _log(self, message: str) -> None:
+    """Internal logging method that respects verbosity setting."""
+    if self.verbose:
+      print(message)
+
   def upload(self, file_path: Union[str, Path], key: str) -> str:
     """
     Upload a file to the storage.
@@ -63,7 +69,7 @@ class Storage:
         str: The URL of the uploaded file
     """
     file_path = Path(file_path)
-    print(f"Uploading file: {file_path} to bucket={self.bucket}, key={key}")
+    self._log(f"Uploading file: {file_path} to bucket={self.bucket}, key={key}")
     
     if not file_path.exists():
       raise FileNotFoundError(f"File not found: {file_path}")
@@ -75,25 +81,25 @@ class Storage:
       try:
         # Ensure bucket exists
         if not self.client.bucket_exists(self.bucket):
-          print(f"Creating bucket: {self.bucket}")
+          self._log(f"Creating bucket: {self.bucket}")
           self.client.make_bucket(self.bucket)
         
-        print(f"Uploading to Minio: bucket={self.bucket}, key={key}")
+        self._log(f"Uploading to Minio: bucket={self.bucket}, key={key}")
         self.client.fput_object(self.bucket, key, str(file_path))
         
         # Verify the upload
         try:
           objects = list(self.client.list_objects(self.bucket, prefix=key, recursive=True))
           if any(obj.object_name == key for obj in objects):
-            print("Upload verified successfully")
+            self._log("Upload verified successfully")
           else:
-            print("Warning: Upload verification failed - file not found in bucket")
+            self._log("Warning: Upload verification failed - file not found in bucket")
         except Exception as e:
-          print(f"Upload verification error: {str(e)}")
+          self._log(f"Upload verification error: {str(e)}")
           
         return f"{self.url_endpoint}/{self.bucket}/{key}"
       except Exception as e:
-        print(f"Minio upload error: {str(e)}")
+        self._log(f"Minio upload error: {str(e)}")
         raise
     else:
       raise ValueError(f"Unsupported driver: {self.driver}")
@@ -145,7 +151,7 @@ class Storage:
     Returns:
         List of dictionaries containing file information
     """
-    print(f"Listing files in bucket '{self.bucket}' with prefix '{prefix}'")
+    self._log(f"Listing files in bucket '{self.bucket}' with prefix '{prefix}'")
     if self.driver == 's3':
       response = self.client.list_objects_v2(Bucket=self.bucket, Prefix=prefix)
       files = [
@@ -168,14 +174,14 @@ class Storage:
           for obj in objects
         ]
       except Exception as e:
-        print(f"Minio list error: {str(e)}")
+        self._log(f"Minio list error: {str(e)}")
         raise
     else:
       raise ValueError(f"Unsupported driver: {self.driver}")
     
-    print(f"Found {len(files)} files:")
+    self._log(f"Found {len(files)} files:")
     for file in files:
-      print(f"- {file['key']} ({file['size']} bytes)")
+      self._log(f"- {file['key']} ({file['size']} bytes)")
     return files
 
   def exists(self, key: str) -> bool:
@@ -188,35 +194,35 @@ class Storage:
     Returns:
         bool: True if the file exists, False otherwise
     """
-    print(f"Checking if file exists: bucket={self.bucket}, key={key}")
+    self._log(f"Checking if file exists: bucket={self.bucket}, key={key}")
     
     if self.driver == 's3':
       try:
         self.client.head_object(Bucket=self.bucket, Key=key)
-        print("File exists in S3")
+        self._log("File exists in S3")
         return True
       except Exception as e:
-        print(f"S3 head_object error: {str(e)}")
+        self._log(f"S3 head_object error: {str(e)}")
         return False
     elif self.driver == 'minio':
       try:
         # First check if bucket exists
         if not self.client.bucket_exists(self.bucket):
-          print(f"Bucket {self.bucket} does not exist")
+          self._log(f"Bucket {self.bucket} does not exist")
           return False
           
         # Use stat_object directly - this is more reliable for private buckets
         try:
           self.client.stat_object(self.bucket, key)
-          print(f"File exists in Minio: {key}")
+          self._log(f"File exists in Minio: {key}")
           return True
         except Exception as e:
           if "NoSuchKey" in str(e):
-            print(f"File does not exist in Minio: {key}")
+            self._log(f"File does not exist in Minio: {key}")
             return False
           raise  # Re-raise if it's not a NoSuchKey error
       except Exception as e:
-        print(f"Minio exists check error: {str(e)}")
+        self._log(f"Minio exists check error: {str(e)}")
         return False
     else:
       raise ValueError(f"Unsupported driver: {self.driver}")
@@ -240,7 +246,7 @@ class Storage:
       
     try:
       if self.driver == 's3':
-        print(f"Generating S3 presigned URL for {key} in bucket {self.bucket}")
+        self._log(f"Generating S3 presigned URL for {key} in bucket {self.bucket}")
         url = self.client.generate_presigned_url(
           'get_object',
           Params={
@@ -250,19 +256,19 @@ class Storage:
           ExpiresIn=expires,
           HttpMethod='GET'
         )
-        print(f"Generated S3 URL: {url}")
+        self._log(f"Generated S3 URL: {url}")
         return url
       elif self.driver == 'minio':
-        print(f"Generating Minio presigned URL for {key} in bucket {self.bucket}")
+        self._log(f"Generating Minio presigned URL for {key} in bucket {self.bucket}")
         url = self.client.presigned_get_object(
           self.bucket, 
           key, 
           expires=timedelta(seconds=expires)
         )
-        print(f"Generated Minio URL: {url}")
+        self._log(f"Generated Minio URL: {url}")
         return url
       else:
         raise ValueError(f"Unsupported driver: {self.driver}")
     except Exception as e:
-      print(f"Error generating URL: {str(e)}")
+      self._log(f"Error generating URL: {str(e)}")
       raise
