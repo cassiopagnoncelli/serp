@@ -11,13 +11,14 @@ This is a brand new Serp project, a boilerplate Python API combining
 - [x] Uvicorn
 - [x] Console
 - [x] OpenAPI (automatic)
-- [ ] Authentication (JWT, OAuth2, Google OAuth2, Microsoft, GitHub, Facebook, Accounts, Plans)
-- [-] Storage
+- [ ] Mailer
+- [ ] Stripe payments
+- [ ] Authentication (JWT, OAuth2, Google OAuth2, Microsoft, GitHub, Facebook)
+- [ ] Models: Accounts, Plans
+- [x] Storage
 - [x] Pytest
 - [ ] Dockerfile
 - [x] Makefile
-- [ ] Jinja2 (mailer templates)
-- [ ] Stripe payments
 - [x] Docling
 - [x] Image Magick
 - [-] Tensor flow
@@ -28,5 +29,6 @@ This is a brand new Serp project, a boilerplate Python API combining
 To-do
 
 - [ ] Pytest: helpers (api), vcr, fixtures
-- [ ] Celery with RabbitMQ
+- [ ] Celery with RabbitMQ and cron
 - [ ] Active Model lifecycle hooks, has_many & siblings, validations, normalizations, enums
+- [ ] Storage for S3
