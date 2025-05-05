@@ -9,7 +9,7 @@ APP_DIR := /app
 all: run
 
 clean: stop
-	docker rmi --force $(IMAGE_NAME)
+	@docker rmi --force $(IMAGE_NAME)
 
 stop:
 	@if [ -z "$$(docker ps -a -q -f name=$(CONTAINER_NAME))" ]; then \
@@ -37,10 +37,10 @@ test:
 		-v'
 
 shell:
-	docker exec -it $(CONTAINER_NAME) /bin/bash
+	@docker exec -it $(CONTAINER_NAME) /bin/bash
 
 console:
-	docker exec -it $(CONTAINER_NAME) /bin/bash -c 'poetry run python lib/core/console.py'
+	@docker exec -it $(CONTAINER_NAME) /app/bin/console
 
 logs:
 	docker logs -f $(CONTAINER_NAME)
@@ -52,9 +52,12 @@ ws_console:
 	wscat -c ws://localhost:$(DOCKER_PORT)/ws
 
 health_check:
-	@STATUS=$$(curl -s -o /dev/null -w "%{http_code}" http://localhost:$(DOCKER_PORT)/health-check); \
-	@if [ "$$STATUS" -ne 200 ]; then \
-		echo "Health check failed"; \
+	@STATUS=$$(curl -s -o /dev/null -w "%{http_code}" http://localhost:$(DOCKER_PORT)/health-check || echo "000"); \
+	if [ "$$STATUS" = "000" ]; then \
+		echo "Failed to connect to server"; \
+		exit 1; \
+	elif [ "$$STATUS" -ne 200 ]; then \
+		echo "Health check failed with status $$STATUS"; \
 		exit 1; \
 	fi
 

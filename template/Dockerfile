@@ -32,12 +32,11 @@ RUN curl -sSL https://install.python-poetry.org | python3 - && \
 RUN useradd -m -s /bin/bash appuser && \
     chown -R appuser:appuser /app
 
-# Set up system-wide bash configuration
-COPY .bash_aliases /etc/profile.d/bash_aliases.sh
-RUN chmod 644 /etc/profile.d/bash_aliases.sh && \
-    echo "if [ -f /etc/profile.d/bash_aliases.sh ]; then" >> /etc/profile && \
-    echo "    . /etc/profile.d/bash_aliases.sh" >> /etc/profile && \
-    echo "fi" >> /etc/profile
+# Set up user-specific bash configuration
+COPY --chown=appuser:appuser .bash_aliases /home/appuser/.bash_aliases
+RUN echo "if [ -f ~/.bash_aliases ]; then" >> /home/appuser/.bashrc && \
+    echo "    . ~/.bash_aliases" >> /home/appuser/.bashrc && \
+    echo "fi" >> /home/appuser/.bashrc
 
 # Switch to non-root user for application setup
 USER appuser
@@ -60,6 +59,6 @@ ENV PYTHONPATH=/app
 COPY --chown=appuser:appuser . /app/
 
 # Install the project
-RUN poetry install --no-interaction
+RUN poetry install --no-root --no-interaction
 
 CMD ["poetry", "run", "fastapi", "run", "--workers", "8", "app/server.py"]
