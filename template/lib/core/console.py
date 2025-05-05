@@ -79,7 +79,6 @@ def create_ipython_config():
   c.InteractiveShell.pprint = True
   c.InteractiveShellEmbed.colors = "Linux"        # 'NoColor', 'LightBG', 'Linux'
   c.InteractiveShellEmbed.autocall = 2            # Auto-call functions (like Rails console)
-  c.TerminalInteractiveShell.editing_mode = "vi"  # Optional: vi mode
   c.InteractiveShell.pretty = True
   c.InteractiveShell.pretty_indent = 3  # Set indentation to 3 spaces
   return c

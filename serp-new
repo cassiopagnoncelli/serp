@@ -86,21 +86,20 @@ function add_ai() {
     "openai" \
     "anthropic" \
     "google-generativeai" \
-    "langchain" \
-    "huggingface-hub" \
-    "langchain-community" && \
-    poetry lock
+    "huggingface-hub"
+  poetry add "langchain" "langchain-community" --python=">=3.13,<4.0"
+  poetry lock
 }
 
 function install_optional_libraries() {
   unique_params=($(printf "%s\n" "${params[@]}" | sort -u))
   for param in "${unique_params[@]}"; do
     case "$param" in
-      --docling)
+      --with-docling)
         echo "Installing Docling library..."
         add_docling
         ;;
-      --ai)
+      --with-ai)
         echo "Installing AI libraries OpenAI, Anthropic, Google Generative AI, LangChain, HuggingFace, LangChain Community..."
         add_ai
         ;;

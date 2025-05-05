@@ -20,6 +20,7 @@
 - [ ] OpenAI, Anthropic, Gemini, Clarifai
 - [ ] Explore: LangChain, HuggingFace
 - [ ] MCP server
+- [ ] RAG
 - [ ] Models: Accounts, Plans
 - [ ] Metrify
 - [ ] Stripe payments
