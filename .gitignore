@@ -1,1 +1,5 @@
 orm
+
+tmp/*
+
+tests/cassettes/*
