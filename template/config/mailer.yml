@@ -1,11 +1,6 @@
 development:
-  driver: fastapi_mail
-  username: test@test.com
-  password: test
-  from: test@test.com
-  server: smtp.gmail.com
-  port: 587
-  from_name: Serp
+  driver: sendgrid
+  api_key: {{ SENDGRID_API_KEY }}
 
 test:
   driver: fastapi_mail

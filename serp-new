@@ -188,7 +188,8 @@ function new_app() {
     "passlib@<2" \
     "python-multipart@<1" \
     "requests@<3" \
-    "websockets"
+    "websockets" \
+    "sendgrid"
 
   # Constrained libraries.
   poetry add "fastapi-mail@^1.4.2" --python=">=3.8.1,<4.0"

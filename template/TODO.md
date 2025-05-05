@@ -25,7 +25,7 @@
 To-do
 
 - [ ] Storage for S3 (30 min)
-- [ ] Sendgrid mailer (1h)
+- [x] Sendgrid mailer (1h)
 - [ ] Authentication (sessions + ip, Captcha, JWT, OAuth2, Google, Facebook, Microsoft, GitHub) (1d)
 - [ ] Model with validations, normalizations, callbacks, enums
 - [ ] Record (ORM) CRUD ops, associations, query building
