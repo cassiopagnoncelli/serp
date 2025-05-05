@@ -18,17 +18,17 @@
 - [x] Docling
 - [x] Image Magick
 - [x] OpenAI, Anthropic, Gemini
-- [ ] Explore: LangChain, HuggingFace
+- [ ] LangChain, HuggingFace
 - [ ] MCP server
 - [ ] RAG
 
 To-do
 
+- [ ] Pytest: helpers (api), vcr, fixtures
+- [-] Celery cron (?)
 - [ ] Authentication (sessions + ip, Captcha, JWT, OAuth2, Google, Facebook, Microsoft, GitHub) (1d)
 - [ ] Model with validations, normalizations, callbacks, enums
 - [ ] Record (ORM) CRUD ops, associations, query building
-- [-] Celery cron (?)
-- [ ] Pytest: helpers (api), vcr, fixtures
 
 Separate system
 
