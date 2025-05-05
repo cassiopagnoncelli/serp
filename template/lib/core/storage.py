@@ -5,6 +5,8 @@ from typing import Optional, List, Dict, Any, Union
 from pathlib import Path
 import io
 from datetime import timedelta
+import shutil
+import os
 
 class Storage:
   def __init__(self, config: Dict[str, Any], verbose: bool = False):
@@ -17,14 +19,14 @@ class Storage:
     """
     self.verbose = verbose
     self.driver = config['driver']
-    self.bucket = config['bucket']
-    self.region = config['region']
+    self.bucket = config.get('bucket')
+    self.region = config.get('region')
     self.url_endpoint = config['url_endpoint']
-    self.access_key = config['access_key']
-    self.secret_key = config['secret_key']
+    self.access_key = config.get('access_key')
+    self.secret_key = config.get('secret_key')
     
-    if not self.bucket:
-      raise ValueError("Bucket must be specified in configuration")
+    if self.driver != 'local' and not self.bucket:
+      raise ValueError("Bucket must be specified in configuration for non-local storage")
     
     if self.driver == 's3':
       self.client = boto3.client(
@@ -49,6 +51,10 @@ class Storage:
       # Ensure bucket exists
       if not self.client.bucket_exists(self.bucket):
         self.client.make_bucket(self.bucket)
+    elif self.driver == 'local':
+      # For local storage, url_endpoint is the base directory
+      self.base_path = Path(config['url_endpoint'])
+      self.base_path.mkdir(parents=True, exist_ok=True)
     else:
       raise ValueError(f"Unsupported driver: {self.driver}")
 
@@ -69,7 +75,7 @@ class Storage:
         str: The URL of the uploaded file
     """
     file_path = Path(file_path)
-    self._log(f"Uploading file: {file_path} to bucket={self.bucket}, key={key}")
+    self._log(f"Uploading file: {file_path} to key={key}")
     
     if not file_path.exists():
       raise FileNotFoundError(f"File not found: {file_path}")
@@ -101,6 +107,11 @@ class Storage:
       except Exception as e:
         self._log(f"Minio upload error: {str(e)}")
         raise
+    elif self.driver == 'local':
+      dest_path = self.base_path / key
+      dest_path.parent.mkdir(parents=True, exist_ok=True)
+      shutil.copy2(file_path, dest_path)
+      return str(dest_path)
     else:
       raise ValueError(f"Unsupported driver: {self.driver}")
 
@@ -122,6 +133,11 @@ class Storage:
       self.client.download_file(self.bucket, key, str(destination))
     elif self.driver == 'minio':
       self.client.fget_object(self.bucket, key, str(destination))
+    elif self.driver == 'local':
+      source_path = self.base_path / key
+      if not source_path.exists():
+        raise FileNotFoundError(f"File not found: {key}")
+      shutil.copy2(source_path, destination)
     else:
       raise ValueError(f"Unsupported driver: {self.driver}")
         
@@ -138,6 +154,10 @@ class Storage:
       self.client.delete_object(Bucket=self.bucket, Key=key)
     elif self.driver == 'minio':
       self.client.remove_object(self.bucket, key)
+    elif self.driver == 'local':
+      file_path = self.base_path / key
+      if file_path.exists():
+        file_path.unlink()
     else:
       raise ValueError(f"Unsupported driver: {self.driver}")
 
@@ -151,7 +171,7 @@ class Storage:
     Returns:
         List of dictionaries containing file information
     """
-    self._log(f"Listing files in bucket '{self.bucket}' with prefix '{prefix}'")
+    self._log(f"Listing files with prefix '{prefix}'")
     if self.driver == 's3':
       response = self.client.list_objects_v2(Bucket=self.bucket, Prefix=prefix)
       files = [
@@ -176,6 +196,17 @@ class Storage:
       except Exception as e:
         self._log(f"Minio list error: {str(e)}")
         raise
+    elif self.driver == 'local':
+      prefix_path = self.base_path / prefix
+      files = []
+      for path in prefix_path.rglob('*') if prefix else self.base_path.rglob('*'):
+        if path.is_file():
+          rel_path = path.relative_to(self.base_path)
+          files.append({
+            'key': str(rel_path),
+            'size': path.stat().st_size,
+            'last_modified': path.stat().st_mtime
+          })
     else:
       raise ValueError(f"Unsupported driver: {self.driver}")
     
@@ -194,7 +225,7 @@ class Storage:
     Returns:
         bool: True if the file exists, False otherwise
     """
-    self._log(f"Checking if file exists: bucket={self.bucket}, key={key}")
+    self._log(f"Checking if file exists: key={key}")
     
     if self.driver == 's3':
       try:
@@ -224,6 +255,11 @@ class Storage:
       except Exception as e:
         self._log(f"Minio exists check error: {str(e)}")
         return False
+    elif self.driver == 'local':
+      file_path = self.base_path / key
+      exists = file_path.exists()
+      self._log(f"File {'exists' if exists else 'does not exist'} in local storage: {key}")
+      return exists
     else:
       raise ValueError(f"Unsupported driver: {self.driver}")
 
@@ -233,7 +269,7 @@ class Storage:
     
     Args:
         key: Key (path) of the file
-        expires: URL expiration time in seconds
+        expires: URL expiration time in seconds (ignored for local storage)
         
     Returns:
         str: Temporary URL for the file
@@ -242,7 +278,7 @@ class Storage:
         FileNotFoundError: If the file does not exist in the bucket
     """
     if not self.exists(key):
-      raise FileNotFoundError(f"File not found in bucket: {key}")
+      raise FileNotFoundError(f"File not found: {key}")
       
     try:
       if self.driver == 's3':
@@ -266,6 +302,15 @@ class Storage:
           expires=timedelta(seconds=expires)
         )
         self._log(f"Generated Minio URL: {url}")
+        return url
+      elif self.driver == 'local':
+        # For local storage, return a file:// URL
+        file_path = self.base_path / key
+        # Convert to absolute path and ensure forward slashes
+        abs_path = str(file_path.absolute()).replace('\\', '/')
+        # Add file:// prefix
+        url = f"file://{abs_path}"
+        self._log(f"Generated local file URL: {url}")
         return url
       else:
         raise ValueError(f"Unsupported driver: {self.driver}")

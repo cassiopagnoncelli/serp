@@ -32,7 +32,7 @@ redis_config = decode_yaml("config/redis.yml")[APP_ENV]
 T = TypeVar('T')
 class Settings(BaseSettings):
   # Application general settings.
-  APP_NAME: str = "my_app"
+  APP_NAME: str = "bla"
   DEBUG: bool = False
   # Broker.
   BROKER_BACKEND: str = dig(broker_config, "backend")
@@ -44,10 +44,23 @@ class Settings(BaseSettings):
   # Storage.
   STORAGE_DRIVER: str = dig(storage_config, "driver")
   STORAGE_URL_ENDPOINT: str = dig(storage_config, "url_endpoint")
-  STORAGE_ACCESS_KEY: str = dig(storage_config, "access_key")
-  STORAGE_SECRET_KEY: str = dig(storage_config, "secret_key")
-  STORAGE_BUCKET: str = dig(storage_config, "bucket")
-  STORAGE_REGION: str = dig(storage_config, "region")
+  STORAGE_ACCESS_KEY: Optional[str] = dig(storage_config, "access_key")
+  STORAGE_SECRET_KEY: Optional[str] = dig(storage_config, "secret_key")
+  STORAGE_BUCKET: Optional[str] = dig(storage_config, "bucket")
+  STORAGE_REGION: Optional[str] = dig(storage_config, "region")
+
+  def model_post_init(self, __context: Any) -> None:
+    # Validate storage configuration based on driver
+    if self.STORAGE_DRIVER == 'local':
+      # For local storage, we only need url_endpoint
+      if not self.STORAGE_URL_ENDPOINT:
+        raise ValueError("STORAGE_URL_ENDPOINT is required for local storage")
+    else:
+      # For S3 and Minio, all fields are required
+      if not all([self.STORAGE_ACCESS_KEY, self.STORAGE_SECRET_KEY, 
+                 self.STORAGE_BUCKET, self.STORAGE_REGION]):
+        raise ValueError("All storage fields are required for S3 and Minio drivers")
+
   # Dynamically load settings from environment variables.
   model_config = SettingsConfigDict(
     env_file = f".env.{APP_ENV}",
