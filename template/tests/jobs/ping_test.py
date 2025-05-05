@@ -1,25 +1,10 @@
 import pytest
 from app.jobs.ping import ping
-from celery import Celery
-from config.core.broker import celery
 
-@pytest.fixture(autouse=True)
-def setup_celery():
-  # configure Celery to use memory backend for testing
-  celery.conf.update(
-    result_backend='cache+memory://',
-    task_always_eager=True # execute synchronously
-  )
-  yield
-  celery.conf.update(
-    result_backend=None,
-    task_always_eager=False
-  )
-
-def test_ping_task():
+def test_ping_task(celery_test):
   result = ping()
   assert result == "pong"
 
-def test_ping_task_async():
+def test_ping_task_async(celery_test):
   result = ping.delay()
   assert result.get() == "pong"
