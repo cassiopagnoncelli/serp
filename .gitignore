@@ -3,3 +3,5 @@ orm
 tmp/*
 
 tests/cassettes/*
+
+.DS_Store

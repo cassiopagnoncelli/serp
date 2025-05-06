@@ -124,14 +124,6 @@ function apply_core_settings() {
   fi
 }
 
-function apply_alembic_ini() {
-  if [[ "$OSTYPE" == "darwin"* ]]; then
-    sed -i '' "s/sqlalchemy.url = driver:\/\/user:pass@localhost\/dbname/sqlalchemy.url = driver:\/\/postgres:postgres@localhost:5432\/${1}_development/g" alembic.ini
-  else
-    sed -i "s/sqlalchemy.url = driver:\/\/user:pass@localhost\/dbname/sqlalchemy.url = driver:\/\/postgres:postgres@localhost:5432\/${1}_development/g" alembic.ini
-  fi
-}
-
 # Create a new app.
 function new_app() {
   if [ "$1" == "" ]; then
@@ -171,9 +163,7 @@ function new_app() {
   apply_env $project_name
   apply_core_settings $project_name
 
-  # Use alembic for migrations
-  alembic init db/migrations > /dev/null
-  apply_alembic_ini $project_name
+  # Use alembic for migrations (alembic init db/migrations)
 
   # Persist to repository
   git add .
