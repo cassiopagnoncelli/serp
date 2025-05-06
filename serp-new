@@ -164,6 +164,9 @@ function new_app() {
   apply_core_settings $project_name
 
   # Use alembic for migrations (alembic init db/migrations)
+  # Setup the database with dbcreate and dbload
+  serp dbcreate
+  serp dbload
 
   # Persist to repository
   git add .

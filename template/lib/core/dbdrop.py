@@ -38,6 +38,10 @@ if __name__ == "__main__":
         conn.autocommit = True
         cursor = conn.cursor()
         
+        # Check if database exists
+        cursor.execute("SELECT 1 FROM pg_database WHERE datname = %s", (parsed_config["dbname"],))
+        db_exists = cursor.fetchone() is not None
+
         # Terminate all connections to the target database
         cursor.execute(f"""
             SELECT pg_terminate_backend(pg_stat_activity.pid)
@@ -50,6 +54,10 @@ if __name__ == "__main__":
         cursor.execute(f'DROP DATABASE IF EXISTS "{parsed_config["dbname"]}"')
         cursor.close()
         conn.close()
-        print(f"PostgreSQL database '{parsed_config['dbname']}' dropped successfully")
+        
+        if db_exists:
+            print(f"PostgreSQL database '{parsed_config['dbname']}' dropped successfully")
+        else:
+            print(f"PostgreSQL database '{parsed_config['dbname']}' did not exist")
     else:
         raise ValueError(f"Unsupported database driver: {parsed_config['driver']}")

@@ -22,8 +22,7 @@ set -e
 #~  Database commands
 #~    dbcreate      - Create the database
 #~    dbdrop        - Drop the database
-#~    [x]dbload     - Load schema up from migrations
-#~    [x]dbsetup    - Setup the database
+#~    dbload        - Load schema up from migrations
 #~    seed          - Fills an empy local dev pgsql database with seed data
 #~
 #~  Monitoring
@@ -123,11 +122,6 @@ case "$command" in
 
   dbload)
     "$SCRIPT_DIR/serp-dbload" "${params[@]}"
-    exit 0
-    ;;
-
-  dbsetup)
-    "$SCRIPT_DIR/serp-dbsetup" "${params[@]}"
     exit 0
     ;;
 
