@@ -154,61 +154,18 @@ function new_app() {
   git branch -M main
 
   # Use virtualenv
-  python -m venv venv
-  source venv/bin/activate
-
-  # Use poetry for package management (poetry init -n).
-  # Add common libraries
-  # poetry add \
-  #   "ipython" \
-  #   "pylint" \
-  #   "fastapi@<1" \
-  #   "fastapi[standard]@<1" \
-  #   "uvicorn@<1" \
-  #   "alembic@<2" \
-  #   "python-dotenv@<2" \
-  #   "pydantic@<3" \
-  #   "pydantic-settings@<3" \
-  #   "sqlmodel@<1" \
-  #   "psycopg2-binary" \
-  #   "celery@<6" \
-  #   "redis@<7" \
-  #   "flower@<3" \
-  #   "pytest@<9" \
-  #   "Wand@<1" \
-  #   "PyJWT@<3" \
-  #   "minio@<8" \
-  #   "boto3@<2" \
-  #   "jinja2@<4" \
-  #   "ruamel.yaml@<1" \
-  #   "prettyprinter@<1" \
-  #   "ipdb@<1" \
-  #   "passlib@<2" \
-  #   "python-multipart@<1" \
-  #   "requests@<3" \
-  #   "websockets" \
-  #   "sendgrid" \
-  #   "vcrpy"
-  # Constrained libraries.
-  # poetry add "fastapi-mail@^1.4.2" --python=">=3.8.1,<4.0"
-
-  install_optional_libraries "${params[@]}"
-
-  poetry install
+  # start a new one with python3 -m venv venv.
+  # python3 -m venv venv
+  # source venv/bin/activate
 
   # Copy files
-  rsync -a "$TEMPLATE_DIR/" .
+  rsync -a --exclude 'venv/' "$TEMPLATE_DIR/" .
 
-  # App structure
-  mkdir -p \
-    tests \
-    config \
-    public \
-    bin \
-    app \
-    db \
-    lib/{core,tasks} \
-    tmp
+  # Install dependencies from pyproject.toml and poetry.lock
+  poetry install
+
+  # Install optional libraries.
+  install_optional_libraries "${params[@]}"
 
   # Update env, config, core settings
   apply_env $project_name
