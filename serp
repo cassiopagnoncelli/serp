@@ -107,7 +107,7 @@ case "$command" in
     ;;
 
   w|worker)
-    "$SCRIPT_DIR/serp-jobs" "${params[@]}"
+    "$SCRIPT_DIR/serp-worker" "${params[@]}"
     exit 0
     ;;
 
