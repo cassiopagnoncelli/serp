@@ -1,6 +1,6 @@
 export EDITOR=vim
 
-export PATH="/app/venv/bin:$PATH"
+export PATH="/app/venv/bin:/app/bin:$PATH"
 
 alias ll='ls -lhG'
 alias l='ll'
