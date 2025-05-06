@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+set -e
+
+#~ USAGE
+#~
+#~   serp dev-deps
+#~
+#~
+#~ COMMANDS
+#~
+#~   --help  - View these usage instructions
+#~
+
+log() {
+  echo "${1}"
+}
+
+usage() {
+  grep '^#~' < "$0" | cut -c 3-
+}
+
+SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
+SCRIPT_DIR="$(dirname "$SCRIPT_PATH")"
+PROJECT_ROOT=$(git rev-parse --show-toplevel)
+
+############################################################
+# Main Script
+############################################################
+
+function install_dev_deps() {
+  if ! command -v sw_vers &> /dev/null
+  then
+    echo "Not on macOS"
+    exit 1
+  fi
+
+  brew install \
+    yq \
+    jq \
+    freetype imagemagick
+
+  echo "Python package Wand (interface for Image Magick) sometiems do not link properly on MacOS, in such cases, link it manually with"
+  echo
+  echo "  ln -s /opt/homebrew/lib/libMagickWand-7.Q16HDRI.dylib /usr/local/lib/"
+  echo "  ln -s /opt/homebrew/include/ImageMagick-7 /usr/local/include/"
+  echo
+}
+
+install_dev_deps

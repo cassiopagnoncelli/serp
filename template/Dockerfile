@@ -1,63 +1,84 @@
-FROM python:3.13
+FROM python:3.13-slim AS builder
 
-ENV PYTHONUNBUFFERED=1 \
-    POETRY_HOME="/opt/poetry" \
-    POETRY_VIRTUALENVS_IN_PROJECT=true \
-    POETRY_VIRTUALENVS_CREATE=true \
-    POETRY_NO_INTERACTION=1
-
-WORKDIR /app/
-
-# System-level operations (as root)
-RUN apt-get update && apt-get install -y \
-    locales \
-    vim \
-    nano \
+# Install build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
     curl \
-    wget \
-    imagemagick
-RUN locale-gen en_US.UTF-8
+    && rm -rf /var/lib/apt/lists/*
 
-ENV LANG=en_US.UTF-8 \
-    LANGUAGE=en_US:en
+# Install poetry
+RUN pip install --no-cache-dir poetry
 
-# Install latest Poetry
-RUN curl -sSL https://install.python-poetry.org | python3 - && \
-    cd /usr/local/bin && \
-    ln -s /opt/poetry/bin/poetry && \
-    poetry --version && \
-    poetry self update
-
-# Create non-root user
-RUN useradd -m -s /bin/bash appuser && \
-    chown -R appuser:appuser /app
-
-# Set up user-specific bash configuration
-COPY --chown=appuser:appuser .bash_aliases /home/appuser/.bash_aliases
-RUN echo "if [ -f ~/.bash_aliases ]; then" >> /home/appuser/.bashrc && \
-    echo "    . ~/.bash_aliases" >> /home/appuser/.bashrc && \
-    echo "fi" >> /home/appuser/.bashrc
-
-# Switch to non-root user for application setup
-USER appuser
+# Create app directory
 WORKDIR /app
 
-# User-level environment setup
-ENV POETRY_HOME="/home/appuser/.local" \
-    PATH="/home/appuser/.local/bin:$PATH"
+# Copy project files
+COPY pyproject.toml poetry.lock ./
 
-# Copy dependency files
-COPY --chown=appuser:appuser pyproject.toml poetry.lock* ./
+# Configure poetry to not create virtual environment
+RUN poetry config virtualenvs.create false
 
-# Install dependencies with caching
-RUN poetry install --no-interaction --no-cache
+# Install dependencies without dev dependencies and without installing the root project
+RUN poetry install --only main --no-interaction --no-ansi --no-root
 
-ENV PYTHONPATH=/app
+# Final stage
+FROM python:3.13-slim
 
-# Copy application files
-COPY --chown=appuser:appuser . /app/
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    vim \
+    curl \
+    imagemagick \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install the project
-RUN poetry install --no-root --no-interaction
+# Install poetry in the final image for console script
+RUN pip install --no-cache-dir poetry
 
-CMD ["poetry", "run", "fastapi", "run", "--workers", "8", "app/server.py"]
+# Create app directory
+WORKDIR /app
+
+# Create non-root user and setup home directory properly
+RUN groupadd -r appuser && useradd -r -g appuser -m appuser && \
+    chown -R appuser:appuser /app && \
+    mkdir -p /home/appuser/.cache && \
+    chown -R appuser:appuser /home/appuser
+
+# Copy installed packages from builder
+COPY --from=builder /usr/local/lib/python3.13/site-packages /usr/local/lib/python3.13/site-packages
+COPY --from=builder /usr/local/bin /usr/local/bin
+
+# Copy application code
+COPY --chown=appuser:appuser . .
+
+# Setup bash aliases for appuser
+RUN cp /app/.bash_aliases /home/appuser/.bash_aliases && \
+    echo 'if [ -f ~/.bash_aliases ]; then . ~/.bash_aliases; fi' >> /home/appuser/.bashrc && \
+    echo 'export PATH="/app/bin:$PATH"' >> /home/appuser/.bashrc && \
+    chown appuser:appuser /home/appuser/.bash_aliases /home/appuser/.bashrc
+
+# Create direct console script that doesn't use Poetry
+RUN echo '#!/usr/bin/env bash\n\ncd /app && PYTHONPATH=/app python lib/core/console.py' > /app/bin/console-direct && \
+    chmod +x /app/bin/console-direct
+
+# Give execute permission to the console script
+RUN chmod +x /app/bin/console
+
+# Remove unnecessary files from the final image
+RUN rm -f /app/.bash_aliases /app/.dockerignore /app/.gitignore /app/Dockerfile /app/Makefile
+
+# Configure poetry to create virtualenvs in the appuser's home directory
+USER appuser
+RUN poetry config virtualenvs.path /home/appuser/.cache/pypoetry/virtualenvs
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    HOME=/home/appuser \
+    PYTHONPATH=/app \
+    PATH="/app/bin:${PATH}"
+
+# Expose port
+EXPOSE 8000
+
+# Command to run the application
+CMD ["uvicorn", "app.server:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -47,6 +47,7 @@ set -e
 #~  Code quality
 #~    test, tests   - Run the tests
 #~    lint          - Run the linter
+#~    dev-deps      - Install development dependencies
 #~
 #~  Help
 #~    help          - View these usage instructions
