@@ -50,8 +50,7 @@ ENV POETRY_HOME="/home/appuser/.local" \
 COPY --chown=appuser:appuser pyproject.toml poetry.lock* ./
 
 # Install dependencies with caching
-RUN poetry add "fastapi[standard]" && \
-    poetry install --no-root --no-interaction
+RUN poetry install --no-interaction --no-cache
 
 ENV PYTHONPATH=/app
 
