@@ -155,14 +155,14 @@ function new_app() {
 
   # Use virtualenv
   # start a new one with python3 -m venv venv.
-  # python3 -m venv venv
-  # source venv/bin/activate
+  python3 -m venv venv
+  source venv/bin/activate
 
   # Copy files
   rsync -a --exclude 'venv/' "$TEMPLATE_DIR/" .
 
   # Install dependencies from pyproject.toml and poetry.lock
-  poetry install
+  poetry install --no-root
 
   # Install optional libraries.
   install_optional_libraries "${params[@]}"
