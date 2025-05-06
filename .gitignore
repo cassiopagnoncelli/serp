@@ -1,7 +1,9 @@
 orm
 
 tmp/*
+tmp/test.db
 
 tests/cassettes/*
 
 .DS_Store
+.pycache/*
