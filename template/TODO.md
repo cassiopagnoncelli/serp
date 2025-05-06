@@ -24,7 +24,6 @@
 
 To-do
 
-- [ ] Pytest: helpers (api), vcr, fixtures
 - [-] Celery cron (?)
 - [ ] Authentication (sessions + ip, Captcha, JWT, OAuth2, Google, Facebook, Microsoft, GitHub) (1d)
 - [ ] Model with validations, normalizations, callbacks, enums

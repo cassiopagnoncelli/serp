@@ -172,7 +172,7 @@ function new_app() {
     "pydantic@<3" \
     "pydantic-settings@<3" \
     "sqlmodel@<1" \
-    "psycopg2@<3" \
+    "psycopg2-binary" \
     "celery@<6" \
     "redis@<7" \
     "flower@<3" \
