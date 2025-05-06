@@ -21,10 +21,9 @@ set -e
 #~
 #~  Database commands
 #~    dbcreate      - Create the database
-#~    [x]reset      - Wipes the dev pgsql database, recreates it clean from
-#~                    migrations, and seeds it with seed data. Useful for clean
-#~                    dev environment setup and for switching customer
-#~                    enviromnets in local development.
+#~    dbdrop        - Drop the database
+#~    [x]dbload     - Load schema up from migrations
+#~    [x]dbsetup    - Setup the database
 #~    seed          - Fills an empy local dev pgsql database with seed data
 #~
 #~  Monitoring
@@ -117,8 +116,18 @@ case "$command" in
     exit 0
     ;;
 
-  reset)
-    "$SCRIPT_DIR/serp-reset" "${params[@]}"
+  dbdrop)
+    "$SCRIPT_DIR/serp-dbdrop" "${params[@]}"
+    exit 0
+    ;;
+
+  dbload)
+    "$SCRIPT_DIR/serp-dbload" "${params[@]}"
+    exit 0
+    ;;
+
+  dbsetup)
+    "$SCRIPT_DIR/serp-dbsetup" "${params[@]}"
     exit 0
     ;;
 
