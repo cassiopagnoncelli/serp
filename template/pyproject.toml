@@ -1,44 +1,48 @@
-[project]
+[tool.poetry]
 name = "template"
 version = "0.1.0"
 description = ""
-authors = [
-    {name = "Cássio Jandir Pagnoncelli",email = "cassiopagnoncellI@gmail.com"}
-]
+authors = ["Cássio Jandir Pagnoncelli <cassiopagnoncellI@gmail.com>"]
 readme = "README.md"
-requires-python = ">=3.13"
-dependencies = [
-    "ipython (>=9.2.0,<10.0.0)",
-    "pylint (>=3.3.7,<4.0.0)",
-    "fastapi[standard] (<1.0.0)",
-    "uvicorn",
-    "alembic (<2.0.0)",
-    "python-dotenv (<2.0.0)",
-    "pydantic (<3.0.0)",
-    "pydantic-settings (<3.0.0)",
-    "sqlmodel (<1)",
-    "psycopg2-binary (>=2.9.10,<3.0.0)",
-    "celery (<6.0.0)",
-    "redis (<7.0.0)",
-    "flower (<3.0.0)",
-    "pytest (<9.0.0)",
-    "wand (<1.0.0)",
-    "pyjwt (<3.0.0)",
-    "minio (<8.0.0)",
-    "boto3 (<2.0.0)",
-    "jinja2 (<4.0.0)",
-    "ruamel-yaml (<1.0.0)",
-    "prettyprinter (<1.0.0)",
-    "ipdb (<1.0.0)",
-    "passlib (<2.0.0)",
-    "python-multipart (<1.0.0)",
-    "requests (<3.0.0)",
-    "websockets (>=15.0.1,<16.0.0)",
-    "sendgrid (>=6.12.0,<7.0.0)",
-    "vcrpy (>=7.0.0,<8.0.0)",
-    "fastapi-mail (>=1.4.2,<2.0.0) ; python_full_version >= \"3.8.1\" and python_version < \"4.0\""
-]
 
+# Core/production dependencies
+[tool.poetry.dependencies]
+python = ">=3.13,<4.0"
+python-dotenv = "<2.0.0"
+ipython = ">=9.2.0,<10.0.0"
+prettyprinter = "<1.0.0"
+fastapi = {extras = ["standard"], version = "<1.0.0"}
+fastapi-mail = ">=1.4.2,<2.0.0"
+uvicorn = "*"
+alembic = "<2.0.0"
+pydantic = "<3.0.0"
+pydantic-settings = "<3.0.0"
+sqlmodel = "<1"
+psycopg2-binary = ">=2.9.10,<3.0.0"
+celery = "<6.0.0"
+redis = "<7.0.0"
+jinja2 = "<4.0.0"
+passlib = "<2.0.0"
+python-multipart = "<1.0.0"
+requests = "<3.0.0"
+websockets = ">=15.0.1,<16.0.0"
+pyjwt = "<3.0.0"
+minio = "<8.0.0"
+boto3 = "<2.0.0"
+ruamel-yaml = "<1.0.0"
+wand = "<1.0.0"
+sendgrid = ">=6.12.0,<7.0.0"
+ipdb = "<1.0.0"
+
+# Development tools
+[tool.poetry.group.dev.dependencies]
+flower = "<3.0.0"  # Celery monitoring
+pylint = ">=3.3.7,<4.0.0"
+
+# Testing dependencies
+[tool.poetry.group.test.dependencies]
+pytest = "<9.0.0"
+vcrpy = ">=7.0.0,<8.0.0"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
