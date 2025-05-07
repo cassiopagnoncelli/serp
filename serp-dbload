@@ -29,7 +29,7 @@ PROJECT_ROOT=$(git rev-parse --show-toplevel)
 ############################################################
 
 function run_db_load() {
-  PYTHONPATH="$PROJECT_ROOT" poetry run python lib/core/dbload.py
+  PYTHONPATH="$PROJECT_ROOT" alembic upgrade head
 }
 
 run_db_load
