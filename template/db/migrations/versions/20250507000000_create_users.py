@@ -26,7 +26,7 @@ def upgrade() -> None:
         sa.Column('created_at', sa.DateTime(), nullable=False, server_default=sa.text('CURRENT_TIMESTAMP')),
         sa.Column('updated_at', sa.DateTime(), nullable=False, server_default=sa.text('CURRENT_TIMESTAMP')),
 
-        sa.Column('account_id', sa.String(length=255), nullable=True),
+        sa.Column('account_uuid', sa.String(length=255), nullable=True),
 
         sa.Column('email', sa.String(length=255), nullable=False),
         sa.Column('enc_password', sa.String(length=255), nullable=False),
@@ -42,12 +42,12 @@ def upgrade() -> None:
     op.create_index('ix_users_uuid', 'users', ['uuid'])
     op.create_index('ix_users_email', 'users', ['email'])
     op.create_index('ix_users_status', 'users', ['status'])
-    op.create_index('ix_users_account_id', 'users', ['account_id'])
+    op.create_index('ix_users_account_uuid', 'users', ['account_uuid'])
 
 def downgrade() -> None:
     """Downgrade schema."""
     # Drop indexes
-    op.drop_index('ix_users_account_id')
+    op.drop_index('ix_users_account_uuid')
     op.drop_index('ix_users_status')
     op.drop_index('ix_users_email')
     op.drop_index('ix_users_uuid')
