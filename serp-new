@@ -95,7 +95,8 @@ function add_ai() {
 function add_geoip() {
   poetry add "geoip2" "user-agents"
   poetry lock
-  curl -L -A "Mozilla/5.0" -O https://git.io/GeoLite2-City.mmdb -o lib/core/geo/GeoLite2-City.mmdb
+  mkdir -p lib/core/geo
+  curl -L -A "Mozilla/5.0" https://github.com/P3TERX/GeoLite.mmdb/raw/main/GeoLite2-City.mmdb -o lib/core/geo/GeoLite2-City.mmdb
   if [ ! -e lib/core/geo/GeoLite2-City.mmdb ]; then
     echo "Can't download GeoLite2-City.mmdb from https://github.com/P3TERX/GeoLite.mmdb"
     echo "Go to https://github.com/P3TERX/GeoLite.mmdb and download it manually"
