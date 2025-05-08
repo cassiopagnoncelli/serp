@@ -2,10 +2,6 @@ import logging
 import geoip2.database
 from typing import Dict, Optional
 
-# Set up logging
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
-
 def get_location_info(ip_address: str) -> Dict[str, str]:
     """
     Get location information from IP address.
@@ -33,8 +29,7 @@ def get_location_info(ip_address: str) -> Dict[str, str]:
             "timezone": response.location.time_zone
         }
     except Exception as e:
-        logger.error(f"Error getting location info: {str(e)}")
         return {}
     finally:
         if 'reader' in locals():
-            reader.close() 
+            reader.close()
