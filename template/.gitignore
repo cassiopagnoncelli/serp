@@ -22,9 +22,9 @@ env/
 *.swo
 
 # Database files
-**/*/tmp/storage/*
-**/*/tmp/test.db
-**/*/tmp/test.db-journal
+tmp/storage/*
+tmp/test.db
+tmp/test.db-journal
 
 # Jupyter Notebook
 .ipynb_checkpoints
