@@ -30,7 +30,21 @@ PROJECT_ROOT=$(git rev-parse --show-toplevel)
 ############################################################
 
 function run_db_console() {
-  psql $(PYTHONPATH="$PROJECT_ROOT" poetry run python lib/core/database_url.py)
+  CONN_STRING=$(PYTHONPATH="$PROJECT_ROOT" poetry run python lib/core/database_url.py)
+  if [ -z "$CONN_STRING" ]; then
+    echo "No connection string found"
+    exit 1
+  elif [[ "$CONN_STRING" == *"sqlite"* ]]; then
+    DB_PATH="${CONN_STRING#sqlite:///}"
+    DB_PATH="${DB_PATH#sqlite://}"
+    echo "Opening SQLite database: $DB_PATH"
+    sqlite3 "$DB_PATH"
+  elif [[ "$CONN_STRING" == *"postgres"* ]]; then
+    psql "$CONN_STRING"
+  else
+    echo "Unsupported database type"
+    exit 1
+  fi
 }
 
 run_db_console
