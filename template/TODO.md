@@ -1,6 +1,5 @@
 To-do
 
-- [ ] Email templates list (in dev only)
 - [ ] Authentication (Captcha, Facebook)
 
 Separate system

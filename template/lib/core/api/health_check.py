@@ -11,7 +11,7 @@ def get_git_revision_short_hash() -> str:
   except CalledProcessError:
     return "unknown"
 
-@router.get("/health-check")
+@router.get("/health-check", include_in_schema=False)
 async def health_check():
   return {
     "status": "ok",

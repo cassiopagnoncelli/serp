@@ -1,76 +1,26 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to Our Platform</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #ffffff;
-        }
-        .header {
-            text-align: center;
-            padding: 20px 0;
-            background-color: #007bff;
-            color: white;
-        }
-        .content {
-            padding: 20px;
-        }
-        .button {
-            display: inline-block;
-            padding: 12px 24px;
-            background-color: #007bff;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-            margin: 20px 0;
-        }
-        .footer {
-            text-align: center;
-            padding: 20px;
-            font-size: 12px;
-            color: #666;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>Welcome to Our Platform!</h1>
-        </div>
-        <div class="content">
-            <p>Hello {{ user_name }},</p>
-            
-            <p>Thank you for joining our platform! We're excited to have you on board.</p>
-            
-            <p>Here's what you can do to get started:</p>
-            <ul>
-                <li>Complete your profile</li>
-                <li>Explore our features</li>
-                <li>Connect with other members</li>
-            </ul>
+{% extends "layout.html.en.v1.jinja2" %}
 
-            <p>If you have any questions, our support team is here to help.</p>
-            
-            <div style="text-align: center;">
-                <a href="{{ get_started_url }}" class="button">Get Started</a>
-            </div>
-        </div>
-        <div class="footer">
-            <p>© {{ current_year }} Your Company Name. All rights reserved.</p>
-            <p>If you have any questions, please contact us at support@yourcompany.com</p>
-        </div>
-    </div>
-</body>
-</html>
+{% block title %}Welcome to Our Platform{% endblock %}
+
+{% block header %}
+<h1>Welcome to Our Platform!</h1>
+{% endblock %}
+
+{% block content %}
+<p>Hello {{ user_name }},</p>
+
+<p>Thank you for joining our platform! We're excited to have you on board.</p>
+
+<p>Here's what you can do to get started:</p>
+<ul>
+    <li>Complete your profile</li>
+    <li>Explore our features</li>
+    <li>Connect with other members</li>
+</ul>
+
+<p>If you have any questions, our support team is here to help.</p>
+
+<div style="text-align: center;">
+    <a href="{{ get_started_url }}" class="button">Get Started</a>
+</div>
+{% endblock %}
