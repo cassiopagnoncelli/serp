@@ -19,8 +19,8 @@ class UserUpdate(SQLModel):
 class UserTokenizable(SQLModel):
   id: int
   uuid: str
-  account_uuid: str
+  account_uuid: Optional[str] = None
   email: str
-  name: str
-  status: str
-  login_provider: str
+  name: Optional[str] = None
+  status: Optional[str] = None
+  login_provider: Optional[str] = None

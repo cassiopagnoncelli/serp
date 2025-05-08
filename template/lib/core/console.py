@@ -203,7 +203,32 @@ def initialize_db(status_manager):
   """Initialize database session."""
   try:
     status_manager.update_db(LOADING)
-    db = get_session_standalone()
+    
+    # Get the session manager and enter the context
+    session_manager = get_session_standalone()
+    # Extract the actual session object from the context manager
+    db = session_manager.__enter__()
+    
+    # Store the manager to properly close it later
+    db._session_manager = session_manager
+    
+    # Add a close method that properly exits the context manager
+    original_close = getattr(db, 'close', None)
+    def safe_close():
+      try:
+        if original_close:
+          original_close()
+      except:
+        pass
+      try:
+        # Properly exit the context manager without raising exceptions
+        session_manager.__exit__(None, None, None)
+      except:
+        pass
+    
+    # Attach the safe close method to the session
+    db.close = safe_close
+    
     status_manager.update_db(SUCCESS)
     return db
   except Exception as e:
