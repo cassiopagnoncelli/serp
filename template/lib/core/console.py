@@ -3,6 +3,9 @@ import os
 from os import getenv
 from pathlib import Path
 import pprint
+import concurrent.futures
+import threading
+import time
 
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, project_root)
@@ -19,7 +22,8 @@ from IPython import get_ipython
 # Project imports
 from config.core.database import get_session_standalone
 from config.core.redis import RedisStandaloneDep
-from config.core.storage import get_storage
+from config.core.storage import get_storage, storage_config
+from lib.core.storage import Storage
 from app.jobs import *
 from app.models import *
 from app.services import *
@@ -88,24 +92,183 @@ def setup_ipython_history():
   ipython_dir.mkdir(parents=True, exist_ok=True)
   os.environ["IPYTHONDIR"] = str(ipython_dir)
 
+# Status icons
+PENDING = "⏳"
+SUCCESS = "✅"
+ERROR = "❌"
+LOADING = "🔄"
+
+class ServiceStatus:
+  def __init__(self):
+    self.status_lock = threading.Lock()
+    self.db_status = PENDING
+    self.redis_status = PENDING
+    self.storage_status = PENDING
+    self.last_line = ""
+    
+  def update_db(self, status):
+    with self.status_lock:
+      self.db_status = status
+      self._update_display()
+      
+  def update_redis(self, status):
+    with self.status_lock:
+      self.redis_status = status
+      self._update_display()
+  
+  def update_storage(self, status):
+    with self.status_lock:
+      self.storage_status = status
+      self._update_display()
+  
+  def _update_display(self):
+    # Clear the last status line
+    if self.last_line:
+      sys.stdout.write("\r" + " " * len(self.last_line) + "\r")
+      
+    # Create new status line
+    status_line = f"Database: {self.db_status}  Redis: {self.redis_status}  Storage: {self.storage_status}"
+    sys.stdout.write(status_line)
+    sys.stdout.flush()
+    self.last_line = status_line
+  
+  def finalize(self):
+    # Complete the line with a newline
+    if self.last_line:
+      print() 
+
+def initialize_storage(status_manager):
+  """Initialize storage with timeout and fallback."""
+  try:
+    status_manager.update_storage(LOADING)
+    
+    # Make sure local storage directory exists if using local driver
+    if storage_config.get('driver') == 'local':
+      local_path = Path(storage_config.get('url_endpoint', 'tmp/storage'))
+      local_path.mkdir(parents=True, exist_ok=True)
+    
+    # Use threading.Timer instead of signals for timeout (works in threads)
+    storage = None
+    storage_initialized = threading.Event()
+    storage_error = [None]  # Use a list to store the error (if any)
+    
+    def initialize():
+      try:
+        nonlocal storage
+        storage = get_storage()
+        storage_initialized.set()
+      except Exception as e:
+        storage_error[0] = e
+        storage_initialized.set()
+    
+    # Start initialization in a thread
+    init_thread = threading.Thread(target=initialize)
+    init_thread.daemon = True
+    init_thread.start()
+    
+    # Wait for initialization with timeout
+    if storage_initialized.wait(timeout=5):
+      # Check if we got an error
+      if storage_error[0] is not None:
+        raise storage_error[0]
+      status_manager.update_storage(SUCCESS)
+      return storage
+    else:
+      # Timeout occurred
+      local_path = Path("tmp/storage")
+      local_path.mkdir(parents=True, exist_ok=True)
+      storage = Storage({
+        'driver': 'local',
+        'url_endpoint': str(local_path)
+      })
+      status_manager.update_storage(SUCCESS)
+      return storage
+      
+  except Exception as e:
+    # Create a minimal local storage instance as fallback
+    try:
+      local_path = Path("tmp/storage")
+      local_path.mkdir(parents=True, exist_ok=True)
+      storage = Storage({
+        'driver': 'local',
+        'url_endpoint': str(local_path)
+      })
+      status_manager.update_storage(SUCCESS)
+      return storage
+    except Exception as local_error:
+      status_manager.update_storage(ERROR)
+      return None
+
+def initialize_db(status_manager):
+  """Initialize database session."""
+  try:
+    status_manager.update_db(LOADING)
+    db = get_session_standalone()
+    status_manager.update_db(SUCCESS)
+    return db
+  except Exception as e:
+    status_manager.update_db(ERROR)
+    return None
+
+def initialize_redis(status_manager):
+  """Initialize Redis connection."""
+  try:
+    status_manager.update_redis(LOADING)
+    redis = RedisStandaloneDep()
+    status_manager.update_redis(SUCCESS)
+    return redis
+  except Exception as e:
+    status_manager.update_redis(ERROR)
+    return None
+
 def start_console():
   print_colored_snake()
   print("\n💻 Starting interactive console. Type 'exit()' or press Ctrl-D to quit.\n")
-
+  
   config = create_ipython_config()
-  setup_ipython_history()  
-  with RedisStandaloneDep() as redis:
-    with get_session_standalone() as db:
-      shell = InteractiveShellEmbed(config=config, banner1="📦 Console loaded", exit_msg="👋 Goodbye!")
+  setup_ipython_history()
+  
+  # Create status manager
+  status_manager = ServiceStatus()
+  
+  # Initialize services asynchronously
+  services = {}
+  def init_services():
+    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
+      # Submit all initialization tasks
+      storage_future = executor.submit(initialize_storage, status_manager)
+      db_future = executor.submit(initialize_db, status_manager)
+      redis_future = executor.submit(initialize_redis, status_manager)
       
-      # Register the custom formatter after shell is created
-      shell.display_formatter.formatters['text/plain'].for_type(dict, custom_dict_formatter)
-      
-      shell(local_ns = {
-        "db": db,
-        "redis": redis,
-        "storage": get_storage()
-      })
+      # Get results as they complete
+      services['storage'] = storage_future.result()
+      services['db'] = db_future.result()
+      services['redis'] = redis_future.result()
+  
+  # Run initialization in a separate thread
+  init_thread = threading.Thread(target=init_services)
+  init_thread.start()
+  init_thread.join()  # Wait for initialization to complete
+  
+  # Finalize the status display
+  status_manager.finalize()
+  
+  # Create the shell
+  shell = InteractiveShellEmbed(config=config, banner1="\n", exit_msg="👋 Goodbye!")
+  
+  # Register the custom formatter after shell is created
+  shell.display_formatter.formatters['text/plain'].for_type(dict, custom_dict_formatter)
+  
+  # Create a namespace with available services
+  namespace = {}
+  
+  # Add services that were successfully initialized
+  for name, service in services.items():
+    if service is not None:
+      namespace[name] = service
+  
+  # Start the shell with the namespace
+  shell(local_ns=namespace)
 
 if __name__ == "__main__":
   start_console()

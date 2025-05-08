@@ -53,12 +53,20 @@ class Storage:
         access_key = config['access_key'],
         secret_key = config['secret_key'],
         secure = True,
-        region = self.region
+        region = self.region,
+        http_client = None  # Use default client with timeout
       )
       
+      # Set connection timeout - this will prevent long hangs
+      if hasattr(self.client._http, '_pool_kwargs'):
+        self.client._http._pool_kwargs['timeout'] = 5.0
+      
       # Ensure bucket exists
-      if not self.client.bucket_exists(self.bucket):
-        self.client.make_bucket(self.bucket)
+      try:
+        if not self.client.bucket_exists(self.bucket):
+          self.client.make_bucket(self.bucket)
+      except Exception as e:
+        self._log(f"Warning: Could not verify bucket existence: {str(e)}")
     elif self.driver == 'local':
       # For local storage, url_endpoint is the base directory
       self.base_path = Path(config['url_endpoint'])

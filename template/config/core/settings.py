@@ -12,7 +12,20 @@ from ipdb import set_trace
 def decode_yaml(path: str) -> dict:
   env = Environment(loader = FileSystemLoader("."), autoescape = False)
   template = env.get_template(path)
-  rendered = template.render(environ)
+  
+  # Create a dictionary with environment variables, 
+  # providing empty strings for missing variables to prevent errors
+  env_vars = {}
+  for key, value in environ.items():
+    env_vars[key] = value
+  
+  # Add special handling for common environment variables that might be missing
+  for key in ["MINIO_ENDPOINT_URL", "MINIO_ACCESS_KEY", "MINIO_SECRET_KEY", 
+              "MINIO_BUCKET", "MINIO_REGION"]:
+    if key not in env_vars:
+      env_vars[key] = ""
+  
+  rendered = template.render(env_vars)
   return YAML(typ = "safe").load(StringIO(rendered))
 
 def dig(d, path, default = None, sep = "."):
