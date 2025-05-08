@@ -2,6 +2,7 @@
 from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.security import OAuth2PasswordBearer
 
 # Import environment variables
 import lib.core.env
@@ -11,7 +12,20 @@ from os import getenv
 from app.api import *
 
 # Create FastAPI app
-app = FastAPI(title="API")
+app = FastAPI(
+    title="API",
+    openapi_tags=[
+        {"name": "Users API", "description": "User management endpoints"},
+        {"name": "Authentication", "description": "Authentication endpoints"}
+    ]
+)
+
+# Add security schemes
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+app.swagger_ui_init_oauth = {
+    "usePkceWithAuthorizationCodeGrant": True,
+    "additionalQueryStringParams": {"token_type": "bearer"}
+}
 
 # Add CORS middleware
 app.add_middleware(

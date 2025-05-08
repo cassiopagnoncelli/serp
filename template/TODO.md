@@ -1,11 +1,12 @@
 To-do
 
-- [ ] Authentication (Captcha, Facebook)
+- [ ] Authentication: Facebook, Captcha, Find or create account (Google, Facebook)
+- [ ] Tortoise ORM replace alembic + SQLModel
 
 Separate system
 
 - [ ] Models: Accounts, Plans
-- [ ] Metrify
+- [ ] Metrify: user.plan, user.account, user.add_credit, user.consume_credit, user.account.members.root
 - [ ] Stripe payments
 
 Learn

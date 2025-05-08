@@ -1,8 +1,10 @@
-from fastapi import Depends
+from fastapi import Depends, HTTPException
 from sqlmodel import select
 from datetime import datetime, timedelta
+import random
+import string
 
-from app.models import User, Token
+from app.models import User, Token, UserStatus
 from app.schemas.user import UserTokenizable
 from config.core.settings import get_settings
 from config.core.database import SessionDep
@@ -49,8 +51,8 @@ def persist_user_token(
       expires_minutes: int = ACCESS_TOKEN_EXPIRE_MINUTES,
       ip_address: str = None,
       user_agent: str = None,
-      location: str = None,
-      device: str = None,
+      location: dict = None,
+      device: dict = None,
       session: SessionDep = Depends(SessionDep)
   ) -> Token:
     obj = Token(
@@ -66,17 +68,38 @@ def persist_user_token(
     session.commit()
     return obj
 
-def login_user(
+def login_user_with_password(
       email: str,
       password: str,
       expires_minutes: int = ACCESS_TOKEN_EXPIRE_MINUTES,
       ip_address: str = None,
       user_agent: str = None,
-      location: str = None,
-      device: str = None,
+      location: dict = None,
+      device: dict = None,
       session: SessionDep = Depends(SessionDep)
   ) -> str:
     user = authenticate_user(email, password, session)
+    if not user:
+        return None
+    if user.status != UserStatus.active:
+      raise HTTPException(status_code=401, detail="User is not active")
+    token = generate_user_token(user.model_dump(), expires_minutes)
+    persist_user_token(user.id, token, expires_minutes, ip_address, user_agent, location, device, session)
+    return token
+
+def random_password() -> str:
+    return "".join(random.choices(string.ascii_letters + string.digits, k=16))
+
+def login_user_with_google(
+      email: str,
+      expires_minutes: int = ACCESS_TOKEN_EXPIRE_MINUTES,
+      ip_address: str = None,
+      user_agent: str = None,
+      location: dict = None,
+      device: dict = None,
+      session: SessionDep = Depends(SessionDep)
+  ) -> str:
+    user = find_user_by_email(email, session)
     if not user:
         return None
     token = generate_user_token(user.model_dump(), expires_minutes)

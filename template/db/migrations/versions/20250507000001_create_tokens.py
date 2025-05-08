@@ -9,6 +9,7 @@ from typing import Sequence, Union
 
 from alembic import op
 import sqlalchemy as sa
+from sqlalchemy.dialects.sqlite import JSON
 
 # revision identifiers, used by Alembic.
 revision: str = '20250507000001_create_tokens'
@@ -31,8 +32,8 @@ def upgrade() -> None:
         sa.Column('expires_at', sa.DateTime(), nullable=False),
         sa.Column('ip_address', sa.String(length=63), nullable=True),
         sa.Column('user_agent', sa.String(length=255), nullable=True),
-        sa.Column('location', sa.String(length=255), nullable=True),
-        sa.Column('device', sa.String(length=255), nullable=True),
+        sa.Column('location', JSON, nullable=True),
+        sa.Column('device', JSON, nullable=True),
 
         sa.PrimaryKeyConstraint('id'),
         sa.UniqueConstraint('token')

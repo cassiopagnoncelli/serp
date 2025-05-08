@@ -3,9 +3,18 @@ import random
 import string
 from datetime import datetime, UTC
 from sqlmodel import Field, SQLModel
+from enum import Enum
 
 from lib.core.authentication.passwords import encrypt_password
 from lib.core.record.uuid import generate_id
+
+class UserStatus(str, Enum):
+    active = "active"
+    inactive = "inactive"
+
+class LoginProvider(str, Enum):
+    email = "email"
+    google = "google"
 
 class User(SQLModel, table=True):
     __tablename__ = "users"
@@ -22,8 +31,8 @@ class User(SQLModel, table=True):
     enc_password: str = Field(index=False)
     # User attributes
     name: Optional[str] = Field(index=False)
-    status: Optional[str] = Field(index=False)
-    login_provider: Optional[str] = Field(index=False)
+    status: UserStatus = Field(default=UserStatus.active)
+    login_provider: LoginProvider = Field(default=LoginProvider.email)
 
     def __init__(self, **data):
         timestamp = datetime.now(UTC)

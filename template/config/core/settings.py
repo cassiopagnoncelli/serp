@@ -45,7 +45,7 @@ redis_config = decode_yaml("config/redis.yml")[APP_ENV]
 T = TypeVar('T')
 class Settings(BaseSettings):
   # Application general settings.
-  APP_NAME: str = "my_app"
+  APP_NAME: str = "bla"
   DEBUG: bool = False
   # Broker.
   BROKER_URL: Optional[str] = dig(broker_config, "url")
@@ -62,8 +62,6 @@ class Settings(BaseSettings):
   STORAGE_SECRET_KEY: Optional[str] = dig(storage_config, "secret_key")
   STORAGE_BUCKET: Optional[str] = dig(storage_config, "bucket")
   STORAGE_REGION: Optional[str] = dig(storage_config, "region")
-  # GeoIP.
-  ENABLE_GEOIP: bool = False
 
   def model_post_init(self, __context: Any) -> None:
     # Validate storage configuration based on driver

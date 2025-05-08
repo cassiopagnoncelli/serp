@@ -8,7 +8,7 @@ from app.api.auth.token import router as token_router
 from app.api.auth.google import router as google_router
 
 # Users.
-from .secure.users import router as users_router
+from .secure.user import router as user_router
 
 # Add all models you want to export here
 __all__ = [
@@ -16,5 +16,5 @@ __all__ = [
   "mailer_router",
   "token_router",
   "google_router",
-  "users_router"
+  "user_router"
 ]

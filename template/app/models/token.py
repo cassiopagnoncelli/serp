@@ -2,6 +2,7 @@ from typing import Annotated, Optional
 import random
 from datetime import datetime, UTC
 from sqlmodel import Field, SQLModel
+from sqlalchemy import JSON
 
 class Token(SQLModel, table=True):
     __tablename__ = "tokens"
@@ -17,8 +18,8 @@ class Token(SQLModel, table=True):
     expires_at: datetime = Field(index=False)
     ip_address: str = Field(index=False)
     user_agent: str = Field(index=False)
-    location: str = Field(index=False)
-    device: str = Field(index=False)
+    location: dict = Field(index=False, sa_type=JSON)
+    device: dict = Field(index=False, sa_type=JSON)
 
     def __init__(self, **data):
         timestamp = datetime.now(UTC)

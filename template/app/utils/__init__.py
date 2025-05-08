@@ -9,6 +9,7 @@ __all__ = [
   "decode_user_token",
   "find_user_by_email",
   "generate_user_token",
-  "login_user",
-  "persist_user_token"
+  "login_user_with_password",
+  "persist_user_token",
+  "create_user"
 ]

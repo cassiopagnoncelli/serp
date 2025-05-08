@@ -4,7 +4,7 @@ from app.utils.authentication import (
     authenticate_user,
     generate_user_token,
     decode_user_token,
-    login_user,
+    login_user_with_password,
     find_user_by_email,
     persist_user_token
 )
@@ -100,9 +100,9 @@ def test_persist_user_token(db_session, test_user):
     assert saved_token is not None
     assert saved_token.token == token
 
-def test_login_user(db_session, test_user):
+def test_login_user_with_password(db_session, test_user):
     # Test successful login
-    token = login_user(
+    token = login_user_with_password(
         "test@example.com",
         "testpassword",
         ip_address="127.0.0.1",
@@ -117,7 +117,7 @@ def test_login_user(db_session, test_user):
     assert saved_token.token == token
     
     # Test login with wrong password
-    wrong_password_token = login_user(
+    wrong_password_token = login_user_with_password(
         "test@example.com",
         "wrongpassword",
         session=db_session
@@ -125,7 +125,7 @@ def test_login_user(db_session, test_user):
     assert wrong_password_token is None
     
     # Test login with non-existent user
-    nonexistent_token = login_user(
+    nonexistent_token = login_user_with_password(
         "nonexistent@example.com",
         "testpassword",
         session=db_session
