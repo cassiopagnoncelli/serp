@@ -32,6 +32,7 @@ def upgrade() -> None:
         sa.Column('enc_password', sa.String(length=255), nullable=False),
         sa.Column('name', sa.String(length=255), nullable=True),
         sa.Column('status', sa.String(length=255), nullable=True),
+        sa.Column('login_provider', sa.String(length=255), nullable=True),
         
         sa.PrimaryKeyConstraint('id'),
         sa.UniqueConstraint('uuid'),

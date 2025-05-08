@@ -111,8 +111,12 @@ function install_optional_libraries() {
 function apply_env() {
   if [[ "$OSTYPE" == "darwin"* ]]; then
     sed -i '' "s/^APP_NAME=template/APP_NAME=${1}/g" .env.*
+    sed -i '' "s/my_app_development$/${1}_development/g" .env.development
+    sed -i '' "s/my_app_production$/${1}_production/g" .env.production
   else
     sed -i "s/^APP_NAME=template/APP_NAME=${1}/g" .env.*
+    sed -i "s/my_app_development$/${1}_development/g" .env.development
+    sed -i "s/my_app_production$/${1}_production/g" .env.production
   fi
 }
 
@@ -155,6 +159,7 @@ function new_app() {
 
   # Install dependencies from pyproject.toml and poetry.lock
   poetry install --no-root
+  poetry env activate
 
   # Install optional libraries.
   install_optional_libraries "${params[@]}"

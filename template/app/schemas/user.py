@@ -9,9 +9,18 @@ class UserPublic(SQLModel):
 class UserCreate(SQLModel):
   name: str
   email: str
-  password: str
+  enc_password: str
 
 class UserUpdate(SQLModel):
   name: Optional[str] = None
   email: Optional[str] = None
-  password: Optional[str] = None
+  enc_password: Optional[str] = None
+
+class UserTokenizable(SQLModel):
+  id: int
+  uuid: str
+  account_uuid: str
+  email: str
+  name: str
+  status: str
+  login_provider: str
