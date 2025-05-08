@@ -36,6 +36,7 @@ set -e
 #~   --with-docling         - Add Docling library (adds ~800MB to the project)
 #~   --with-ai              - Add AI libraries OpenAI, Anthropic, Google
 #~                            Generative AI, LangChain, HuggingFace
+#~   --with-geoip           - Add GeoIP to get users location
 #~
 #~ COMMANDS
 #~
@@ -91,6 +92,18 @@ function add_ai() {
   poetry lock
 }
 
+function add_geoip() {
+  poetry add "geoip2" "user-agents"
+  poetry lock
+  curl -L -A "Mozilla/5.0" -O https://git.io/GeoLite2-City.mmdb -o lib/core/geo/GeoLite2-City.mmdb
+  if [ ! -e lib/core/geo/GeoLite2-City.mmdb ]; then
+    echo "Can't download GeoLite2-City.mmdb from https://github.com/P3TERX/GeoLite.mmdb"
+    echo "Go to https://github.com/P3TERX/GeoLite.mmdb and download it manually"
+    echo "and put it in lib/core/geo/"
+    exit 1
+  fi
+}
+
 function install_optional_libraries() {
   unique_params=($(printf "%s\n" "${params[@]}" | sort -u))
   for param in "${unique_params[@]}"; do
@@ -102,6 +115,10 @@ function install_optional_libraries() {
       --with-ai)
         echo "Installing AI libraries OpenAI, Anthropic, Google Generative AI, LangChain, HuggingFace, LangChain Community..."
         add_ai
+        ;;
+      --with-geoip)
+        echo "Installing GeoIP libraries..."
+        add_geoip
         ;;
     esac
   done
