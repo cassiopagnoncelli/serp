@@ -11,6 +11,9 @@ import logging
 from app.utils.authentication import login_user, authenticate_user, find_user_by_email
 from config.core.database import SessionDep
 from lib.core.geo import get_device_info, get_location_info
+from config.core.settings import get_settings
+
+settings = get_settings()
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
@@ -58,8 +61,12 @@ async def login_for_access_token(
     user_agent = request.headers.get("user-agent")
     ip_address = request.client.host if request.client else None
     
-    device_info = get_device_info(user_agent)
-    location_info = get_location_info(ip_address)
+    if settings.ENABLE_GEOIP:
+        device_info = get_device_info(user_agent)
+        location_info = get_location_info(ip_address)
+    else:
+        device_info = {}
+        location_info = {}
     
     if verbose:
         logger.debug(f"Device info: {device_info}")
