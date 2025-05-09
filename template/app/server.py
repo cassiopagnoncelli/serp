@@ -14,9 +14,11 @@ from app.api import *
 # Create FastAPI app
 app = FastAPI(
     title="API",
+    description="ASGI FastAPI backend app",
     openapi_tags=[
-        {"name": "Users API", "description": "User management endpoints"},
-        {"name": "Authentication", "description": "Authentication endpoints"}
+        {"name": "Authentication", "description": "Token and social login endpoints"},
+        {"name": "Sign Up", "description": "Sign up endpoints"},
+        {"name": "Users API", "description": "User, account, plan, and subscription management endpoints"},
     ],
     swagger_ui_parameters={"defaultModelsExpandDepth": -1}
 )

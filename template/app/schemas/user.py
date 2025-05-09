@@ -10,6 +10,7 @@ class UserCreate(SQLModel):
   name: str
   email: str
   enc_password: str
+  account_uuid: Optional[str] = None
 
 class UserUpdate(SQLModel):
   name: Optional[str] = None

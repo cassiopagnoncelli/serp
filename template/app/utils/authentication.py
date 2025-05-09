@@ -1,5 +1,6 @@
-from fastapi import Depends, HTTPException
-from sqlmodel import select
+from fastapi import Depends, HTTPException, Security
+from fastapi.security import OAuth2PasswordBearer, HTTPBearer, HTTPAuthorizationCredentials
+from sqlmodel import Session, SQLModel, select, update
 from datetime import datetime, timedelta
 import random
 import string
@@ -15,6 +16,9 @@ settings = get_settings()
 
 SECRET_KEY: str = settings.fetch("ACCESS_TOKEN_SECRET_KEY")
 ACCESS_TOKEN_EXPIRE_MINUTES: int = int(settings.fetch("ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+bearer_scheme = HTTPBearer()
 
 def find_user_by_email(email: str, session: SessionDep = Depends(SessionDep)) -> UserTokenizable:
     statement = select(User).where(User.email == email)
@@ -67,6 +71,23 @@ def persist_user_token(
     session.add(obj)
     session.commit()
     return obj
+
+def get_current_user(
+    oauth_token: str = Depends(oauth2_scheme),
+    bearer_token: HTTPAuthorizationCredentials = Depends(bearer_scheme)
+) -> UserTokenizable:
+    # Try OAuth2 token first
+    token_data = decode_user_token(oauth_token)
+    if not token_data:
+        # Try bearer token
+        token_data = decode_user_token(bearer_token.credentials)
+        if not token_data:
+            raise HTTPException(
+                status_code=401,
+                detail="Invalid authentication credentials",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+    return token_data
 
 def login_user_with_password(
       email: str,
