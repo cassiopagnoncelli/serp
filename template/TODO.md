@@ -1,6 +1,6 @@
 To-do
 
-- [ ] Authentication: Facebook, Captcha, Find or create account (Google, Facebook)
+- [ ] Authentication: Facebook, GitHub, Apple, Captcha (sign up)
 - [ ] Tortoise ORM replace alembic + SQLModel
 
 Separate system
