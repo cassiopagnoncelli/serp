@@ -17,7 +17,8 @@ app = FastAPI(
     openapi_tags=[
         {"name": "Users API", "description": "User management endpoints"},
         {"name": "Authentication", "description": "Authentication endpoints"}
-    ]
+    ],
+    swagger_ui_parameters={"defaultModelsExpandDepth": -1}
 )
 
 # Add security schemes

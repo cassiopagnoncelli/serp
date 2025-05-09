@@ -20,7 +20,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl = "token")
 router = APIRouter(tags = ["Authentication"])
 
 @router.post(
-    "/token",
+    "/auth/token",
     name="Login for Access Token",
     description="Authenticates a user and returns an access token"
 )

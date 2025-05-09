@@ -6,6 +6,7 @@ from lib.core.api.health_check import router as health_check_router
 from lib.core.api.mailer import router as mailer_router
 from app.api.auth.token import router as token_router
 from app.api.auth.google import router as google_router
+from app.api.public.signup import router as signup_router
 
 # Users.
 from .secure.user import router as user_router
@@ -16,5 +17,6 @@ __all__ = [
   "mailer_router",
   "token_router",
   "google_router",
-  "user_router"
+  "user_router",
+  "signup_router"
 ]
