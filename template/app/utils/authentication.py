@@ -126,3 +126,19 @@ def login_user_with_google(
     token = generate_user_token(user.model_dump(), expires_minutes)
     persist_user_token(user.id, token, expires_minutes, ip_address, user_agent, location, device, session)
     return token
+
+def login_user_with_facebook(
+      email: str,
+      expires_minutes: int = ACCESS_TOKEN_EXPIRE_MINUTES,
+      ip_address: str = None,
+      user_agent: str = None,
+      location: dict = None,
+      device: dict = None,
+      session: SessionDep = Depends(SessionDep)
+  ) -> str:
+    user = find_user_by_email(email, session)
+    if not user:
+        return None
+    token = generate_user_token(user.model_dump(), expires_minutes)
+    persist_user_token(user.id, token, expires_minutes, ip_address, user_agent, location, device, session)
+    return token

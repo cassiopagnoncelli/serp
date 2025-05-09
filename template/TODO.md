@@ -1,6 +1,5 @@
 To-do
 
-- [ ] Authentication: Facebook, GitHub, Apple, Captcha (sign up)
 - [ ] Tortoise ORM replace alembic + SQLModel
 
 Separate system

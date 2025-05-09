@@ -15,6 +15,7 @@ class UserStatus(str, Enum):
 class LoginProvider(str, Enum):
     email = "email"
     google = "google"
+    facebook = "facebook"
 
 class User(SQLModel, table=True):
     __tablename__ = "users"
