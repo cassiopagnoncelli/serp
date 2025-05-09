@@ -1,0 +1,17 @@
+development:
+  social_login:
+    create_user_on_google_login: true
+  signup:
+    captcha: true
+
+test:
+  social_login:
+    create_user_on_google_login: false
+  signup:
+    captcha: true
+
+production:
+  social_login:
+    create_user_on_google_login: false
+  signup:
+    captcha: true

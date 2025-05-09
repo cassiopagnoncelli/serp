@@ -76,7 +76,7 @@ async def google_callback(
     # Find or create user
     user = find_user_by_email(user_info.get("email"), session)
     if not user:
-      if feature_flags.get("CREATE_USER_ON_GOOGLE_LOGIN"):
+      if feature_flags.get("social_login.create_user_on_google_login"):
         user = User(
             email=user_info.get("email"),
             password=random_password(),

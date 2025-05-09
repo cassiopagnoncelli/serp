@@ -23,6 +23,7 @@ from IPython import get_ipython
 from config.core.database import get_session_standalone
 from config.core.redis import RedisStandaloneDep
 from config.core.storage import get_storage, storage_config
+from config.core.feature_flags import get_feature_flags
 from lib.core.storage import Storage
 from app.jobs import *
 from app.models import *
@@ -291,6 +292,9 @@ def start_console():
   for name, service in services.items():
     if service is not None:
       namespace[name] = service
+
+  # Add configurations
+  namespace['feature_flags'] = get_feature_flags()
   
   # Start the shell with the namespace
   shell(local_ns=namespace)
