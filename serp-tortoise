@@ -4,13 +4,17 @@ set -e
 
 #~ USAGE
 #~
-#~   serp redis
+#~   serp tortoise
 #~
 #~
 #~ COMMANDS
 #~
 #~   --help  - View these usage instructions
 #~
+
+log() {
+  echo "${1}"
+}
 
 usage() {
   grep '^#~' < "$0" | cut -c 3-
@@ -23,11 +27,11 @@ PROJECT_ROOT=$(git rev-parse --show-toplevel)
 ############################################################
 # Main Script
 ############################################################
-
-function run_redis_cli() {
-  URL=$(PYTHONPATH="$PROJECT_ROOT" poetry run python lib/core/redis_service/url.py)
-  echo $URL
-  redis-cli -u $URL
+function run_tortoise() {
+  cd "$PROJECT_ROOT"
+  params=("$@")
+  source "$PROJECT_ROOT/venv/bin/activate"
+  PYTHONPATH="$PROJECT_ROOT" tortoise-cli -c config.core.tortoise_db.TORTOISE_ORM shell"
 }
 
-run_redis_cli
+run_tortoise "$@"

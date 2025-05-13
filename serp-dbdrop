@@ -29,7 +29,7 @@ PROJECT_ROOT=$(git rev-parse --show-toplevel)
 ############################################################
 
 function run_db_drop() {
-  PYTHONPATH="$PROJECT_ROOT" poetry run python lib/core/dbdrop.py
+  PYTHONPATH="$PROJECT_ROOT" poetry run python lib/core/database_routines/dbdrop.py
 }
 
 run_db_drop

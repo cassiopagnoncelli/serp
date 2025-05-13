@@ -18,6 +18,7 @@ set -e
 #~    dev, s        - Run web server in development mode
 #~    prod          - Run web server in production mode
 #~    worker, w     - Run celery worker
+#~    tortoise, to  - Open Tortoise ORM console
 #~
 #~  Database commands
 #~    dbcreate      - Create the database

@@ -31,7 +31,7 @@ PROJECT_ROOT=$(git rev-parse --show-toplevel)
 
 function run_console() {
   source "$PROJECT_ROOT/venv/bin/activate"
-  PYTHONPATH="$PROJECT_ROOT" poetry run python lib/core/console.py
+  PYTHONPATH="$PROJECT_ROOT" poetry run python lib/core/console/main.py
 }
 
 run_console

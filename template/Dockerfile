@@ -56,10 +56,6 @@ RUN cp /app/.bash_aliases /home/appuser/.bash_aliases && \
     echo 'export PATH="/app/bin:$PATH"' >> /home/appuser/.bashrc && \
     chown appuser:appuser /home/appuser/.bash_aliases /home/appuser/.bashrc
 
-# Create direct console script that doesn't use Poetry
-RUN echo '#!/usr/bin/env bash\n\ncd /app && PYTHONPATH=/app python lib/core/console.py' > /app/bin/console-direct && \
-    chmod +x /app/bin/console-direct
-
 # Give execute permission to the console script
 RUN chmod +x /app/bin/console
 

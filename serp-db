@@ -30,7 +30,7 @@ PROJECT_ROOT=$(git rev-parse --show-toplevel)
 ############################################################
 
 function run_db_console() {
-  CONN_STRING=$(PYTHONPATH="$PROJECT_ROOT" poetry run python lib/core/database_url.py)
+  CONN_STRING=$(PYTHONPATH="$PROJECT_ROOT" poetry run python lib/core/database/url.py)
   if [ -z "$CONN_STRING" ]; then
     echo "No connection string found"
     exit 1

@@ -3,10 +3,12 @@ from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.security import OAuth2PasswordBearer
+from tortoise.contrib.fastapi import register_tortoise
 
 # Import environment variables
 import lib.core.env
 from os import getenv
+from config.core.database import TORTOISE_ORM
 
 # Import project modules
 from app.api import *
@@ -39,10 +41,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Register Tortoise ORM with FastAPI
+register_tortoise(
+    app,
+    config=TORTOISE_ORM,
+    generate_schemas=True,
+    add_exception_handlers=True,
+)
+
 # Include API routers
 for router_name in dir():
     if router_name.endswith('_router') and isinstance(globals()[router_name], APIRouter):
         app.include_router(globals()[router_name])
 
 # Mount static files
-app.mount("/public", StaticFiles(directory="public"), name="public")
+app.mount("/static", StaticFiles(directory="static"), name="static")
