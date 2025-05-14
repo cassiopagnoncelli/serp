@@ -15,3 +15,7 @@ To-do
 - [ ] Record dirty
 - [ ] Record scopes, default_scope (see Claude chat)
 - [ ] Record batch processing (see Claude chat)
+- [ ] Logout
+- [ ] Check token is still valid
+- [ ] touch, pluck, ids, exists, persisted, new_record, changed
+- [ ] Caching tokens (redis)
