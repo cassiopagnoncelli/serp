@@ -1,6 +1,6 @@
 To-do
 
-- [ ] Write tests (fix user password update)
+- [ ] Write tests for api, utils
 - [ ] Seeds
 - [ ] Record dirty
 - [ ] Record scopes, default_scope (see Claude chat)
@@ -17,7 +17,5 @@ Admin (Rails)
 - [ ] Revenue
 
 Learn
-- [x] @contextmanager
 - [ ] https://python.langchain.com/docs/introduction/
-- [ ] Tortoise ORM: associations, query building, callbacks (hooks), enums, delegate, validations, normalizations
 - [ ] https://github.com/agno-agi/agno [https://www.instagram.com/p/DJVIL3dtgQb/]
