@@ -1,31 +1,32 @@
-import redis
+from redis import Redis, ConnectionPool
 from fastapi import Depends
 from typing import Annotated
 from contextlib import contextmanager
+
 from config.core.settings import get_settings
 
 settings = get_settings()
 
-redis_pool = redis.ConnectionPool(
+redis_pool = ConnectionPool(
   url = settings.fetch("REDIS_URL"),
   decode_responses = True
 )
 
 def get_redis():
-  redis_client = redis.Redis(connection_pool=redis_pool)
+  redis_client = Redis(connection_pool=redis_pool)
   try:
     yield redis_client
   finally:
     pass  # No need to close the connection as it returns to the pool
 
-RedisDep = Annotated[redis.Redis, Depends(get_redis)]
+RedisDep = Annotated[Redis, Depends(get_redis)]
 
 @contextmanager
 def get_redis_standalone():
   with redis.Redis(connection_pool=redis_pool) as redis_client:
     yield redis_client
 
-RedisStandaloneDep = Annotated[redis.Redis, Depends(get_redis_standalone)]
+RedisStandaloneDep = Annotated[Redis, Depends(get_redis_standalone)]
 
 # Example usage in FastAPI:
 #

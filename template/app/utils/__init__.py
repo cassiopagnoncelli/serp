@@ -5,10 +5,14 @@ from .authentication import *
 
 # Add all models you want to export here
 __all__ = [
-  "authenticate_user",
-  "decode_user_token",
   "find_user_by_email",
+  "authenticate_user",
   "generate_user_token",
+  "decode_user_token",
+  "persist_user_token",
+  "get_current_user",
+  "random_password",
   "login_user_with_password",
-  "persist_user_token"
+  "login_user_with_google",
+  "login_user_with_facebook",
 ]

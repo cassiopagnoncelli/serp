@@ -1,13 +1,15 @@
 import os
 import pytest
+import pytest_asyncio
 from dotenv import load_dotenv
 from fastapi.testclient import TestClient
-from sqlmodel import SQLModel, create_engine, Session
 import vcr
+from tortoise import Tortoise
+from tortoise.contrib.test import finalizer, initializer
+import asyncio
 
 from app.server import app
 from app.models import *
-from config.core.database import get_session
 from config.core.settings import decode_yaml
 from config.core.broker import celery
 
@@ -19,35 +21,37 @@ load_dotenv(dotenv_path = ".env.test")
 def set_test_env_vars():
     os.environ["APP_ENV"] = "test"
 
-# Create the test database engine
+# Create the test database configuration
 db_config = decode_yaml("config/database.yml")["test"]
-if db_config["driver"] == "sqlite":
-    engine = create_engine(db_config["url"], connect_args={"check_same_thread": False})
-else:
-    raise ValueError(f"Unsupported test database driver: {db_config['driver']}")
+db_config["url"] = db_config["url"].replace("postgresql://", "postgres://")
+TORTOISE_TEST_ORM = {
+    "connections": {
+        "default": db_config["url"]
+    },
+    "apps": {
+        "models": {
+            "models": ["app.models", "aerich.models"],
+            "default_connection": "default",
+        }
+    },
+    "use_tz": False,
+    "timezone": "UTC"
+}
 
-# Create the test database
-@pytest.fixture(scope="session", autouse=True)
-def create_test_db():
-    SQLModel.metadata.drop_all(bind=engine)
-    SQLModel.metadata.create_all(bind=engine)
+@pytest_asyncio.fixture(autouse=True)
+async def initialize_tests():
+    """Initialize the test database for each test."""
+    await Tortoise.init(config=TORTOISE_TEST_ORM)
+    await Tortoise.generate_schemas()
     yield
-    SQLModel.metadata.drop_all(bind=engine)
-
-# Create a test database session
-@pytest.fixture(scope="function")
-def db_session():
-    with Session(engine) as session:
-        yield session
+    # Clean up all tables
+    conn = Tortoise.get_connection("default")
+    await conn.execute_query("TRUNCATE TABLE users CASCADE")
+    await Tortoise.close_connections()
 
 # Create a test client
 @pytest.fixture(scope="function")
-def client(db_session):
-    # Dependency override for FastAPI
-    def override_get_session():
-        yield db_session
-    # Patch the dependency in your app so all routes use the test DB
-    app.dependency_overrides[get_session] = override_get_session
+def client():
     with TestClient(app) as c:
         yield c
 

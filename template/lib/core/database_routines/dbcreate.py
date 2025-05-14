@@ -1,15 +1,3 @@
-# import sys
-# import os
-
-# sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
-
-# from sqlmodel import Session, SQLModel
-# from config.core.database import get_session_standalone, engine
-
-# with get_session_standalone() as db:
-#   SQLModel.metadata.create_all(engine)
-
-
 import os
 from sqlalchemy import create_engine
 import psycopg2
@@ -17,7 +5,7 @@ import sqlalchemy
 
 from config.core.settings import get_settings
 from lib.core.env import APP_ENV
-from lib.core.dbstring import parse_db_url
+from lib.core.database.dbstring import parse_db_url
 
 def create_database_if_not_exists(parsed_config):
     """Create database if it doesn't exist."""

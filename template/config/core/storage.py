@@ -7,7 +7,7 @@ from pathlib import Path
 
 from lib.core.env import APP_ENV
 from config.core.settings import decode_yaml
-from lib.core.storage import Storage
+from lib.core.storage.main import Storage
 
 # Load and parse storage configuration once, based on the environment
 storage_config = decode_yaml("config/storage.yml")[APP_ENV]

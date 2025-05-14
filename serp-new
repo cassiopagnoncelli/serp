@@ -129,20 +129,20 @@ function install_optional_libraries() {
 function apply_env() {
   if [[ "$OSTYPE" == "darwin"* ]]; then
     sed -i '' "s/^APP_NAME=template/APP_NAME=${1}/g" .env.*
-    sed -i '' "s/my_app_development$/${1}_development/g" .env.development
-    sed -i '' "s/my_app_production$/${1}_production/g" .env.production
+    sed -i '' "s/serp_app_development$/${1}_development/g" .env.development
+    sed -i '' "s/serp_app_production$/${1}_production/g" .env.production
   else
     sed -i "s/^APP_NAME=template/APP_NAME=${1}/g" .env.*
-    sed -i "s/my_app_development$/${1}_development/g" .env.development
-    sed -i "s/my_app_production$/${1}_production/g" .env.production
+    sed -i "s/serp_app_development$/${1}_development/g" .env.development
+    sed -i "s/serp_app_production$/${1}_production/g" .env.production
   fi
 }
 
 function apply_core_settings() {
   if [[ "$OSTYPE" == "darwin"* ]]; then
-    sed -i '' "s/my_app/${1}/g" config/core/settings.py
+    sed -i '' "s/serp_app/${1}/g" config/core/settings.py
   else
-    sed -i "s/my_app/${1}/g" config/core/settings.py
+    sed -i "s/serp_app/${1}/g" config/core/settings.py
   fi
 }
 
@@ -173,7 +173,19 @@ function new_app() {
   source venv/bin/activate
 
   # Copy files
-  rsync -a --exclude 'venv/' "$TEMPLATE_DIR/" .
+  rsync -a \
+    --exclude 'venv/' \
+    --exclude '.git/' \
+    --exclude '**/__pycache__/' \
+    --exclude '**/*.pyc' \
+    --exclude '**/*.pyo' \
+    --exclude '.pytest_cache/' \
+    --exclude '**/.pytest_cache/' \
+    --exclude '.DS_Store' \
+    --exclude '**/.DS_Store' \
+    "$TEMPLATE_DIR/" .
+
+  tree -a -I venv -I .git
 
   # Install dependencies from pyproject.toml and poetry.lock
   poetry install --no-root

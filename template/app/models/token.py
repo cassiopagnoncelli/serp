@@ -1,30 +1,22 @@
-from typing import Annotated, Optional
-import random
-from datetime import datetime, UTC
-from sqlmodel import Field, SQLModel
-from sqlalchemy import JSON
+from tortoise import fields
+from datetime import datetime
+from typing import Any, Dict
+from pydantic import BaseModel, ConfigDict
 
-class Token(SQLModel, table=True):
-    __tablename__ = "tokens"
+from lib.core.record.inflection import to_table_name
+from lib.core.record.base import Base
 
-    # Automatic fields
-    id: Optional[int] = Field(default=None, primary_key=True)
-    created_at: datetime = Field(default=None, index=False)
-    updated_at: datetime = Field(default=None, index=False)
+class Token(Base):
+    class Meta:
+        table = to_table_name("Token")
+
     # Relationships
-    user_id: int = Field(default=None, index=True, unique=False)
-    # Token fields
-    token: str = Field(index=True, unique=True)
-    expires_at: datetime = Field(index=False)
-    ip_address: str = Field(index=False)
-    user_agent: str = Field(index=False)
-    location: dict = Field(index=False, sa_type=JSON)
-    device: dict = Field(index=False, sa_type=JSON)
+    user_id = fields.IntField(index=True, null=False)
 
-    def __init__(self, **data):
-        timestamp = datetime.now(UTC)
-        if 'created_at' not in data or data['created_at'] is None:
-            data['created_at'] = timestamp
-        if 'updated_at' not in data or data['updated_at'] is None:
-            data['updated_at'] = timestamp
-        super().__init__(**data)
+    # Token fields
+    token = fields.CharField(max_length=1023, unique=True, index=True, null=False)
+    expires_at = fields.DatetimeField(null=False)
+    ip_address = fields.CharField(max_length=63, null=True)  # IPv6 max length
+    user_agent = fields.TextField(max_length=1023, null=True)
+    location = fields.JSONField(null=True)
+    device = fields.JSONField(null=True)

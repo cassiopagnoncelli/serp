@@ -5,13 +5,11 @@ import jwt
 from requests import post, get
 from os import getenv
 from urllib.parse import urlencode
-from sqlmodel import Session
 
 from config.core.feature_flags import get_feature_flags
 from app.models import User, UserStatus, LoginProvider
 from lib.core.geo import get_device_info, get_location_info
 from app.utils.authentication import *
-from config.core.database import SessionDep
 
 router = APIRouter(tags=["Authentication"])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl = "token")
@@ -51,7 +49,6 @@ async def login_facebook():
 )
 async def facebook_callback(
   code: str,
-  session: SessionDep,
   request: Request = None
 ):
     # Exchange code for access token
@@ -84,19 +81,16 @@ async def facebook_callback(
     user_info = user_req.json()
     
     # Find or create user
-    user = find_user_by_email(user_info.get("email"), session)
+    user = await find_user_by_email(user_info.get("email"))
     if not user:
         if feature_flags.get("social_login.create_user_on_facebook_login"):
-            user = User(
+            user = await User.create(
                 email=user_info.get("email"),
                 password=random_password(),
                 name=user_info.get("name"),
                 status=UserStatus.active,
                 login_provider=LoginProvider.facebook
             )
-            session.add(user)
-            session.commit()
-            session.refresh(user)
         else:
             raise HTTPException(status_code=401, detail="User not found")
     
@@ -111,14 +105,13 @@ async def facebook_callback(
     location_info = get_location_info(ip_address)
 
     # Generate token
-    token = login_user_with_facebook(
+    token = await login_user_with_facebook(
         email=user.email,
         expires_minutes=ACCESS_TOKEN_EXPIRE_MINUTES,
         ip_address=ip_address,
         user_agent=user_agent,
         device=device_info,
-        location=location_info,
-        session=session
+        location=location_info
     )
 
     return { "token": token }

@@ -1,11 +1,9 @@
-"""
-Models package that exports all models from submodules.
-"""
-from .user import *
-from .token import *
+from .user import User, UserStatus, LoginProvider
+from .token import Token
 
-# Add all models you want to export here
 __all__ = [
-  "User",
-  "Token"
+    "User",
+    "Token",
+    "UserStatus",
+    "LoginProvider"
 ]

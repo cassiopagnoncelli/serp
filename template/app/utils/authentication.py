@@ -1,16 +1,17 @@
 from fastapi import Depends, HTTPException, Security
 from fastapi.security import OAuth2PasswordBearer, HTTPBearer, HTTPAuthorizationCredentials
-from sqlmodel import Session, SQLModel, select, update
-from datetime import datetime, timedelta
+from datetime import timedelta
 import random
 import string
 
-from app.models import User, Token, UserStatus
-from app.schemas.user import UserTokenizable
-from config.core.settings import get_settings
-from config.core.database import SessionDep
 from lib.core.authentication.passwords import verify_password
 from lib.core.authentication.tokens import generate_access_token, decode_access_token
+from lib.core.dt import DateTime
+from config.core.settings import get_settings
+from app.models.user import *
+from app.models.token import *
+from app.schemas.user import *
+from app.schemas.token import TokenSchema, CreateTokenSchema
 
 settings = get_settings()
 
@@ -20,12 +21,11 @@ ACCESS_TOKEN_EXPIRE_MINUTES: int = int(settings.fetch("ACCESS_TOKEN_EXPIRE_MINUT
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 bearer_scheme = HTTPBearer()
 
-def find_user_by_email(email: str, session: SessionDep = Depends(SessionDep)) -> UserTokenizable:
-    statement = select(User).where(User.email == email)
-    return session.exec(statement).first()
+async def find_user_by_email(email: str) -> UserTokenizable:
+    return await User.filter(email=email).first()
 
-def authenticate_user(email: str, password: str, session: SessionDep = Depends(SessionDep)) -> UserTokenizable:
-    user = find_user_by_email(email, session)
+async def authenticate_user(email: str, password: str) -> UserTokenizable:
+    user = await find_user_by_email(email)
     if not user:
         return None
     if not verify_password(password, user.enc_password):
@@ -41,7 +41,9 @@ def generate_user_token(data: dict, expires_minutes: int = ACCESS_TOKEN_EXPIRE_M
       "name": data["name"],
       "status": data["status"],
       "login_provider": data["login_provider"],
-      "created_at": data["created_at"]
+      "created_at": data["created_at"],
+      "updated_at": data["updated_at"],
+      "enc_password": data["enc_password"]
     }
     return generate_access_token(data=user_data, secret_key=SECRET_KEY, expires_minutes=expires_minutes)
 
@@ -49,7 +51,7 @@ def decode_user_token(token: str) -> dict:
     data = decode_access_token(token=token, secret_key=SECRET_KEY)
     return data["data"] if data else None
 
-def persist_user_token(
+async def persist_user_token(
       user_id: int,
       token: str,
       expires_minutes: int = ACCESS_TOKEN_EXPIRE_MINUTES,
@@ -57,22 +59,36 @@ def persist_user_token(
       user_agent: str = None,
       location: dict = None,
       device: dict = None,
-      session: SessionDep = Depends(SessionDep)
-  ) -> Token:
-    obj = Token(
-      user_id=user_id,
-      token=token,
-      expires_at=datetime.now() + timedelta(minutes=expires_minutes),
-      ip_address=ip_address,
-      user_agent=user_agent,
-      location=location,
-      device=device
+  ) -> TokenSchema:
+    expires_at = DateTime.utc() + timedelta(minutes=expires_minutes)
+    
+    # Create and validate the data using CreateTokenSchema
+    token_data = CreateTokenSchema(
+        user_id=user_id,
+        token=token,
+        expires_at=expires_at,
+        ip_address=ip_address,
+        user_agent=user_agent,
+        location=location,
+        device=device
     )
-    session.add(obj)
-    session.commit()
-    return obj
+    
+    # Create the Token model instance with validated data
+    tok = Token(
+        user_id=token_data.user_id,
+        token=token_data.token,
+        expires_at=token_data.expires_at,
+        ip_address=token_data.ip_address,
+        user_agent=token_data.user_agent,
+        location=token_data.location,
+        device=token_data.device
+    )
+    await tok.save()
+    
+    # Convert the saved model to TokenSchema for response
+    return TokenSchema.model_validate(tok)
 
-def get_current_user(
+async def get_current_user(
     oauth_token: str = Depends(oauth2_scheme),
     bearer_token: HTTPAuthorizationCredentials = Depends(bearer_scheme)
 ) -> UserTokenizable:
@@ -87,9 +103,12 @@ def get_current_user(
                 detail="Invalid authentication credentials",
                 headers={"WWW-Authenticate": "Bearer"},
             )
-    return token_data
+    return UserTokenizable.model_validate(token_data)
 
-def login_user_with_password(
+def random_password() -> str:
+    return "".join(random.choices(string.ascii_letters + string.digits, k=16))
+
+async def login_user_with_password(
       email: str,
       password: str,
       expires_minutes: int = ACCESS_TOKEN_EXPIRE_MINUTES,
@@ -97,48 +116,45 @@ def login_user_with_password(
       user_agent: str = None,
       location: dict = None,
       device: dict = None,
-      session: SessionDep = Depends(SessionDep)
   ) -> str:
-    user = authenticate_user(email, password, session)
+    user = await authenticate_user(email, password)
     if not user:
         return None
     if user.status != UserStatus.active:
       raise HTTPException(status_code=401, detail="User is not active")
-    token = generate_user_token(user.model_dump(), expires_minutes)
-    persist_user_token(user.id, token, expires_minutes, ip_address, user_agent, location, device, session)
+    data = user.to_dict()
+    token = generate_user_token(data, expires_minutes)
+    await persist_user_token(user.id, token, expires_minutes, ip_address, user_agent, location, device)
     return token
 
-def random_password() -> str:
-    return "".join(random.choices(string.ascii_letters + string.digits, k=16))
-
-def login_user_with_google(
+async def login_user_with_google(
       email: str,
       expires_minutes: int = ACCESS_TOKEN_EXPIRE_MINUTES,
       ip_address: str = None,
       user_agent: str = None,
       location: dict = None,
       device: dict = None,
-      session: SessionDep = Depends(SessionDep)
   ) -> str:
-    user = find_user_by_email(email, session)
+    user = await find_user_by_email(email)
     if not user:
         return None
-    token = generate_user_token(user.model_dump(), expires_minutes)
-    persist_user_token(user.id, token, expires_minutes, ip_address, user_agent, location, device, session)
+    data = await user.to_dict()
+    token = generate_user_token(data, expires_minutes)
+    await persist_user_token(user.id, token, expires_minutes, ip_address, user_agent, location, device)
     return token
 
-def login_user_with_facebook(
+async def login_user_with_facebook(
       email: str,
       expires_minutes: int = ACCESS_TOKEN_EXPIRE_MINUTES,
       ip_address: str = None,
       user_agent: str = None,
       location: dict = None,
       device: dict = None,
-      session: SessionDep = Depends(SessionDep)
   ) -> str:
-    user = find_user_by_email(email, session)
+    user = await find_user_by_email(email)
     if not user:
         return None
-    token = generate_user_token(user.model_dump(), expires_minutes)
-    persist_user_token(user.id, token, expires_minutes, ip_address, user_agent, location, device, session)
+    data = await user.to_dict()
+    token = generate_user_token(data, expires_minutes)
+    await persist_user_token(user.id, token, expires_minutes, ip_address, user_agent, location, device)
     return token

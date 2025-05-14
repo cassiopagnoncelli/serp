@@ -1,12 +1,13 @@
-from typing import Annotated, Optional
-import random
-import string
-from datetime import datetime, UTC
-from sqlmodel import Field, SQLModel
+from tortoise import fields
 from enum import Enum
+from datetime import datetime
+from typing import Any, Dict
+from pydantic import BaseModel, ConfigDict
 
 from lib.core.authentication.passwords import encrypt_password
 from lib.core.record.uuid import generate_id
+from lib.core.record.inflection import to_table_name
+from lib.core.record.base import Base
 
 class UserStatus(str, Enum):
     active = "active"
@@ -17,31 +18,26 @@ class LoginProvider(str, Enum):
     google = "google"
     facebook = "facebook"
 
-class User(SQLModel, table=True):
-    __tablename__ = "users"
+class User(Base):
+    class Meta:
+        table = to_table_name("User")
 
-    # Automatic fields
-    id: Optional[int] = Field(default=None, primary_key=True)
-    uuid: Annotated[str, Field(default_factory=lambda: generate_id("usr"), index=True, unique=True)]
-    created_at: datetime = Field(default=None, index=False)
-    updated_at: datetime = Field(default=None, index=False)
+    # Primary key
+    uuid = fields.CharField(max_length=255, default=lambda: generate_id("usr"), pk=False)
+
     # Relationships
-    account_uuid: str = Field(default=None, index=True, unique=False)
-    # Email, password fields
-    email: str = Field(index=True, unique=True)
-    enc_password: str = Field(index=False)
-    # User attributes
-    name: Optional[str] = Field(index=False)
-    status: UserStatus = Field(default=UserStatus.active)
-    login_provider: LoginProvider = Field(default=LoginProvider.email)
+    account_uuid = fields.CharField(max_length=255, index=True, null=True)
 
-    def __init__(self, **data):
-        timestamp = datetime.now(UTC)
-        if 'created_at' not in data or data['created_at'] is None:
-            data['created_at'] = timestamp
-        if 'updated_at' not in data or data['updated_at'] is None:
-            data['updated_at'] = timestamp
-        if 'password' in data:
-            data['enc_password'] = encrypt_password(data.pop('password'))
-            
-        super().__init__(**data)
+    # Email, password fields
+    email = fields.CharField(max_length=255, unique=True, index=True)
+    enc_password = fields.CharField(max_length=255)
+
+    # User attributes
+    name = fields.CharField(max_length=255, null=True)
+    status = fields.CharEnumField(UserStatus, default=UserStatus.active, max_length=255)
+    login_provider = fields.CharEnumField(LoginProvider, default=LoginProvider.email, max_length=255)
+
+    # Default handlers for field transformations
+    defaults = {
+        "enc_password": lambda kwargs: encrypt_password(kwargs.get('password')) if 'password' in kwargs else None
+    }

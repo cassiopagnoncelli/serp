@@ -4,7 +4,7 @@ from functools import lru_cache
 
 from lib.core.env import APP_ENV
 from config.core.settings import decode_yaml
-from lib.core.mailer import Mailer
+from lib.core.mailer.main import Mailer
 
 # Load and parse storage configuration once, based on the environment
 mailer_config = decode_yaml("config/mailer.yml")[APP_ENV]

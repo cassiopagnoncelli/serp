@@ -45,7 +45,7 @@ redis_config = decode_yaml("config/redis.yml")[APP_ENV]
 T = TypeVar('T')
 class Settings(BaseSettings):
   # Application general settings.
-  APP_NAME: str = "bla"
+  APP_NAME: str = "serp_app"
   DEBUG: bool = False
   # Broker.
   BROKER_URL: Optional[str] = dig(broker_config, "url")

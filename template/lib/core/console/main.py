@@ -6,6 +6,7 @@ import pprint
 import concurrent.futures
 import threading
 import time
+import asyncio
 
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, project_root)
@@ -20,15 +21,17 @@ from IPython.lib.pretty import pprint as ipprint
 from IPython import get_ipython
 
 # Project imports
-from config.core.database import get_session_standalone
-from config.core.redis import RedisStandaloneDep
+from config.core.tortoise_db import init_db, close_db, TORTOISE_ORM
+from config.core.redis_conn import RedisStandaloneDep
 from config.core.storage import get_storage, storage_config
 from config.core.feature_flags import get_feature_flags
-from lib.core.storage import Storage
+from lib.core.storage.main import Storage
+from lib.core.console.pretty_print import pp, PrettyPrinter
+from lib.core.dt import *
 from app.jobs import *
 from app.models import *
-from app.services import *
-from app.utils import *
+# from app.services import *
+# from app.utils import *
 
 def print_colored_snake():
   GREEN = "\033[32m"
@@ -205,30 +208,15 @@ def initialize_db(status_manager):
   try:
     status_manager.update_db(LOADING)
     
-    # Get the session manager and enter the context
-    session_manager = get_session_standalone()
-    # Extract the actual session object from the context manager
-    db = session_manager.__enter__()
+    # Initialize Tortoise ORM
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(init_db())
     
-    # Store the manager to properly close it later
-    db._session_manager = session_manager
-    
-    # Add a close method that properly exits the context manager
-    original_close = getattr(db, 'close', None)
-    def safe_close():
-      try:
-        if original_close:
-          original_close()
-      except:
-        pass
-      try:
-        # Properly exit the context manager without raising exceptions
-        session_manager.__exit__(None, None, None)
-      except:
-        pass
-    
-    # Attach the safe close method to the session
-    db.close = safe_close
+    # Create a namespace with the database connection
+    db = {
+      'close': lambda: loop.run_until_complete(close_db())
+    }
     
     status_manager.update_db(SUCCESS)
     return db
@@ -295,6 +283,9 @@ def start_console():
 
   # Add configurations
   namespace['feature_flags'] = get_feature_flags()
+  
+  # Add pretty printer function to namespace
+  namespace['pp'] = pp
   
   # Start the shell with the namespace
   shell(local_ns=namespace)

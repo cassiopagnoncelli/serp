@@ -2,6 +2,8 @@ export EDITOR=vim
 
 export PATH="/app/venv/bin:/app/bin:$PATH"
 
+export TORTOISE_ORM=config.core.tortoise_db.TORTOISE_ORM
+
 alias ll='ls -lhG'
 alias l='ll'
 alias ..='cd ..'

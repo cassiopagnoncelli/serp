@@ -1,9 +1,10 @@
-from config.core.broker import celery
-from lib.core.mailer import Mailer
 from pydantic import EmailStr
 from typing import Dict, Any
 from config.core.mailer import mailer_config
 from asyncio import run
+
+from lib.core.mailer.main import Mailer
+from config.core.broker import celery
 
 # Usage:
 #

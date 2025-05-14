@@ -5,7 +5,7 @@ import sqlalchemy
 
 from config.core.settings import get_settings
 from lib.core.env import APP_ENV
-from lib.core.dbstring import parse_db_url
+from lib.core.database.dbstring import parse_db_url
 
 if __name__ == "__main__":
     # App settings.

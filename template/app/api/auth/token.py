@@ -9,7 +9,6 @@ from pydantic import BaseModel, EmailStr
 import logging
 
 from app.utils.authentication import login_user_with_password, authenticate_user, find_user_by_email
-from config.core.database import SessionDep
 from lib.core.geo import get_device_info, get_location_info
 from config.core.settings import get_settings
 
@@ -26,11 +25,10 @@ router = APIRouter(tags = ["Authentication"])
 )
 async def login_for_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(),
-    session: SessionDep = None,
     request: Request = None
 ) -> str:
     # Check if user exists
-    user = find_user_by_email(form_data.username, session)
+    user = await find_user_by_email(form_data.username)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -45,14 +43,13 @@ async def login_for_access_token(
     location_info = get_location_info(ip_address)
 
     # Try authentication
-    token = login_user_with_password(
+    token = await login_user_with_password(
         email=form_data.username,
         password=form_data.password,
         ip_address=ip_address,
         user_agent=user_agent,
         device=device_info,
-        location=location_info,
-        session=session
+        location=location_info
     )
     
     if not token:

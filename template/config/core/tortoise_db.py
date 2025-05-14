@@ -1,24 +1,22 @@
 from tortoise import Tortoise
+from lib.core.database.dbstring import parse_db_url
+from config.core.settings import get_settings
 
-Tortoise.init_models(["app.records"], "models")
+settings = get_settings()
+
+# Fetch DATABASE_URL and adjusting protocol.
+db_url = settings.fetch("DATABASE_URL")
+db_url = db_url.replace("postgresql://", "postgres://")
+
+TORTOISE_MODELS = ["app.models", "aerich.models"]
 
 TORTOISE_ORM = {
     "connections": {
-        "default": {
-            "engine": "tortoise.backends.asyncpg",
-            "credentials": {
-                "host": "localhost",
-                "port": "5432",
-                "user": "cassio",
-                "password": "123",
-                "database": "bla_development",
-            }
-        }
+        "default": db_url
     },
     "apps": {
         "models": {
-            # "models": ["app.models", "aerich.models"],
-            "models": ["app.records"],
+            "models": TORTOISE_MODELS,
             "default_connection": "default",
         }
     },
@@ -27,6 +25,7 @@ TORTOISE_ORM = {
 }
 
 async def init_db():
+    Tortoise.init_models(TORTOISE_MODELS, "models")
     await Tortoise.init(config=TORTOISE_ORM)
 
 async def close_db():

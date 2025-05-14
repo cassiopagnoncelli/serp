@@ -9,7 +9,6 @@ from pydantic import BaseModel, EmailStr, SecretStr
 
 from app.schemas.user import UserCreate, UserPublic
 from app.utils.authentication import find_user_by_email
-from config.core.database import SessionDep
 from lib.core.authentication.passwords import encrypt_password
 from app.models import User
 
@@ -27,10 +26,9 @@ async def signup(
     confirm_password: SecretStr,
     name: str,
     account_uuid: Optional[str] = None,
-    session: SessionDep = None
 ) -> UserPublic:
     # Check if user exists
-    user = find_user_by_email(email, session)
+    user = await find_user_by_email(email)
     if user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -45,22 +43,13 @@ async def signup(
         )
 
     # Create user
-    encrypted_password = encrypt_password(password.get_secret_value())
     user_data = UserCreate(
         email=email,
-        enc_password=encrypted_password,
+        password=password.get_secret_value(),
         name=name,
         account_uuid=account_uuid
     )
     
     # Create actual User model instance
-    user = User(**user_data.model_dump())
-    session.add(user)
-    session.commit()
-    session.refresh(user)
-
-    return UserPublic(
-        uuid=user.uuid,
-        name=user.name,
-        email=user.email
-    )
+    user = await User.create(**user_data.dict())
+    return UserPublic(**user.to_dict())

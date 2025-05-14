@@ -4,14 +4,22 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.security import OAuth2PasswordBearer
 from tortoise.contrib.fastapi import register_tortoise
+import pytz
+from contextlib import asynccontextmanager
 
 # Import environment variables
 import lib.core.env
 from os import getenv
-from config.core.database import TORTOISE_ORM
+from config.core.tortoise_db import TORTOISE_ORM, init_db, close_db
 
 # Import project modules
 from app.api import *
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await init_db()
+    yield
+    await close_db()
 
 # Create FastAPI app
 app = FastAPI(
@@ -22,7 +30,8 @@ app = FastAPI(
         {"name": "Sign Up", "description": "Sign up endpoints"},
         {"name": "Users API", "description": "User, account, plan, and subscription management endpoints"},
     ],
-    swagger_ui_parameters={"defaultModelsExpandDepth": -1}
+    swagger_ui_parameters={"defaultModelsExpandDepth": -1},
+    lifespan=lifespan
 )
 
 # Add security schemes
@@ -42,10 +51,11 @@ app.add_middleware(
 )
 
 # Register Tortoise ORM with FastAPI
+pytz.timezone('America/Sao_Paulo')
 register_tortoise(
     app,
     config=TORTOISE_ORM,
-    generate_schemas=True,
+    generate_schemas=False,
     add_exception_handlers=True,
 )
 
