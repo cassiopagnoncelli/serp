@@ -229,7 +229,7 @@ function new_app() {
   # Use alembic for migrations (alembic init db/migrations)
   # Setup the database with dbcreate and dbload
   makequiet $quiet serp dbcreate
-  makequiet $quiet serp dbload
+  # makequiet $quiet serp dbload
 
   # Persist to repository
   git add .
