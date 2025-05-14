@@ -3,6 +3,7 @@ from datetime import datetime, UTC
 from typing import Any, Dict, ClassVar, Type, List
 from pydantic import BaseModel, ConfigDict
 from enum import Enum
+import asyncio
 
 from lib.core.dt import *
 from lib.core.serializers.json import *
@@ -63,6 +64,12 @@ class Base(models.Model):
         return True
 
     @classmethod
+    async def last(cls, n: int = 1) -> 'Base | None':
+        """Return the last record."""
+        results = await cls.all().order_by('-id').limit(n)
+        return results[0] if len(results) > 0 else None
+
+    @classmethod
     async def head(cls, n: int = 1) -> 'Base | None':
         """Return the first record."""
         return await cls.all().order_by('id').limit(n)
@@ -72,7 +79,7 @@ class Base(models.Model):
         """Return the last record."""
         result = await cls.all().order_by('-id').limit(n)
         return result if decreasing else result[::-1]
-    
+
     # Alias for filter
     where = filter
 
@@ -277,6 +284,79 @@ class Base(models.Model):
     def format(self, to_model: Type[BaseModel]) -> BaseModel:
         """Convert the model instance to a Pydantic model."""
         return to_model(**self.to_dict())
+
+    # Synchronous operations.
+
+    # Class-level event loop for sync operations
+    _loop: ClassVar[asyncio.AbstractEventLoop] = None
+
+    @classmethod
+    def _get_loop(cls) -> asyncio.AbstractEventLoop:
+        """Get or create the event loop for sync operations."""
+        if cls._loop is None or cls._loop.is_closed():
+            cls._loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(cls._loop)
+        return cls._loop
+
+    @classmethod
+    def _first(cls, n: int = 1) -> 'Base | None':
+        """Return the first record synchronously."""
+        loop = cls._get_loop()
+        return loop.run_until_complete(cls.head(n))
+    afirst = _first
+    sfirst = _first
+
+    @classmethod
+    def _last(cls, n: int = 1) -> 'Base | None':
+        """Return the last record synchronously."""
+        loop = cls._get_loop()
+        return loop.run_until_complete(cls.last(n))
+    alast = _last
+    slast = _last
+
+    @classmethod
+    def _head(cls, n: int = 1) -> 'Base | None':
+        """Return the first record synchronously."""
+        loop = cls._get_loop()
+        return loop.run_until_complete(cls.head(n))
+    ahead = _head
+    shead = _head
+
+    @classmethod
+    def _tail(cls, n: int = 1, decreasing: bool = True) -> 'Base | None':
+        """Return the last record synchronously."""
+        loop = cls._get_loop()
+        return loop.run_until_complete(cls.tail(n, decreasing))
+    atail = _tail
+    stail = _tail
+
+    def _create(self, **kwargs) -> 'Base':
+        """Create a new instance synchronously."""
+        loop = self._get_loop()
+        return loop.run_until_complete(self.create(**kwargs))
+    acreate = _create
+    screate = _create
+
+    def _update(self, **kwargs) -> 'Base':
+        """Update the instance synchronously."""
+        loop = self._get_loop()
+        return loop.run_until_complete(self.update(**kwargs))
+    aupdate = _update
+    supdate = _update
+
+    def _delete(self) -> bool:
+        """Delete the instance synchronously."""
+        loop = self._get_loop()
+        return loop.run_until_complete(self.delete())
+    adelete = _delete
+    sdelete = _delete
+
+    def _save(self, *args, **kwargs) -> 'Base':
+        """Save the instance synchronously."""
+        loop = self._get_loop()
+        return loop.run_until_complete(self.save(*args, **kwargs))
+    asave = _save
+    ssave = _save
 
 # Base Pydantic model with common fields
 class BasePydanticModel(BaseModel):
