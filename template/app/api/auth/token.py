@@ -1,27 +1,25 @@
-import jwt
-from datetime import datetime, timedelta, timezone
-from typing import Annotated
 from fastapi import Depends, HTTPException, status, APIRouter, Request
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from jwt.exceptions import InvalidTokenError
-from passlib.context import CryptContext
-from pydantic import BaseModel, EmailStr
-import logging
+from fastapi.security import OAuth2PasswordRequestForm
 
-from app.utils.authentication import login_user_with_password, authenticate_user, find_user_by_email
+from app.utils.authentication import login_user_with_password, find_user_by_email
 from lib.core.geo import get_device_info, get_location_info
 from config.core.settings import get_settings
 
 settings = get_settings()
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl = "token")
-
 router = APIRouter(tags = ["Authentication"])
 
+# Request example:
+#
+#   curl -X POST "http://localhost:8000/auth/token" \
+#     -H "Content-Type: application/x-www-form-urlencoded" \
+#     -d "username=email@example.com&password=passphrase"
+#
 @router.post(
     "/auth/token",
-    name="Login for Access Token",
-    description="Authenticates a user and returns an access token"
+    name="Request Bearer Token",
+    description="Authenticates a user and returns an access token",
+    # include_in_schema=False
 )
 async def login_for_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(),

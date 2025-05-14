@@ -18,7 +18,7 @@ settings = get_settings()
 SECRET_KEY: str = settings.fetch("ACCESS_TOKEN_SECRET_KEY")
 ACCESS_TOKEN_EXPIRE_MINUTES: int = int(settings.fetch("ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
 bearer_scheme = HTTPBearer()
 
 async def find_user_by_email(email: str) -> UserTokenizable:

@@ -35,7 +35,7 @@ app = FastAPI(
 )
 
 # Add security schemes
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
 app.swagger_ui_init_oauth = {
     "usePkceWithAuthorizationCodeGrant": True,
     "additionalQueryStringParams": {"token_type": "bearer"}

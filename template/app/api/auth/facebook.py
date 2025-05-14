@@ -1,9 +1,7 @@
 from fastapi import HTTPException, APIRouter, Request
-from fastapi.security import OAuth2PasswordBearer
 from fastapi.responses import RedirectResponse
 import jwt
 from requests import post, get
-from os import getenv
 from urllib.parse import urlencode
 
 from config.core.feature_flags import get_feature_flags
@@ -12,7 +10,6 @@ from lib.core.geo import get_device_info, get_location_info
 from app.utils.authentication import *
 
 router = APIRouter(tags=["Authentication"])
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl = "token")
 
 feature_flags = get_feature_flags()
 
