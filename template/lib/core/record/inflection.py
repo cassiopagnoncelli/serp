@@ -20,3 +20,23 @@ def to_table_name(class_name):
     
     # Step 2: Pluralize the snake_case string
     return p.plural(s)
+
+def to_class_name(table_name):
+    """
+    Convert a Rails-style table name to a class name
+    Examples:
+    - user_models => UserModel
+    - user_modal_hashes => UserModalHash
+    - john_paul_person_hildas => JohnPaulPersonHilda
+    """
+    # Step 1: Singularize the table name
+    singular = p.singular_noun(table_name)
+    if not singular:  # If already singular
+        singular = table_name
+    
+    # Step 2: Convert snake_case to CamelCase
+    # Split by underscore and capitalize each word
+    words = singular.split('_')
+    # Capitalize first letter of each word and join
+    return ''.join(word.capitalize() for word in words)
+
