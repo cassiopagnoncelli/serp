@@ -1,6 +1,7 @@
 from celery import Celery
-from celery.schedules import crontab
+
 from config.core.settings import get_settings
+from lib.core.jobs.cron_config import load_beat_schedule
 
 settings = get_settings()
 
@@ -11,14 +12,4 @@ celery = Celery(
   result_backend = settings.fetch("BROKER_RESULT_BACKEND"),
 )
 
-# Import periodic tasks
-celery.conf.beat_schedule = {
-    'ping-every-minute': {
-        'task': 'app.jobs.ping.ping',  # Use full task path
-        'schedule': crontab(minute='*'),  # Run every minute
-    },
-    'clean-expired-tokens-every-hour': {
-        'task': 'app.jobs.clean_expired_tokens.clean_expired_tokens',  # Use full task path
-        'schedule': crontab(hour="*"),  # Run every hour
-    },
-}
+celery.conf.beat_schedule = load_beat_schedule()

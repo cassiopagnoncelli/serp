@@ -1,0 +1,7 @@
+ping-every-minute:
+  task: app.jobs.ping.ping
+  schedule: "* * * * *"
+
+clean-expired-tokens-every-hour:
+  task: app.jobs.clean_expired_tokens.clean_expired_tokens
+  schedule: "0 * * * *"
