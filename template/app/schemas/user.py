@@ -34,6 +34,7 @@ class UserCreate(BaseModel):
   email: str
   password: str
   name: Optional[str] = None
+  account_uuid: Optional[str] = None
 
 class UserUpdate(BaseModel):
   email: Optional[str] = None
