@@ -236,7 +236,24 @@ class Base(models.Model):
         for field, transform in self.defaults.items():
             if transform(kwargs):
                 kwargs[field] = transform(kwargs)
-        await super().update(**kwargs)
+        
+        # Update the instance using Tortoise's filter().update()
+        await self.__class__.filter(id=self.pk).update(**kwargs)
+        
+        # Refresh the instance with updated values
+        refreshed = await self.__class__.get(id=self.pk)
+        
+        # Only update fields that are not properties
+        for field_name in self._meta.fields_map:
+            if field_name != 'id':  # Don't update id
+                try:
+                    # Try to set the attribute directly
+                    setattr(self, field_name, getattr(refreshed, field_name))
+                except AttributeError:
+                    # Skip if it's a property without a setter
+                    continue
+        
+        return self
 
     async def reload(self) -> 'Base | None':
         """Reload the instance from the database.

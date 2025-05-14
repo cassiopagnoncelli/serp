@@ -5,13 +5,14 @@ from pydantic import BaseModel, ConfigDict
 
 from lib.core.record.inflection import to_table_name
 from lib.core.record.base import Base
+from .user import User
 
 class Token(Base):
     class Meta:
         table = to_table_name("Token")
 
     # Relationships
-    user_id = fields.IntField(index=True, null=False)
+    user = fields.ForeignKeyField('models.User', related_name='tokens')
 
     # Token fields
     token = fields.CharField(max_length=8192, unique=True, index=True, null=False)
