@@ -1,6 +1,7 @@
 To-do
 
 - [ ] Write tests (fix user password update)
+- [ ] Seeds
 - [ ] Record dirty
 - [ ] Record scopes, default_scope (see Claude chat)
 - [ ] Record batch processing (see Claude chat)

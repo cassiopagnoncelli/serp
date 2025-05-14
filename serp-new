@@ -155,10 +155,12 @@ function apply_env() {
     sed -i '' "s/^APP_NAME=template/APP_NAME=${1}/g" .env.*
     sed -i '' "s/serp_app_development$/${1}_development/g" .env.development
     sed -i '' "s/serp_app_production$/${1}_production/g" .env.production
+    sed -i '' "s/serp_app_test$/${1}_test/g" .env.test
   else
     sed -i "s/^APP_NAME=template/APP_NAME=${1}/g" .env.*
     sed -i "s/serp_app_development$/${1}_development/g" .env.development
     sed -i "s/serp_app_production$/${1}_production/g" .env.production
+    sed -i "s/serp_app_test$/${1}_test/g" .env.test
   fi
 }
 

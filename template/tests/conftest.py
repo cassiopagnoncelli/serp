@@ -21,27 +21,12 @@ load_dotenv(dotenv_path = ".env.test")
 def set_test_env_vars():
     os.environ["APP_ENV"] = "test"
 
-# Create the test database configuration
-db_config = decode_yaml("config/database.yml")["test"]
-db_config["url"] = db_config["url"].replace("postgresql://", "postgres://")
-TORTOISE_TEST_ORM = {
-    "connections": {
-        "default": db_config["url"]
-    },
-    "apps": {
-        "models": {
-            "models": ["app.models", "aerich.models"],
-            "default_connection": "default",
-        }
-    },
-    "use_tz": False,
-    "timezone": "UTC"
-}
+from config.core.tortoise_db import TORTOISE_ORM
 
 @pytest_asyncio.fixture(autouse=True)
 async def initialize_tests():
     """Initialize the test database for each test."""
-    await Tortoise.init(config=TORTOISE_TEST_ORM)
+    await Tortoise.init(config=TORTOISE_ORM)
     await Tortoise.generate_schemas()
     yield
     # Clean up all tables
