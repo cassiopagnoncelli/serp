@@ -1,9 +1,4 @@
 user_1:
-  name: Cas
-  email: cas@example.com
-  password: password
-
-user_2:
   name: Cassio
-  email: cassiopagnoncelli@gmail.com
-  password: password
+  email: cas@gmail.com
+  password: pass

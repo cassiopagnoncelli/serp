@@ -17,4 +17,8 @@ celery.conf.beat_schedule = {
         'task': 'app.jobs.ping.ping',  # Use full task path
         'schedule': crontab(minute='*'),  # Run every minute
     },
+    'clean-expired-tokens-every-hour': {
+        'task': 'app.jobs.clean_expired_tokens.clean_expired_tokens',  # Use full task path
+        'schedule': crontab(hour="*"),  # Run every hour
+    },
 }

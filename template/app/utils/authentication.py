@@ -158,3 +158,6 @@ async def login_user_with_facebook(
     token = generate_user_token(data, expires_minutes)
     await persist_user_token(user.id, token, expires_minutes, ip_address, user_agent, location, device)
     return token
+
+async def delete_expired_tokens() -> None:
+    await Token.filter(expires_at__lt=DateTime.utc()).delete()
