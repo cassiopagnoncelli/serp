@@ -10,21 +10,8 @@ from app.server import app
 def test_client():
     return TestClient(app)
 
-@pytest.fixture
-def mock_user():
-    return User(
-        id=1,
-        uuid="test-uuid",
-        account_uuid="account-uuid",
-        email="test@example.com",
-        name="Test User",
-        status=UserStatus.active,
-        login_provider=LoginProvider.email,
-        enc_password="hashed_password"
-    )
-
 @pytest.mark.asyncio
-async def test_secure_me_endpoint(test_client, mock_user):
+async def test_secure_me_endpoint(test_client):
     user = await User.create(
         email="test@example.com",
         password="securepassword123",

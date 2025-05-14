@@ -1,6 +1,5 @@
 To-do
 
-- [ ] Write tests for api, utils
 - [ ] Record dirty
 - [ ] Record scopes, default_scope (see Claude chat)
 - [ ] Record batch processing (see Claude chat)
