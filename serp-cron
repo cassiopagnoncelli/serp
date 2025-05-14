@@ -4,7 +4,7 @@ set -e
 
 #~ USAGE
 #~
-#~   serp flower
+#~   serp cron
 #~
 #~
 #~ COMMANDS
@@ -22,18 +22,17 @@ usage() {
 
 SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
 SCRIPT_DIR="$(dirname "$SCRIPT_PATH")"
+TEMPLATE_DIR="$SCRIPT_DIR/template"
 PROJECT_ROOT=$(git rev-parse --show-toplevel)
 
 ############################################################
 # Main Script
 ############################################################
 
-function run_jobs_ui() {
+function run_jobs_cron() {
   cd "$PROJECT_ROOT"
-  export SERP_BROKER_PASSWORD=$(serp secret)
-  echo "Celery ``admin`` password: $SERP_BROKER_PASSWORD"
-  # PYTHONPATH="$PROJECT_ROOT" celery -A config.core.broker --basic-auth="admin:$SERP_BROKER_PASSWORD" flower
-  PYTHONPATH="$PROJECT_ROOT" celery -A config.core.broker flower
+  source "$PROJECT_ROOT/venv/bin/activate"
+  PYTHONPATH="$PROJECT_ROOT" celery -A config.core.broker beat
 }
 
-run_jobs_ui
+run_jobs_cron

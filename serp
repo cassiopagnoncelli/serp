@@ -18,6 +18,7 @@ set -e
 #~    dev, s        - Run web server in development mode
 #~    prod          - Run web server in production mode
 #~    worker, w     - Run celery worker
+#~    cron          - Run celery cron
 #~    tortoise, to  - Open Tortoise ORM console
 #~
 #~  Database commands
@@ -107,6 +108,11 @@ case "$command" in
 
   w|worker)
     "$SCRIPT_DIR/serp-worker" "${params[@]}"
+    exit 0
+    ;;
+
+  cron)
+    "$SCRIPT_DIR/serp-cron" "${params[@]}"
     exit 0
     ;;
 
