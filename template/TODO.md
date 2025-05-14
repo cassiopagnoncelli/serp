@@ -3,7 +3,6 @@ To-do
 - [ ] Record dirty
 - [ ] Record scopes, default_scope (see Claude chat)
 - [ ] Record batch processing (see Claude chat)
-- [ ] Record transaction block (see Claude chat)
 
 Separate system
 - [ ] Models: Accounts, Plans
