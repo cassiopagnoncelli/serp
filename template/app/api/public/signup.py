@@ -24,7 +24,7 @@ async def signup(
     email: EmailStr,
     password: SecretStr,
     confirm_password: SecretStr,
-    name: str,
+    name: Optional[str] = None,
     account_uuid: Optional[str] = None,
 ) -> UserPublic:
     # Check if user exists

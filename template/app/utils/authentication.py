@@ -49,7 +49,7 @@ def generate_user_token(data: dict, expires_minutes: int = ACCESS_TOKEN_EXPIRE_M
 
 def decode_user_token(token: str) -> dict:
     data = decode_access_token(token=token, secret_key=SECRET_KEY)
-    return data["data"] if data else None
+    return data if data else None
 
 async def persist_user_token(
       user_id: int,
@@ -138,7 +138,7 @@ async def login_user_with_google(
     user = await find_user_by_email(email)
     if not user:
         return None
-    data = await user.to_dict()
+    data = user.to_dict()
     token = generate_user_token(data, expires_minutes)
     await persist_user_token(user.id, token, expires_minutes, ip_address, user_agent, location, device)
     return token
@@ -154,7 +154,7 @@ async def login_user_with_facebook(
     user = await find_user_by_email(email)
     if not user:
         return None
-    data = await user.to_dict()
+    data = user.to_dict()
     token = generate_user_token(data, expires_minutes)
     await persist_user_token(user.id, token, expires_minutes, ip_address, user_agent, location, device)
     return token

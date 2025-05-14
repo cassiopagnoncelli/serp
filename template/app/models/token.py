@@ -14,7 +14,7 @@ class Token(Base):
     user_id = fields.IntField(index=True, null=False)
 
     # Token fields
-    token = fields.CharField(max_length=1023, unique=True, index=True, null=False)
+    token = fields.CharField(max_length=8192, unique=True, index=True, null=False)
     expires_at = fields.DatetimeField(null=False)
     ip_address = fields.CharField(max_length=63, null=True)  # IPv6 max length
     user_agent = fields.TextField(max_length=1023, null=True)
