@@ -12,6 +12,7 @@ from lib.core.record.mixins.sync_operations import SyncOperationsMixin
 from lib.core.record.mixins.crud import CRUDMixin
 from lib.core.record.mixins.reload import ReloadMixin
 from lib.core.record.mixins.attributes import AttributesMixin
+from lib.core.record.mixins.finders import FindersMixin
 
 class Base(
     RepresentationMixin,
@@ -21,6 +22,7 @@ class Base(
     CRUDMixin,
     ReloadMixin,
     AttributesMixin,
+    FindersMixin,
     models.Model
 ):
     """

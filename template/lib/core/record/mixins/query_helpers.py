@@ -24,24 +24,5 @@ class QueryHelpersMixin:
         result = await cls.all().order_by('-id').limit(n)  # type: ignore
         return result if decreasing else result[::-1]
 
-    async def reload(self) -> Any:  # type: ignore # Returns Base | None in context
-        """Reload the instance from the database.
-        
-        Returns:
-            Base | None: The reloaded instance if it exists in the database, None otherwise.
-        """
-        if not hasattr(self, 'id') or not self.id:
-            return None
-        try:
-            # Fetch fresh data from database
-            fresh_instance = await self.__class__.get(id=self.id)  # type: ignore
-            # Update all attributes of current instance
-            for field_name in self._meta.fields_map:  # type: ignore
-                setattr(self, field_name, getattr(fresh_instance, field_name))
-            return self
-        except Exception:
-            # If record doesn't exist or any other error occurs, return None
-            return None
-
     # Alias for filter
     where = filter

@@ -14,19 +14,19 @@ class ReloadMixin:
     Mixin for common reload operations.
     Assumes self is a Tortoise ORM model.
     """
-    async def reload(self) -> 'Base | None':
+    async def reload(self) -> Any:  # type: ignore # Returns Base | None in context
         """Reload the instance from the database.
         
         Returns:
             Base | None: The reloaded instance if it exists in the database, None otherwise.
         """
-        if not self.id:
+        if not hasattr(self, 'id') or not self.id:  # if not self.id:
             return None
         try:
             # Fetch fresh data from database
-            fresh_instance = await self.__class__.get(id=self.id)
+            fresh_instance = await self.__class__.get(id=self.id)  # type: ignore
             # Update all attributes of current instance
-            for field_name in self._meta.fields_map:
+            for field_name in self._meta.fields_map:  # type: ignore
                 setattr(self, field_name, getattr(fresh_instance, field_name))
             return self
         except Exception:

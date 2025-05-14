@@ -36,4 +36,5 @@ htmlcov/
 coverage.xml
 *.cover
 
-celerybeat-schedule{,-shm,-wal}
+celerybeat-schedule*
+
