@@ -51,5 +51,5 @@ async def signup(
     )
     
     # Create actual User model instance
-    user = await User.create(**user_data.dict())
+    user = await User.create(**user_data.model_dump())
     return UserPublic(**user.to_dict())

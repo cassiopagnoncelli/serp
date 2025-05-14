@@ -10,4 +10,4 @@ router = APIRouter(tags=["Users API"])
     response_model=UserPublic
 )
 async def read_user(user: UserTokenizable = Depends(get_current_user)) -> UserPublic:
-    return UserPublic(**user.dict())
+    return UserPublic(**user.model_dump())
