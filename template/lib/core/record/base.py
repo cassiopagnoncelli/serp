@@ -24,8 +24,8 @@ def format_value(value: Any) -> str:
 class Base(models.Model):
     # Common fields
     id = fields.IntField(pk=True)
-    created_at = fields.DatetimeField()
-    updated_at = fields.DatetimeField()
+    created_at = fields.DatetimeField(auto_now_add=True, timezone=False)
+    updated_at = fields.DatetimeField(auto_now=True, timezone=False)
 
     # Default handlers for field transformations
     defaults = {}

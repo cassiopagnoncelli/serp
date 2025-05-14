@@ -21,7 +21,13 @@ TORTOISE_ORM = {
         }
     },
     "use_tz": False,
-    "timezone": "UTC"
+    "timezone": "UTC",
+    "db_url": db_url,
+    "db_type": "postgres",
+    "db_params": {
+        "timezone": "UTC",
+        "use_tz": False
+    }
 }
 
 async def init_db():
