@@ -14,6 +14,9 @@ from app.utils.authentication import (
     persist_user_token,
     get_current_user,
     login_user_with_password,
+    login_user_with_google,
+    login_user_with_facebook,
+    delete_expired_tokens,
     SECRET_KEY,
     ACCESS_TOKEN_EXPIRE_MINUTES
 )
@@ -298,12 +301,17 @@ async def test_login_user_with_password_success():
     expires_minutes = 60
     token = "test.jwt.token"
     
+    # Create user data dictionary
+    user_data = {"id": 1, "email": email, "status": "active"}
+    
     # Create a mock user with active status
     mock_user = AsyncMock()
     mock_user.id = 1
     mock_user.email = email
     mock_user.status = UserStatus.active
-    mock_user.to_dict.return_value = {"id": 1, "email": email, "status": "active"}
+    
+    # Properly mock to_dict which is a synchronous method, not async
+    mock_user.to_dict = MagicMock(return_value=user_data)
     
     # Mock authenticate_user to return the mock user
     with patch("app.utils.authentication.authenticate_user") as mock_auth:
@@ -332,7 +340,7 @@ async def test_login_user_with_password_success():
                 mock_auth.assert_called_once_with(email, password)
                 
                 # Assert generate_user_token was called with correct args
-                mock_generate.assert_called_once_with(mock_user.to_dict.return_value, expires_minutes)
+                mock_generate.assert_called_once_with(user_data, expires_minutes)
                 
                 # Assert persist_user_token was called with correct args
                 mock_persist.assert_called_once_with(
@@ -488,3 +496,187 @@ async def test_get_current_user_both_tokens_invalid():
         assert mock_decode.call_count == 2
         mock_decode.assert_any_call(oauth_token)
         mock_decode.assert_any_call(bearer_token_value)
+
+
+@pytest.mark.asyncio
+async def test_login_user_with_google_success():
+    """Test that login with Google works with valid email"""
+    email = "test@example.com"
+    expires_minutes = 60
+    ip_address = "127.0.0.1"
+    user_agent = "Mozilla/5.0"
+    token = "test.google.token"
+    
+    # Create user data dictionary
+    user_data = {"id": 1, "email": email, "status": "active"}
+    
+    # Create a mock user
+    mock_user = AsyncMock()
+    mock_user.id = 1
+    mock_user.email = email
+    
+    # Properly mock to_dict which is a synchronous method, not async
+    mock_user.to_dict = MagicMock(return_value=user_data)
+    
+    # Mock find_user_by_email to return the mock user
+    with patch("app.utils.authentication.find_user_by_email") as mock_find:
+        mock_find.return_value = mock_user
+        
+        # Mock generate_user_token
+        with patch("app.utils.authentication.generate_user_token") as mock_generate:
+            mock_generate.return_value = token
+            
+            # Mock persist_user_token
+            with patch("app.utils.authentication.persist_user_token") as mock_persist:
+                mock_persist.return_value = MagicMock()
+                
+                result = await login_user_with_google(
+                    email=email,
+                    expires_minutes=expires_minutes,
+                    ip_address=ip_address,
+                    user_agent=user_agent
+                )
+                
+                # Assert result is the token
+                assert result == token
+                
+                # Assert find_user_by_email was called with correct email
+                mock_find.assert_called_once_with(email)
+                
+                # Assert generate_user_token was called with correct args
+                mock_generate.assert_called_once_with(user_data, expires_minutes)
+                
+                # Assert persist_user_token was called with correct args
+                mock_persist.assert_called_once_with(
+                    mock_user.id, token, expires_minutes, ip_address, user_agent, None, None
+                )
+
+
+@pytest.mark.asyncio
+async def test_login_user_with_google_user_not_found():
+    """Test that login with Google returns None when user is not found"""
+    email = "nonexistent@example.com"
+    
+    # Mock find_user_by_email to return None
+    with patch("app.utils.authentication.find_user_by_email") as mock_find:
+        mock_find.return_value = None
+        
+        result = await login_user_with_google(email=email)
+        
+        # Assert result is None
+        assert result is None
+        
+        # Assert find_user_by_email was called with correct email
+        mock_find.assert_called_once_with(email)
+
+
+@pytest.mark.asyncio
+async def test_login_user_with_facebook_success():
+    """Test that login with Facebook works with valid email"""
+    email = "test@example.com"
+    expires_minutes = 60
+    ip_address = "127.0.0.1"
+    user_agent = "Mozilla/5.0"
+    token = "test.facebook.token"
+    
+    # Create user data dictionary
+    user_data = {"id": 1, "email": email, "status": "active"}
+    
+    # Create a mock user
+    mock_user = AsyncMock()
+    mock_user.id = 1
+    mock_user.email = email
+    
+    # Properly mock to_dict which is a synchronous method, not async
+    mock_user.to_dict = MagicMock(return_value=user_data)
+    
+    # Mock find_user_by_email to return the mock user
+    with patch("app.utils.authentication.find_user_by_email") as mock_find:
+        mock_find.return_value = mock_user
+        
+        # Mock generate_user_token
+        with patch("app.utils.authentication.generate_user_token") as mock_generate:
+            mock_generate.return_value = token
+            
+            # Mock persist_user_token
+            with patch("app.utils.authentication.persist_user_token") as mock_persist:
+                mock_persist.return_value = MagicMock()
+                
+                result = await login_user_with_facebook(
+                    email=email,
+                    expires_minutes=expires_minutes,
+                    ip_address=ip_address,
+                    user_agent=user_agent
+                )
+                
+                # Assert result is the token
+                assert result == token
+                
+                # Assert find_user_by_email was called with correct email
+                mock_find.assert_called_once_with(email)
+                
+                # Assert generate_user_token was called with correct args
+                mock_generate.assert_called_once_with(user_data, expires_minutes)
+                
+                # Assert persist_user_token was called with correct args
+                mock_persist.assert_called_once_with(
+                    mock_user.id, token, expires_minutes, ip_address, user_agent, None, None
+                )
+
+
+@pytest.mark.asyncio
+async def test_login_user_with_facebook_user_not_found():
+    """Test that login with Facebook returns None when user is not found"""
+    email = "nonexistent@example.com"
+    
+    # Mock find_user_by_email to return None
+    with patch("app.utils.authentication.find_user_by_email") as mock_find:
+        mock_find.return_value = None
+        
+        result = await login_user_with_facebook(email=email)
+        
+        # Assert result is None
+        assert result is None
+        
+        # Assert find_user_by_email was called with correct email
+        mock_find.assert_called_once_with(email)
+
+
+@pytest.mark.asyncio
+async def test_delete_expired_tokens():
+    """Test that delete_expired_tokens removes expired tokens"""
+    # Create mock objects for expired tokens
+    mock_token1 = AsyncMock()
+    mock_token1.delete_token = AsyncMock()
+    mock_token2 = AsyncMock()
+    mock_token2.delete_token = AsyncMock()
+    token_list = [mock_token1, mock_token2]
+    
+    # Create a mock query result with the tokens that also has a delete method
+    mock_query = MagicMock()
+    mock_query.__iter__ = lambda self: iter(token_list)  # Make iterable
+    mock_query.delete = AsyncMock()                      # Add delete method
+    
+    # Create a mock Token class with a filter method that returns our mock query 
+    mock_token_class = MagicMock()
+    
+    # Set up the filter method to return an awaitable that yields our mock query
+    async def mock_filter(*args, **kwargs):
+        return mock_query
+    
+    mock_token_class.filter = mock_filter
+    
+    # Mock the entire Token class
+    with patch("app.utils.authentication.Token", mock_token_class):
+        # Mock the datetime used for expiration
+        current_time = datetime.now()
+        with patch("app.utils.authentication.DateTime.utc", return_value=current_time):
+            # Call the function
+            await delete_expired_tokens()
+            
+            # Verify the tokens were processed
+            mock_token1.delete_token.assert_called_once()
+            mock_token2.delete_token.assert_called_once()
+            
+            # Verify the bulk delete was called
+            mock_query.delete.assert_called_once()
