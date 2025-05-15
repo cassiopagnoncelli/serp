@@ -22,4 +22,3 @@ To-do
 - [ ] Caching tokens (redis)
 - [ ] Logout
 - [ ] Check token is still valid
-- [ ] Pretty print array
