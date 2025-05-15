@@ -12,7 +12,7 @@ from os import getenv
 import lib.core.env
 from config.core.settings import get_settings
 from config.core.tortoise_db import TORTOISE_ORM, init_db, close_db
-from config.core.redis_manager import *
+from config.core.redis_manager import RedisManager
 
 # Import project modules
 from app.api import *
@@ -21,10 +21,10 @@ settings = get_settings()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    init_redis()
     await init_db()
+    # Redis already initialized during import
     yield
-    await close_redis()
+    await RedisManager.disconnect()
     await close_db()
 
 # Create FastAPI app
