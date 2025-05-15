@@ -19,8 +19,8 @@ Learn
 
 To-do
 
-- [ ] Record scopes, default_scope (see Claude chat)
 - [ ] Record batch processing (see Claude chat)
 - [ ] Caching tokens (redis)
 - [ ] Logout
 - [ ] Check token is still valid
+- [ ] Pretty print array
