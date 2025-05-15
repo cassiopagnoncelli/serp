@@ -14,7 +14,7 @@ TOKEN_CACHE_PREFIX: str = "token:"
 async def store_token(
   token: str,
   token_data: dict,
-  expires_minutes: int = settings.fetch("TOKEN_EXPIRATION_MINUTES")
+  expires_minutes: int = settings.fetch("ACCESS_TOKEN_EXPIRE_MINUTES")
 ) -> bool:
     if settings.fetch("CACHE_TOKENS") != "true":
         return True
@@ -57,7 +57,7 @@ async def delete_cached_token(token: str) -> bool:
 
 async def refresh_cached_token(
   token: str,
-  expires_minutes: int = settings.fetch("TOKEN_EXPIRATION_MINUTES")
+  expires_minutes: int = settings.fetch("ACCESS_TOKEN_EXPIRE_MINUTES")
 ) -> bool:
     if settings.fetch("CACHE_TOKENS") != "true":
         return True

@@ -41,3 +41,12 @@ class User(Base):
     defaults = {
         "enc_password": lambda kwargs: encrypt_password(kwargs.get('password')) if 'password' in kwargs else None
     }
+
+    async def logout(self) -> None:
+        tokens = await Token.filter(user_id=self.id).all()
+        for token in tokens:
+            await token.destroy()
+
+    async def destroy(self) -> None:
+        await self.logout()
+        await self.delete()

@@ -1,12 +1,12 @@
 from tortoise import fields
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict
 from pydantic import BaseModel, ConfigDict
 
 from lib.core.record.inflection import to_table_name
 from lib.core.record.base import Base
 from lib.core.dt import DateTime
-from app.utils.auth_tokens import store_token, delete_cached_token, refresh_cached_token
+from app.utils.auth_tokens import store_token, get_cached_token, delete_cached_token, refresh_cached_token
 from app.models.user import User
 from config.core.settings import get_settings
 
@@ -27,14 +27,28 @@ class Token(Base):
     location = fields.JSONField(null=True)
     device = fields.JSONField(null=True)
 
-    def valid(self) -> bool:
-        return self.expires_at > DateTime.utc()
+    @classmethod
+    async def check_token(cls, token: str) -> bool:
+        if settings.fetch("CACHE_TOKENS") == "true":
+            tokstr = await get_cached_token(token)
+            return (tokstr is not None and len(tokstr) > 0)
+        else:
+            obj = await cls.filter(token=token).first()
+            return (obj is not None and len(obj.token) > 0)
 
-    async def cache_token(self, expires_minutes: int = settings.fetch("TOKEN_EXPIRATION_MINUTES")) -> bool:
+    def valid(self) -> bool:
+        utc_now = DateTime.utc().replace(tzinfo=timezone.utc)
+        return self.expires_at > utc_now
+
+    async def cache_token(self, expires_minutes: int = settings.fetch("ACCESS_TOKEN_EXPIRE_MINUTES")) -> bool:
         return await store_token(self.token, self.to_dict(), expires_minutes)
-    
+
     async def delete_token(self) -> bool:
         return await delete_cached_token(self.token)
 
-    async def refresh_token(self, expires_minutes: int = settings.fetch("TOKEN_EXPIRATION_MINUTES")) -> bool:
+    async def refresh_token(self, expires_minutes: int = settings.fetch("ACCESS_TOKEN_EXPIRE_MINUTES")) -> bool:
         return await refresh_cached_token(self.token, expires_minutes)
+
+    async def destroy(self) -> None:
+        await self.delete_token()
+        await self.delete()

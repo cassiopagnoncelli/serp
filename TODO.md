@@ -16,9 +16,6 @@ Learn
 - [ ] https://python.langchain.com/docs/introduction/
 - [ ] https://github.com/agno-agi/agno [https://www.instagram.com/p/DJVIL3dtgQb/]
 
+To do
 
-To-do
-
-- [ ] Caching tokens (redis)
-- [ ] Logout
-- [ ] Check token is still valid
+- [ ] Normalize created_at/updated_at to TZ=UTC

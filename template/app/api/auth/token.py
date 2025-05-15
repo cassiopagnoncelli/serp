@@ -1,7 +1,8 @@
 from fastapi import Depends, HTTPException, status, APIRouter, Request
-from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordRequestForm, HTTPBearer, HTTPAuthorizationCredentials
 
-from app.utils.authentication import login_user_with_password, find_user_by_email
+from app.utils.authentication import login_user_with_password, find_user_by_email, logout_token, bearer_scheme
+from app.models.token import Token
 from lib.core.geo import get_device_info, get_location_info
 from config.core.settings import get_settings
 
@@ -18,8 +19,7 @@ router = APIRouter(tags = ["Authentication"])
 @router.post(
     "/auth/token",
     name="Request Bearer Token",
-    description="Authenticates a user and returns an access token",
-    # include_in_schema=False
+    description="Authenticates a user and returns an access token"
 )
 async def login_for_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(),
@@ -57,3 +57,29 @@ async def login_for_access_token(
             headers={"WWW-Authenticate": "Bearer"},
         )
     return token
+
+@router.post(
+    "/auth/logout",
+    name="Logout",
+    description="Logs out a user from the current session"
+)
+async def logout(
+    bearer_token: HTTPAuthorizationCredentials = Depends(bearer_scheme)
+) -> None:
+    try:
+        checked_token = await Token.check_token(bearer_token.credentials)
+        if checked_token:
+            await logout_token(bearer_token.credentials)
+            return {"message": "Logged out successfully"}
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid token",
+                headers={"WWW-Authenticate": "Bearer"}
+            )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=str(e),
+            headers={"WWW-Authenticate": "Bearer"}
+        )

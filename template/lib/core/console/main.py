@@ -27,6 +27,7 @@ from config.core.tortoise_db import init_db, close_db, TORTOISE_ORM
 from config.core.redis_manager import RedisManager
 from config.core.storage import get_storage, storage_config
 from config.core.feature_flags import get_feature_flags
+from config.core.settings import get_settings
 from lib.core.storage.main import Storage
 from lib.core.console.pretty_print import pp, PrettyPrinter
 from lib.core.console.service_status import ServiceStatus, PENDING, SUCCESS, ERROR, LOADING
@@ -250,6 +251,7 @@ def start_console():
 
   # Add configurations
   namespace['feature_flags'] = get_feature_flags()
+  namespace['settings'] = get_settings()
   
   # Add pretty printer function to namespace
   namespace['pp'] = pp
