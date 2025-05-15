@@ -19,7 +19,6 @@ Learn
 
 To-do
 
-- [ ] Record batch processing (see Claude chat)
 - [ ] Caching tokens (redis)
 - [ ] Logout
 - [ ] Check token is still valid

@@ -67,10 +67,18 @@ def pp(obj: Any) -> None:
         PrettyPrinter.print_models(obj)
     elif isinstance(obj, Model):
         PrettyPrinter.print_model(obj)
+    elif isinstance(obj, list) and all(isinstance(item, dict) for item in obj):
+        # Handle list of dictionaries
+        for item in obj:
+            # For dictionaries, indent each line by 3 spaces
+            json_str = json.dumps(item, indent=2, default=str)  # Added default=str to handle datetime
+            indented_json = '\n'.join('   ' + line for line in json_str.split('\n'))
+            print(f"{Fore.GREEN}{indented_json}{Style.RESET_ALL}")
+            print()  # Add blank line between items
     elif isinstance(obj, dict):
         # For plain dictionaries, also use 3-space indentation
-        json_str = json.dumps(obj, indent=2)
+        json_str = json.dumps(obj, indent=2, default=str)  # Added default=str to handle datetime
         indented_json = '\n'.join('   ' + line for line in json_str.split('\n'))
-        print(indented_json)
+        print(f"{Fore.GREEN}{indented_json}{Style.RESET_ALL}")
     else:
         print(obj) 

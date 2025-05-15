@@ -19,6 +19,15 @@ class SyncOperationsMixin:
             asyncio.set_event_loop(cls._loop)
         return cls._loop
 
+    # Existing operations.
+    @classmethod
+    def _all(cls: Type[T]) -> Any:  # type: ignore # Returns Base | None in context
+        """Return all records."""
+        loop = cls._get_loop()
+        return loop.run_until_complete(cls.all())  # type: ignore
+    aall = _all
+    sall = _all
+
     # Query Helpers.
     @classmethod
     def _first(cls: Type[T], n: int = 1) -> Any:  # type: ignore # Returns Base | None in context
