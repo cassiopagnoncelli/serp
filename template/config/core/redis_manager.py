@@ -1,4 +1,4 @@
-from lib.core.redis_service.redis_manager import RedisManager
+from lib.core.redis_service import RedisManager
 from config.core.settings import get_settings
 
 settings = get_settings()

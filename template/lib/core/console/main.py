@@ -7,6 +7,8 @@ import concurrent.futures
 import threading
 import time
 import asyncio
+from asyncio import run as sync_run
+from redis import Redis
 
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, project_root)
@@ -22,11 +24,13 @@ from IPython import get_ipython
 
 # Project imports
 from config.core.tortoise_db import init_db, close_db, TORTOISE_ORM
-from config.core.redis_conn import RedisStandaloneDep
+from config.core.redis_manager import RedisManager
 from config.core.storage import get_storage, storage_config
 from config.core.feature_flags import get_feature_flags
 from lib.core.storage.main import Storage
 from lib.core.console.pretty_print import pp, PrettyPrinter
+from lib.core.console.service_status import ServiceStatus, PENDING, SUCCESS, ERROR, LOADING
+from lib.core.redis_service import SyncRedisAdapter
 from lib.core.dt import *
 from app.jobs import *
 from app.models import *
@@ -95,51 +99,6 @@ def setup_ipython_history():
   ipython_dir = Path.home() / ".config" / "serp-ipython"
   ipython_dir.mkdir(parents=True, exist_ok=True)
   os.environ["IPYTHONDIR"] = str(ipython_dir)
-
-# Status icons
-PENDING = "⏳"
-SUCCESS = "✅"
-ERROR = "❌"
-LOADING = "🔄"
-
-class ServiceStatus:
-  def __init__(self):
-    self.status_lock = threading.Lock()
-    self.db_status = PENDING
-    self.redis_status = PENDING
-    self.storage_status = PENDING
-    self.last_line = ""
-    
-  def update_db(self, status):
-    with self.status_lock:
-      self.db_status = status
-      self._update_display()
-      
-  def update_redis(self, status):
-    with self.status_lock:
-      self.redis_status = status
-      self._update_display()
-  
-  def update_storage(self, status):
-    with self.status_lock:
-      self.storage_status = status
-      self._update_display()
-  
-  def _update_display(self):
-    # Clear the last status line
-    if self.last_line:
-      sys.stdout.write("\r" + " " * len(self.last_line) + "\r")
-      
-    # Create new status line
-    status_line = f"Database: {self.db_status}  Redis: {self.redis_status}  Storage: {self.storage_status}"
-    sys.stdout.write(status_line)
-    sys.stdout.flush()
-    self.last_line = status_line
-  
-  def finalize(self):
-    # Complete the line with a newline
-    if self.last_line:
-      print() 
 
 def initialize_storage(status_manager):
   """Initialize storage with timeout and fallback."""
@@ -228,9 +187,15 @@ def initialize_redis(status_manager):
   """Initialize Redis connection."""
   try:
     status_manager.update_redis(LOADING)
-    redis = RedisStandaloneDep()
+    # Create a synchronous adapter for the async RedisManager
+    redis = SyncRedisAdapter()
+    # Test the connection
+    redis.ping()
+    # Also provide the async RedisManager class directly
+    _redis = RedisManager
+    async_redis = RedisManager
     status_manager.update_redis(SUCCESS)
-    return redis
+    return {'redis': redis, '_redis': _redis, 'async_redis': async_redis}
   except Exception as e:
     status_manager.update_redis(ERROR)
     return None
@@ -257,7 +222,9 @@ def start_console():
       # Get results as they complete
       services['storage'] = storage_future.result()
       services['db'] = db_future.result()
-      services['redis'] = redis_future.result()
+      redis_result = redis_future.result()
+      if redis_result:
+        services.update(redis_result)
   
   # Run initialization in a separate thread
   init_thread = threading.Thread(target=init_services)
