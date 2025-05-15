@@ -6,19 +6,25 @@ from fastapi.security import OAuth2PasswordBearer
 from tortoise.contrib.fastapi import register_tortoise
 import pytz
 from contextlib import asynccontextmanager
+from os import getenv
 
 # Import environment variables
 import lib.core.env
-from os import getenv
+from config.core.settings import get_settings
 from config.core.tortoise_db import TORTOISE_ORM, init_db, close_db
+from config.core.redis_manager import *
 
 # Import project modules
 from app.api import *
 
+settings = get_settings()
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    init_redis()
     await init_db()
     yield
+    await close_redis()
     await close_db()
 
 # Create FastAPI app

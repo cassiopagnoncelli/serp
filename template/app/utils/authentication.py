@@ -11,7 +11,8 @@ from config.core.settings import get_settings
 from app.models.user import *
 from app.models.token import *
 from app.schemas.user import *
-from app.schemas.token import TokenSchema, CreateTokenSchema
+from app.schemas.token import *
+from app.utils.auth_tokens import *
 
 settings = get_settings()
 
@@ -33,18 +34,7 @@ async def authenticate_user(email: str, password: str) -> UserTokenizable:
     return user
 
 def generate_user_token(data: dict, expires_minutes: int = ACCESS_TOKEN_EXPIRE_MINUTES) -> str:
-    user_data = {
-      "id": data["id"],
-      "uuid": data["uuid"],
-      "account_uuid": data["account_uuid"],
-      "email": data["email"],
-      "name": data["name"],
-      "status": data["status"],
-      "login_provider": data["login_provider"],
-      "created_at": data["created_at"],
-      "updated_at": data["updated_at"],
-      "enc_password": data["enc_password"]
-    }
+    user_data = UserTokenizable.model_validate(data)
     return generate_access_token(data=user_data, secret_key=SECRET_KEY, expires_minutes=expires_minutes)
 
 def decode_user_token(token: str) -> dict:
@@ -84,6 +74,9 @@ async def persist_user_token(
         device=token_data.device
     )
     await tok.save()
+
+    # Cache the token data in Redis
+    await tok.cache_token(expires_minutes = expires_minutes)
     
     # Convert the saved model to TokenSchema for response
     return TokenSchema.model_validate(tok)
@@ -160,4 +153,8 @@ async def login_user_with_facebook(
     return token
 
 async def delete_expired_tokens() -> None:
-    await Token.filter(expires_at__lt=DateTime.utc()).delete()
+    """Delete expired tokens from both database and cache."""
+    expired_tokens = await Token.filter(expires_at__lt=DateTime.utc())
+    for token in expired_tokens:
+        await token.delete_token()
+    await expired_tokens.delete()

@@ -30,8 +30,8 @@ from lib.core.console.pretty_print import pp, PrettyPrinter
 from lib.core.dt import *
 from app.jobs import *
 from app.models import *
-# from app.services import *
-# from app.utils import *
+from app.services import *
+from app.utils import *
 
 def print_colored_snake():
   GREEN = "\033[32m"

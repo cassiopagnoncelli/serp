@@ -7,9 +7,9 @@ from config.core.settings import get_settings
 
 settings = get_settings()
 
-redis_pool = ConnectionPool(
-  url = settings.fetch("REDIS_URL"),
-  decode_responses = True
+redis_pool = ConnectionPool.from_url(
+    url=settings.fetch("REDIS_URL"),
+    decode_responses=True
 )
 
 def get_redis():
@@ -23,9 +23,10 @@ RedisDep = Annotated[Redis, Depends(get_redis)]
 
 @contextmanager
 def get_redis_standalone():
-  with redis.Redis(connection_pool=redis_pool) as redis_client:
+  with Redis(connection_pool=redis_pool) as redis_client:
     yield redis_client
 
+# TODO: Not working properly, setting to db=0
 RedisStandaloneDep = Annotated[Redis, Depends(get_redis_standalone)]
 
 # Example usage in FastAPI:

@@ -7,4 +7,4 @@ from config.core.settings import get_settings
 
 settings = get_settings()
 
-print(settings.fetch("REDIS_URL", "redis://localhost:6379/0"))
+print(settings.fetch("REDIS_URL", "redis://localhost:6379/null"))
