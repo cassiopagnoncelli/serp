@@ -8,7 +8,6 @@ import asyncio
 from lib.core.record.mixins.representation import RepresentationMixin
 from lib.core.record.mixins.serialization import SerializationMixin
 from lib.core.record.mixins.query_helpers import QueryHelpersMixin
-from lib.core.record.mixins.sync_operations import SyncOperationsMixin
 from lib.core.record.mixins.crud import CRUDMixin
 from lib.core.record.mixins.reload import ReloadMixin
 from lib.core.record.mixins.attributes import AttributesMixin
@@ -18,7 +17,6 @@ class Base(
     RepresentationMixin,
     SerializationMixin,
     QueryHelpersMixin,
-    SyncOperationsMixin,
     CRUDMixin,
     ReloadMixin,
     AttributesMixin,

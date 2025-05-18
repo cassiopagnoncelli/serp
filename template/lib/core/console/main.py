@@ -32,6 +32,7 @@ from lib.core.storage.main import Storage
 from lib.core.console.pretty_print import pp, PrettyPrinter
 from lib.core.console.service_status import ServiceStatus, PENDING, SUCCESS, ERROR, LOADING
 from lib.core.redis_service import SyncRedisAdapter
+from lib.core.database.sync_tortoise_adapter import SyncTortoiseAdapter, get_tortoise_adapter
 from lib.core.dt import *
 from app.jobs import *
 from app.models import *
@@ -173,9 +174,10 @@ def initialize_db(status_manager):
     asyncio.set_event_loop(loop)
     loop.run_until_complete(init_db())
     
-    # Create a namespace with the database connection
+    # Create a namespace with the database connection and sync adapter
     db = {
-      'close': lambda: loop.run_until_complete(close_db())
+      'close': lambda: loop.run_until_complete(close_db()),
+      'sync': get_tortoise_adapter()
     }
     
     status_manager.update_db(SUCCESS)
@@ -235,8 +237,29 @@ def start_console():
   # Finalize the status display
   status_manager.finalize()
   
+  # Create banner text
+  banner = """
+💻 Interactive Console
+================================
+
+Available models:
+- User: User.create(), User.all(), User.find_by(email='...')
+- Token: Token.all(), Token.delete_all()
+
+Example commands:
+  user = User.create(email='test@example.com', password='secure123')
+  users = User.all()
+  user = User.find_by(email='test@example.com')
+  user.name = 'Test User'
+  user.save()
+
+Redis operations:
+  redis.set('key', 'value')
+  redis.get('key')
+"""
+  
   # Create the shell
-  shell = InteractiveShellEmbed(config=config, banner1="\n", exit_msg="👋 Goodbye!")
+  shell = InteractiveShellEmbed(config=config, banner1=banner, exit_msg="👋 Goodbye!")
   
   # Register the custom formatter after shell is created
   shell.display_formatter.formatters['text/plain'].for_type(dict, custom_dict_formatter)
@@ -255,6 +278,20 @@ def start_console():
   
   # Add pretty printer function to namespace
   namespace['pp'] = pp
+  
+  # Create direct model access
+  if services.get('db') and services['db'].get('sync'):
+    # Get the Models adapter
+    models_adapter = services['db']['sync']
+    
+    # Import all models and add them directly to the namespace
+    from app.models import __all__ as model_names
+    for model_name in model_names:
+      try:
+        # Add the model directly to the namespace
+        namespace[model_name] = models_adapter.get_model(f'models.{model_name}')
+      except Exception as e:
+        pass  # Skip if model can't be loaded
   
   # Start the shell with the namespace
   shell(local_ns=namespace)

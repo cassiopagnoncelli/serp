@@ -3,6 +3,8 @@ from typing import Any, List, ClassVar, Type, TypeVar
 
 T = TypeVar('T', bound='SyncOperationsMixin')
 
+# This module is deprecated in favour of the sync_tortoise_adapter.py module.
+# It is kept here for mere further reference.
 class SyncOperationsMixin:
     """
     Mixin for synchronous operation wrappers.
