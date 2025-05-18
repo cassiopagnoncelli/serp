@@ -95,6 +95,8 @@ def create_ipython_config():
   c.InteractiveShellEmbed.autocall = 2            # Auto-call functions (like Rails console)
   c.InteractiveShell.pretty = True
   c.InteractiveShell.pretty_indent = 3  # Set indentation to 3 spaces
+  c.TerminalIPythonApp.display_banner = False     # Hide the banner
+  c.InteractiveShellEmbed.display_banner = False  # Hide the banner for embedded shell too
   return c
 
 def setup_ipython_history():
@@ -237,29 +239,8 @@ def start_console():
   # Finalize the status display
   status_manager.finalize()
   
-  # Create banner text
-  banner = """
-💻 Interactive Console
-================================
-
-Available models:
-- User: User.create(), User.all(), User.find_by(email='...')
-- Token: Token.all(), Token.delete_all()
-
-Example commands:
-  user = User.create(email='test@example.com', password='secure123')
-  users = User.all()
-  user = User.find_by(email='test@example.com')
-  user.name = 'Test User'
-  user.save()
-
-Redis operations:
-  redis.set('key', 'value')
-  redis.get('key')
-"""
-  
   # Create the shell
-  shell = InteractiveShellEmbed(config=config, banner1=banner, exit_msg="👋 Goodbye!")
+  shell = InteractiveShellEmbed(config=config, banner1="", exit_msg="👋 Goodbye!")
   
   # Register the custom formatter after shell is created
   shell.display_formatter.formatters['text/plain'].for_type(dict, custom_dict_formatter)
