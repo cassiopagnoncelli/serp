@@ -16,6 +16,8 @@ class AsyncRedisClient:
         url: str,
         max_connections: int = 10,
         decode_responses: bool = True,
+        socket_connect_timeout: int = 10,  # Default 10 seconds
+        socket_timeout: int = 10,  # Default 10 seconds
         **kwargs
     ):
         """
@@ -25,11 +27,15 @@ class AsyncRedisClient:
             url: Redis connection URL from settings
             max_connections: Maximum number of connections in the pool
             decode_responses: Whether to decode responses to strings
+            socket_connect_timeout: Timeout for socket connection in seconds
+            socket_timeout: Timeout for socket operations in seconds
             **kwargs: Additional Redis connection parameters
         """
         self.url = url
         self.max_connections = max_connections
         self.decode_responses = decode_responses
+        self.socket_connect_timeout = socket_connect_timeout
+        self.socket_timeout = socket_timeout
         self.kwargs = kwargs
         self._client: Optional[redis.Redis] = None
         self._pool: Optional[redis.ConnectionPool] = None
@@ -41,12 +47,18 @@ class AsyncRedisClient:
             return
         
         try:
-            # Create connection pool
+            # Create connection pool with timeouts
+            connection_kwargs = {
+                'socket_connect_timeout': self.socket_connect_timeout,
+                'socket_timeout': self.socket_timeout,
+                **self.kwargs
+            }
+            
             self._pool = redis.ConnectionPool.from_url(
                 self.url,
                 max_connections=self.max_connections,
                 decode_responses=self.decode_responses,
-                **self.kwargs
+                **connection_kwargs
             )
             
             # Create Redis client using the pool

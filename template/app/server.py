@@ -21,11 +21,13 @@ settings = get_settings()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    await init_db()
-    # Redis already initialized during import
-    yield
-    await RedisManager.disconnect()
-    await close_db()
+    try:
+        await init_db()
+        # Redis already initialized during import
+        yield
+    finally:
+        await RedisManager.disconnect()
+        await close_db()
 
 # Create FastAPI app
 app = FastAPI(

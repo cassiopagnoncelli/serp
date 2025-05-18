@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+# Set Python path to include the current directory
+export PYTHONPATH=${PYTHONPATH:-.}
+
+# Run the task CLI
+python lib/core/task/cli.py "$@"

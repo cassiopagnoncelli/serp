@@ -8,14 +8,18 @@ from datetime import timedelta
 import shutil
 import os
 
+# Default timeout values
+DEFAULT_TIMEOUT = 10  # 10 seconds
+
 class Storage:
-  def __init__(self, config: Dict[str, Any], verbose: bool = False):
+  def __init__(self, config: Dict[str, Any], verbose: bool = False, timeout: int = DEFAULT_TIMEOUT):
     """
     Initialize the storage client with configuration dictionary.
     
     Args:
         config: Dictionary containing storage configuration
         verbose: Whether to enable verbose logging (default: False)
+        timeout: Connection timeout in seconds (default: 10)
     """
     self.verbose = verbose
     self.driver = config['driver']
@@ -24,18 +28,25 @@ class Storage:
     self.url_endpoint = config['url_endpoint']
     self.access_key = config.get('access_key')
     self.secret_key = config.get('secret_key')
+    self.timeout = timeout
     
     if self.driver != 'local' and not self.bucket:
       raise ValueError("Bucket must be specified in configuration for non-local storage")
     
     if self.driver == 's3':
+      # Configure boto3 client with timeouts
       self.client = boto3.client(
         's3',
         endpoint_url = config['url_endpoint'],
         aws_access_key_id = config['access_key'],
         aws_secret_access_key = config['secret_key'],
         region_name = self.region,
-        config = Config(signature_version='s3v4')
+        config = Config(
+          signature_version='s3v4',
+          connect_timeout=self.timeout,  # Connection timeout
+          read_timeout=self.timeout,     # Read timeout
+          retries={'max_attempts': 2}    # Limit retries
+        )
       )
       # Check if the bucket exists
       try:
@@ -59,7 +70,7 @@ class Storage:
       
       # Set connection timeout - this will prevent long hangs
       if hasattr(self.client._http, '_pool_kwargs'):
-        self.client._http._pool_kwargs['timeout'] = 5.0
+        self.client._http._pool_kwargs['timeout'] = self.timeout
       
       # Ensure bucket exists
       try:
