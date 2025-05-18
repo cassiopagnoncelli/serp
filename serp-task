@@ -4,13 +4,25 @@ set -e
 
 #~ USAGE
 #~
-#~   serp tasks
+#~   serp task list
+#~   serp task describe [task_name]
+#~   serp task run [task_name] [task_args] [extra_args]
 #~
 #~
-#~ COMMANDS
+#~ OPTIONS
+#~
+#~   task_name    - The name of the task to run
+#~   task_args    - The arguments to pass to the task (optional)
+#~   extra_args   - Extra arguments to pass to the task (optional)
+#~
+#~ EXAMPLES
+#~
+#~   serp task list
+#~   serp task describe serp.tasks.examples.hello_world
+#~   serp task run greeting --param name=John --param title=Professor --no-db
+#~
 #~
 #~   --help  - View these usage instructions
-#~
 
 log() {
   echo "${1}"
@@ -31,7 +43,7 @@ PROJECT_ROOT=$(git rev-parse --show-toplevel)
 
 function run_task() {
   source "$PROJECT_ROOT/venv/bin/activate"
-  PYTHONPATH="$PROJECT_ROOT" poetry run python -m lib.tasks.$1
+  PYTHONPATH="$PROJECT_ROOT" poetry run python lib/core/task/cli.py run "$@"
 }
 
-run_task "$1"
+run_task "$@"

@@ -4,10 +4,13 @@ set -e
 
 #~ USAGE
 #~
-#~   serp tasks
+#~   serp tasks [task_name]
 #~
 #~
-#~ COMMANDS
+#~ OPTIONS
+#~
+#~   task_name - The name of the task to describe
+#~
 #~
 #~   --help  - View these usage instructions
 #~
@@ -30,10 +33,13 @@ PROJECT_ROOT=$(git rev-parse --show-toplevel)
 ############################################################
 
 function list_tasks() {
-  cd "$PROJECT_ROOT"
-  grep "#~" lib/tasks/* | \
-    sed -E "s/.*:#~ ([^:]*): (.*)/\1:\2/" | \
-    awk -F: '{printf "%30s     %s\n", $1, $2}'
+  source "$PROJECT_ROOT/venv/bin/activate"
+  task_name="$1"
+  if [ "$task_name" != "" ]; then
+    PYTHONPATH="$PROJECT_ROOT" poetry run python lib/core/task/cli.py describe "$task_name"
+  else
+    PYTHONPATH="$PROJECT_ROOT" poetry run python lib/core/task/cli.py list
+  fi
 }
 
-list_tasks
+list_tasks "$@"
