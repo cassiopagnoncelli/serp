@@ -156,7 +156,8 @@ async def delete_expired_tokens() -> None:
     """Delete expired tokens from both database and cache."""
     expired_tokens = await Token.filter(expires_at__lt=DateTime.utc())
     for token in expired_tokens:
-        await token.destroy()
+        await token.delete_token()
+    await expired_tokens.delete()
 
 async def logout_token(token: str) -> None:
     token = await Token.filter(token=token).first()
