@@ -19,3 +19,4 @@ Learn
 To do
 
 - [ ] Normalize created_at/updated_at to TZ=UTC
+- [ ] Log service
