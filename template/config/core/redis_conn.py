@@ -20,22 +20,3 @@ def get_redis():
     pass  # No need to close the connection as it returns to the pool
 
 RedisDep = Annotated[Redis, Depends(get_redis)]
-
-@contextmanager
-def get_redis_standalone():
-  with Redis(connection_pool=redis_pool) as redis_client:
-    yield redis_client
-
-# TODO: Not working properly, setting to db=0
-RedisStandaloneDep = Annotated[Redis, Depends(get_redis_standalone)]
-
-# Example usage in FastAPI:
-#
-#   @app.get("/users")
-#   def get_users(redis: RedisDep):
-#     redis.get("item:1")
-#
-# For general-purpose usage:
-#
-#   with RedisStandaloneDep() as redis_client:
-#     redis_client.get("item:1")
