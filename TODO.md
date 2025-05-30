@@ -16,9 +16,10 @@ Learn
 - [ ] https://python.langchain.com/docs/introduction/
 - [ ] https://github.com/agno-agi/agno [https://www.instagram.com/p/DJVIL3dtgQb/]
 
+
 To do
 
 - [ ] Parameterise databases: pg (default), sqlite3 (--database=sqlite3)
+- [ ] Parameterise sync/async tortoise
 - [ ] Normalize created_at/updated_at to TZ=UTC
 - [ ] Log service
-
