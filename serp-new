@@ -60,7 +60,6 @@ debug() {
 
 SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
 SCRIPT_DIR="$(dirname "$SCRIPT_PATH")"
-TEMPLATE_DIR="$SCRIPT_DIR/template"
 
 ############################################################
 # Validation Functions
@@ -196,24 +195,14 @@ function new_app() {
   git init > /dev/null
   git branch -M main
 
+  # Fetch template
+  git remote add template https://github.com/cassiopagnoncelli/serp-template.git
+  git pull template main
+
   # Use virtualenv
   # start a new one with python3 -m venv venv.
   python3 -m venv venv
   source venv/bin/activate
-
-  # Copy files
-  rsync -a \
-    --exclude 'venv/' \
-    --exclude '.venv/' \
-    --exclude '.git/' \
-    --exclude '**/__pycache__/' \
-    --exclude '**/*.pyc' \
-    --exclude '**/*.pyo' \
-    --exclude '.pytest_cache/' \
-    --exclude '**/.pytest_cache/' \
-    --exclude '.DS_Store' \
-    --exclude '**/.DS_Store' \
-    "$TEMPLATE_DIR/" .
 
   # Install dependencies from pyproject.toml and poetry.lock
   makequiet $quiet poetry install --no-root

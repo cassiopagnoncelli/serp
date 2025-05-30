@@ -32,6 +32,7 @@ set -e
 #~    flower        - Run Flower (Celery's monitor UI)
 #~
 #~  Routines
+#~    update        - Update serp app to the newest version
 #~    env           - Show the current environment (APP_ENV env variable)
 #~    secret        - Generate a secure random secret
 #~
@@ -149,6 +150,11 @@ case "$command" in
     ;;
 
   # Routines.
+  update)
+    "$SCRIPT_DIR/serp-update" "${params[@]}"
+    exit 0
+    ;;
+
   env)
     "$SCRIPT_DIR/serp-env" "${params[@]}"
     exit 0
