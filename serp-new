@@ -197,7 +197,7 @@ function new_app() {
 
   # Fetch template
   git remote add template https://github.com/cassiopagnoncelli/serp-template.git
-  git pull template main
+  serp update
 
   # Use virtualenv
   # start a new one with python3 -m venv venv.

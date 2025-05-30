@@ -25,7 +25,9 @@ PROJECT_ROOT=$(git rev-parse --show-toplevel)
 ############################################################
 
 function run_update() {
-  git pull template main
+  git fetch template
+  git log template/main --oneline
+  git merge template/main --allow-unrelated-histories
 }
 
 run_update
