@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-
-PYTHONPATH=/app python lib/core/console/main.py
