@@ -164,6 +164,7 @@ function apply_env() {
 }
 
 function apply_core_settings() {
+  return 0
   if [[ "$OSTYPE" == "darwin"* ]]; then
     sed -i '' "s/serp_app/${1}/g" config/core/settings.py
   else
