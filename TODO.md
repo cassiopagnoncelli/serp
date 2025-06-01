@@ -19,7 +19,6 @@ Learn
 
 To do
 
-- [ ] Parameterise databases: pg (default), sqlite3 (--database=sqlite3)
-- [ ] Parameterise sync/async tortoise
-- [ ] Normalize created_at/updated_at to TZ=UTC
+- [ ] Normalize created at / updated at to TZ=UTC
 - [ ] Log service
+
