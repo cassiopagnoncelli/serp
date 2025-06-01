@@ -5,5 +5,5 @@ tmp/test.db
 
 tests/cassettes/*
 
-.DS_Store
+**/.DS_Store
 .pycache/*
