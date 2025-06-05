@@ -38,6 +38,9 @@ set -e
 #~   --with-ai              - Add AI libraries OpenAI, Anthropic, Google
 #~                            Generative AI, LangChain, HuggingFace
 #~   --with-geoip           - Add GeoIP to get users location
+#
+#~ Database:
+#~   --database=OPTION      - Choose between `postgresql` or `sqlite` (default: `sqlite`)
 #~
 #~ Commands:
 #~   --quiet                - Suppress output
@@ -148,6 +151,24 @@ function install_optional_libraries() {
   done
 }
 
+function use_postgresql() {
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    sed -i '' "s/# DATABASE_URL=postgresql/DATABASE_URL=postgresql/1" .env.development
+  else
+    sed -i "s/# DATABASE_URL=postgresql/DATABASE_URL=postgresql/1" .env.development
+  fi
+}
+
+function use_sqlite() {
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    sed -i '' "s/# DATABASE_URL=sqlite/DATABASE_URL=sqlite/1" .env.development
+  else
+    sed -i "s/# DATABASE_URL=sqlite/DATABASE_URL=sqlite/1" .env.development
+  fi
+}
+
+
+
 # Environment.
 function apply_env() {
   if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -169,6 +190,32 @@ function apply_core_settings() {
     sed -i '' "s/serp_app/${1}/g" config/core/settings.py
   else
     sed -i "s/serp_app/${1}/g" config/core/settings.py
+  fi
+}
+
+function apply_db_settings() {
+  local db_configured=false
+  unique_params=($(printf "%s\n" "${params[@]}" | sort -u))
+  for param in "${unique_params[@]}"; do
+    if [ "$db_configured" = false ]; then
+      case "$param" in
+        --database=postgresql|--database=postgres|--db=postgresql|--db=postgres|--with-postgresql|--with-postgres|--postgresql|--postgres|--pg)
+          echo "Configuring postgresql..."
+          use_postgresql
+          db_configured=true
+          ;;
+        --database=sqlite|--database=sqlite3|--db=sqlite|--db=sqlite3|--with-sqlite|--with-sqlite3|--sqlite|--sqlite3)
+          echo "Configuring sqlite..."
+          use_sqlite
+          db_configured=true
+          ;;
+      esac
+    fi
+  done
+  
+  if [ "$db_configured" = false ]; then
+    echo "No database specified, defaulting to sqlite..."
+    use_sqlite
   fi
 }
 
@@ -215,6 +262,7 @@ function new_app() {
   # Update env, config, core settings
   apply_env $project_name
   apply_core_settings $project_name
+  apply_db_settings $project_name
 
   # Use alembic for migrations (alembic init db/migrations)
   # Setup the database with dbcreate and dbload
