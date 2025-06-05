@@ -26,8 +26,9 @@ PROJECT_ROOT=$(git rev-parse --show-toplevel)
 
 function run_update() {
   git fetch template
-  git log template/main --oneline
-  git merge template/main --allow-unrelated-histories
+  git checkout template/main -- .
+  git commit -m "Serp edge"
+  git log --oneline
 }
 
 run_update

@@ -227,7 +227,7 @@ function new_app() {
 
   # Persist to repository
   git add .
-  git commit -m "Initial commit" > /dev/null
+  git commit -m "Setting up project settings" > /dev/null
 
   # Output project structure
   makequiet $quiet tree -a -I venv -I .git
