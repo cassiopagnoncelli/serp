@@ -104,6 +104,7 @@ post_install_message() {
 
 # Libraries.
 function add_docling() {
+  poetry add "pypdf2" "python-docx" "python-pptx"
   poetry add "docling@^2.31.0" --python=">=3.13,<4.0" && \
     poetry lock
 }
