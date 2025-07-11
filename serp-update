@@ -31,9 +31,29 @@ function run_update() {
 
   # Fetch template update
   git fetch template
-  git checkout template/main -- .
-  git commit -m "Serp edge"
-  git log --oneline
+  
+  # Check if there are uncommitted changes
+  if ! git diff-index --quiet HEAD --; then
+    echo "Warning: You have uncommitted changes. Please commit or stash them before updating."
+    echo "Uncommitted changes:"
+    git status --porcelain
+    exit 1
+  fi
+  
+  # Rebase current branch onto template/main instead of overwriting
+  echo "Rebasing current branch onto template/main..."
+  git rebase template/main
+  
+  if [ $? -eq 0 ]; then
+    echo "✅ Successfully rebased onto template updates"
+    git log --oneline -10
+  else
+    echo "❌ Rebase conflicts detected. Please resolve conflicts and run:"
+    echo "   git rebase --continue"
+    echo "Or abort the rebase with:"
+    echo "   git rebase --abort"
+    exit 1
+  fi
 }
 
 run_update
