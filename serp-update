@@ -27,7 +27,7 @@ PROJECT_ROOT=$(command -v git >/dev/null 2>&1 && git rev-parse --is-inside-work-
 function run_update() {
   # Fetch bin update
   git submodule update --init --recursive
-  cd lib/bin && git pull && cd ../..
+  cd lib/bin && git pull origin main && cd ../..
 
   # Fetch template update
   git fetch template
