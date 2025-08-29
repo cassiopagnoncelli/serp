@@ -31,7 +31,8 @@ PROJECT_ROOT=$(command -v git >/dev/null 2>&1 && git rev-parse --is-inside-work-
 
 function run_dev_server() {
   source "$PROJECT_ROOT/venv/bin/activate"
-  PYTHONPATH="$PROJECT_ROOT" APP_ENV=development fastapi dev app/server.py
+  PORT=${PORT:-8000}
+  PYTHONPATH="$PROJECT_ROOT" APP_ENV=development fastapi dev app/server.py --host 0.0.0.0 --port $PORT
 }
 
 run_dev_server
